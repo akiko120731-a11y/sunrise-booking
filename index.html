@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-<title>煦陽內部預約登記系統 v45 手機表格對齊版</title>
+<title>煦陽內部預約登記系統 v48 手機登入獨立版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -358,9 +358,126 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
   }
 }
 
+
+/* v47 手機 App 式介面：TimeTree / Google Calendar 方向，桌機版不變 */
+.mobile-app-shell,.mobile-bottom-nav{display:none;}
+@media(max-width:760px){
+  body.is-logged-in{padding-bottom:calc(82px + env(safe-area-inset-bottom,0px));background:#f8f6f1!important;}
+  body.is-logged-in #appHeader{position:sticky!important;top:0!important;z-index:50!important;padding:10px 12px!important;border-bottom:1px solid #eadfce!important;background:rgba(248,246,241,.96)!important;}
+  body.is-logged-in #appHeader>div:first-child{display:none!important;}
+  body.is-logged-in .toolbar{width:100%!important;display:flex!important;gap:8px!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding:4px 2px 6px!important;scrollbar-width:none!important;}
+  body.is-logged-in .toolbar::-webkit-scrollbar{display:none!important;}
+  body.is-logged-in .toolbar button,body.is-logged-in .toolbar input{min-height:42px!important;font-size:14px!important;padding:9px 14px!important;flex:0 0 auto!important;}
+  body.is-logged-in .toolbar .status{font-size:12px!important;align-self:center!important;white-space:nowrap!important;}
+  #appWrap{display:flex!important;flex-direction:column!important;padding:10px 10px 0!important;gap:12px!important;height:auto!important;overflow:visible!important;}
+  #mobileAppHome{display:block!important;order:1!important;}
+  #desktopScheduleCard{order:2!important;display:none!important;}
+  .side{order:3!important;display:none!important;}
+  body.mobile-tab-agenda #mobileAppHome{display:block!important;}
+  body.mobile-tab-agenda #desktopScheduleCard,body.mobile-tab-agenda .side{display:none!important;}
+  body.mobile-tab-schedule #mobileAppHome{display:none!important;}
+  body.mobile-tab-schedule #desktopScheduleCard{display:block!important;}
+  body.mobile-tab-schedule .side{display:none!important;}
+  body.mobile-tab-stats #mobileAppHome{display:block!important;}
+  body.mobile-tab-stats #mobileAgendaList,body.mobile-tab-stats #mobileTodaySummary,body.mobile-tab-stats #mobileDateStrip{display:none!important;}
+  body.mobile-tab-settings #mobileAppHome{display:none!important;}
+  body.mobile-tab-settings #desktopScheduleCard{display:none!important;}
+  body.mobile-tab-settings .side{display:flex!important;}
+  .mobile-app-shell{background:transparent!important;overflow:visible!important;height:auto!important;}
+  .mobile-app-top{display:flex;align-items:center;justify-content:space-between;padding:14px 4px 8px;}
+  .mobile-kicker{font-size:12px;color:#8a7c6d;margin-bottom:2px;}
+  .mobile-app-top h2{margin:0;font-size:26px;letter-spacing:.02em;color:#2f2c28;font-weight:900;}
+  .mobile-top-actions{display:flex;gap:8px}.mobile-icon-btn{width:42px;height:42px;border-radius:999px;font-size:24px;line-height:1;padding:0;background:#fffefb;border-color:#eadfce;}
+  .mobile-date-strip{display:flex;gap:8px;overflow-x:auto;padding:8px 2px 12px;scroll-snap-type:x mandatory;scrollbar-width:none;}
+  .mobile-date-strip::-webkit-scrollbar{display:none;}
+  .mobile-day-pill{flex:0 0 58px;min-height:72px;border:1px solid #eadfce;border-radius:20px;background:#fffefb;box-shadow:0 5px 16px rgba(80,60,30,.045);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;scroll-snap-align:start;color:#3d3933;}
+  .mobile-day-pill .dow{font-size:12px;color:#8a7c6d}.mobile-day-pill .day{font-size:20px;font-weight:900}.mobile-day-pill .count{font-size:10px;color:#8f704c;background:#f4eadb;border-radius:999px;padding:1px 6px;}
+  .mobile-day-pill.active{background:#b99b72;color:#fff;border-color:#b99b72}.mobile-day-pill.active .dow,.mobile-day-pill.active .count{color:#fff;background:rgba(255,255,255,.2)}
+  .mobile-day-pill.today{box-shadow:inset 0 0 0 2px #bd695d,0 5px 16px rgba(80,60,30,.045)}
+  .mobile-summary-card{margin:0 0 12px;background:#fffefb;border:1px solid #eadfce;border-radius:24px;padding:14px 16px;box-shadow:0 8px 22px rgba(80,60,30,.055);}
+  .mobile-summary-card h3{margin:0 0 4px;font-size:17px}.mobile-summary-card p{margin:0;color:#8a7c6d;font-size:13px;line-height:1.5;}
+  .mobile-agenda-list{display:flex;flex-direction:column;gap:14px;height:auto!important;overflow:visible!important;}
+  .mobile-date-group{display:flex;flex-direction:column;gap:8px;}
+  .mobile-date-title{font-size:16px;font-weight:900;color:#3d3933;padding:6px 2px;display:flex;align-items:baseline;gap:8px;}
+  .mobile-date-title small{font-size:12px;color:#bd695d;font-weight:800;}
+  .mobile-booking-card{background:#fffefb;border:1px solid #eadfce;border-radius:22px;padding:12px 13px;box-shadow:0 8px 22px rgba(80,60,30,.055);display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:start;position:relative;overflow:hidden;}
+  .mobile-booking-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:#b99b72;opacity:.75;}
+  .mobile-booking-time{font-size:14px;font-weight:900;color:#8f704c;line-height:1.35;padding-left:4px;}
+  .mobile-booking-main{min-width:0}.mobile-booking-name{font-size:16px;font-weight:900;margin-bottom:4px;word-break:break-word}.mobile-booking-meta{font-size:13px;color:#6f665b;line-height:1.55}.mobile-booking-note{font-size:12px;color:#8a7c6d;background:#fff7e8;border-radius:12px;padding:5px 7px;margin-top:6px;line-height:1.45;}
+  .mobile-empty{background:#fffefb;border:1px dashed #eadfce;border-radius:20px;padding:18px;text-align:center;color:#8a7c6d;font-size:14px;}
+  .mobile-soft-section{margin:14px 0;background:#fffefb;border:1px solid #eadfce;border-radius:24px;padding:15px;box-shadow:0 8px 22px rgba(80,60,30,.055);height:auto!important;overflow:visible!important;}
+  .mobile-soft-section h3{margin:0 0 12px;font-size:17px;color:#3d3933;}
+  .mobile-stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .mobile-stat-card{background:#fffaf1;border:1px solid #eadfce;border-radius:18px;padding:12px;}.mobile-stat-card span{display:block;color:#8a7c6d;font-size:12px}.mobile-stat-card b{font-size:24px;line-height:1.2;}
+  .mobile-chart-wrap{height:auto!important;min-height:190px!important;overflow:visible!important;margin-top:12px;}.mobile-chart-wrap canvas{height:190px!important;max-height:none!important;}
+  .mobile-report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}.mobile-report-grid.one{grid-template-columns:1fr;}.mobile-report-grid label{font-size:12px;color:#8a7c6d;font-weight:800;}.mobile-report-grid input,.mobile-report-grid select{width:100%;min-height:44px;border:0;background:#fffaf1;border-radius:16px;padding:9px 11px;box-shadow:inset 0 0 0 1px #eadfce;margin-top:5px;font-size:16px;}
+  .mobile-action-row{display:flex;gap:8px;margin-top:12px}.mobile-action-row button{flex:1;min-height:44px;font-size:14px;}
+  .mobile-bottom-nav{display:flex!important;position:fixed;left:0;right:0;bottom:0;z-index:80;background:rgba(255,254,251,.96);backdrop-filter:blur(14px);border-top:1px solid #eadfce;padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));justify-content:space-around;box-shadow:0 -8px 24px rgba(80,60,30,.08);}
+  .mobile-bottom-nav button{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:18px!important;min-width:56px;min-height:54px;padding:4px 8px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#8a7c6d;}
+  .mobile-bottom-nav button span{font-size:22px;line-height:1}.mobile-bottom-nav button b{font-size:11px;line-height:1.1}.mobile-bottom-nav button.active{color:#8f704c;background:#fff4df!important;}
+  .mobile-bottom-nav .mobile-add{width:64px;height:64px;margin-top:-24px;border-radius:999px!important;background:#b99b72!important;color:#fff!important;box-shadow:0 8px 18px rgba(80,60,30,.18)!important;}.mobile-bottom-nav .mobile-add span{font-size:30px}.mobile-bottom-nav .mobile-add b{font-size:11px;color:#fff;}
+  #desktopScheduleCard .controls select,#desktopScheduleCard .controls button{min-height:40px!important;font-size:14px!important;}
+  .schedule-wrap{max-height:none!important;overflow-x:auto!important;overflow-y:visible!important;border-radius:18px!important;}
+  .side .card,#reportPanel,.stats,.form,.report-box,.history-list{height:auto!important;max-height:none!important;overflow:visible!important;}
+}
+
+
+/* v48 手機未登入獨立登入頁：登入前不顯示任何系統內容或底部導覽 */
+body.is-logged-out #appHeader,
+body.is-logged-out #appWrap,
+body.is-logged-out #mobileAppHome,
+body.is-logged-out #desktopScheduleCard,
+body.is-logged-out .side,
+body.is-logged-out #mobileBottomNav,
+body.is-logged-out .mobile-bottom-nav{
+  display:none!important;
+  visibility:hidden!important;
+  height:0!important;
+  max-height:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+body.is-logged-out #identityScreen{
+  display:flex!important;
+  visibility:visible!important;
+  min-height:100dvh!important;
+  height:auto!important;
+  overflow:auto!important;
+  pointer-events:auto!important;
+  position:relative!important;
+  z-index:9999!important;
+}
+body.is-logged-out{
+  min-height:100dvh!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  padding-bottom:0!important;
+}
+@media(max-width:760px){
+  body.is-logged-out #appHeader,
+  body.is-logged-out #appWrap,
+  body.is-logged-out #mobileAppHome,
+  body.is-logged-out #desktopScheduleCard,
+  body.is-logged-out .side,
+  body.is-logged-out #mobileBottomNav,
+  body.is-logged-out .mobile-bottom-nav{
+    display:none!important;
+    visibility:hidden!important;
+    height:0!important;
+    max-height:0!important;
+    overflow:hidden!important;
+  }
+  body.is-logged-out #identityScreen{
+    display:flex!important;
+    min-height:100dvh!important;
+    padding:calc(env(safe-area-inset-top,0px) + 18px) 12px 28px!important;
+    background:linear-gradient(180deg,#fbfaf6,#f3efe7)!important;
+  }
+}
+
 </style>
 </head>
-<body>
+<body class="is-logged-out">
 <div id="identityScreen" class="identity-screen">
   <div class="identity-card">
     <h1 class="identity-title">煦陽內部預約登記系統</h1>
@@ -379,7 +496,38 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
   <div class="toolbar"><span class="status" id="roleBadge"></span><button class="mini" onclick="switchIdentity()">切換身份</button><button class="mini" onclick="prevWeek()">← 上週</button><input id="weekPicker" type="date" onchange="render()"><button class="mini" onclick="nextWeek()">下週 →</button><button class="primary mini" onclick="openEditor()">＋新增預約</button><button class="mini" onclick="openNoteEditor()">＋新增記事</button><button class="mini coach-only pink-btn" onclick="openMonthOverview()">本月預約總覽</button><button class="mini student-btn" onclick="openStudentManager()">學員管理</button><button class="mini admin-only" onclick="openReportWork()">報表作業</button><button class="mini danger admin-only" onclick="clearAll()">清空</button></div>
 </header>
 <div id="appWrap" class="wrap" style="display:none">
-  <section class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="zoom-tools no-print"><button class="mini" onclick="zoomSchedule(-0.08)">－</button><span id="zoomPercent" class="zoom-percent">100%</span><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
+  
+  <section id="mobileAppHome" class="mobile-app-shell no-print">
+    <div class="mobile-app-top">
+      <div>
+        <div class="mobile-kicker" id="mobileRoleText">內部預約</div>
+        <h2 id="mobileMonthTitle">2026年5月</h2>
+      </div>
+      <div class="mobile-top-actions">
+        <button type="button" class="mobile-icon-btn" onclick="prevWeek();setTimeout(renderMobileApp,0)">‹</button>
+        <button type="button" class="mobile-icon-btn" onclick="nextWeek();setTimeout(renderMobileApp,0)">›</button>
+      </div>
+    </div>
+    <div id="mobileDateStrip" class="mobile-date-strip"></div>
+    <div id="mobileTodaySummary" class="mobile-summary-card"></div>
+    <div id="mobileAgendaList" class="mobile-agenda-list"></div>
+    <section id="mobileStatsBlock" class="mobile-soft-section">
+      <h3>本月統計分析</h3>
+      <div id="mobileStatsCards" class="mobile-stat-cards"></div>
+      <div class="mobile-chart-wrap"><canvas id="mobileChart" height="170"></canvas></div>
+    </section>
+    <section id="mobileReportBlock" class="mobile-soft-section">
+      <h3>輸出資料（報表）</h3>
+      <div class="mobile-report-grid">
+        <label>開始日期<input id="mobileReportStart" type="date"></label>
+        <label>結束日期<input id="mobileReportEnd" type="date"></label>
+      </div>
+      <div id="mobileReportCoachWrap" class="mobile-report-grid one"><label>教練<select id="mobileReportCoach"></select></label></div>
+      <div class="mobile-action-row"><button class="primary" onclick="syncMobileReportAndOpen()">查詢報表</button><button onclick="syncMobileReportAndExport()">輸出CSV</button></div>
+    </section>
+  </section>
+
+  <section id="desktopScheduleCard" class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="zoom-tools no-print"><button class="mini" onclick="zoomSchedule(-0.08)">－</button><span id="zoomPercent" class="zoom-percent">100%</span><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
   <aside class="side no-print">
     <section class="card"><h2 id="dashboardTitle">我的本月統計分析</h2><div class="stats"><div class="stat-grid"><div class="stat"><span class="small" id="classStatLabel">學員名稱</span><b id="classCount">0</b></div><div class="stat"><span class="small">衛教堂數</span><b id="eduCount">0</b></div></div><canvas id="chart" height="210"></canvas><div id="chartFallback" class="hint"></div></div></section>
     <section class="card"><h2 id="historyTitle">我的預約記事歷程</h2><div id="historyList" class="history-list"></div></section>
@@ -587,6 +735,15 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
   </div>
 </div></dialog>
 
+
+<nav id="mobileBottomNav" class="mobile-bottom-nav no-print">
+  <button type="button" data-tab="agenda" class="active" onclick="setMobileTab('agenda')"><span>📅</span><b>行程</b></button>
+  <button type="button" data-tab="schedule" onclick="setMobileTab('schedule')"><span>▦</span><b>課表</b></button>
+  <button type="button" class="mobile-add" onclick="openEditor()"><span>＋</span><b>新增</b></button>
+  <button type="button" data-tab="stats" onclick="setMobileTab('stats')"><span>◔</span><b>統計</b></button>
+  <button type="button" data-tab="settings" onclick="setMobileTab('settings')"><span>⚙</span><b>設定</b></button>
+</nav>
+
 <div id="toast" class="toast">已儲存</div>
 <script>
 const KEY='sunrise_reservation_v2', NOTE_KEY='sunrise_coach_notes_v2', LOG_KEY='sunrise_activity_logs_v1', HOLIDAY_KEY='sunrise_holidays_v2', COACH_KEY='sunrise_coaches_v2', STUDENT_KEY='sunrise_students_v1', VERSION_KEY='sunrise_data_version_v2', FB_CONFIG_KEY='sunrise_firebase_config_v1', WORKSPACE_KEY='sunrise_workspace_id_v1', ROLE_KEY='sunrise_role_v1', ROLE_COACH_KEY='sunrise_role_coach_v1';
@@ -605,7 +762,7 @@ const DEFAULT_COACHES=['Shawn','Akiko','Jasper','Ollie','華偉'];
 let coaches=[...DEFAULT_COACHES];
 const defaultHolidays={'2026-01-01':'元旦','2026-02-14':'春節連假','2026-02-15':'春節連假','2026-02-16':'除夕','2026-02-17':'春節','2026-02-18':'春節','2026-02-19':'春節','2026-02-20':'春節補假','2026-02-21':'春節連假','2026-02-22':'春節連假','2026-02-27':'和平紀念日補假','2026-02-28':'和平紀念日','2026-04-03':'兒童節/清明補假','2026-04-04':'兒童節','2026-04-05':'清明節','2026-04-06':'清明補假','2026-05-01':'勞動節','2026-06-19':'端午節','2026-09-25':'中秋節','2026-09-28':'教師節','2026-10-09':'國慶日補假','2026-10-10':'國慶日','2026-10-25':'光復節','2026-10-26':'光復節補假','2026-12-25':'行憲紀念日'};
 let holidays=safeParse(localStorage.getItem(HOLIDAY_KEY),defaultHolidays);
-const times=[];for(let h=7;h<=22;h++){times.push(String(h).padStart(2,'0')+':00');if(h<22)times.push(String(h).padStart(2,'0')+':30')}
+const times=[];for(let h=7;h<=22;h++){times.push(String(h).padStart(2,'0')+':00');times.push(String(h).padStart(2,'0')+':30')}
 function safeParse(s,fallback){try{return s?JSON.parse(s):fallback}catch(e){return fallback}}
 function el(id){return document.getElementById(id)}function newId(){return'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}function esc(s){return String(s||'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
 function monday(d){d=new Date(d);if(isNaN(d))d=new Date();const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d}function fmt(d){return new Date(d).toISOString().slice(0,10)}function md(d){return`${d.getMonth()+1}/${d.getDate()}（${['日','一','二','三','四','五','六'][d.getDay()]}）`}function mins(t){let[h,m]=t.split(':').map(Number);return h*60+m}function addMins(t,add){const total=mins(t)+Number(add);return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0')}function venueName(v){return v==='A'?'本館':(v==='B'?'辦公室':(v==='none'?'無':v))}function durationFromTimes(start,end){return Math.max(30, mins(end)-mins(start))}function covers(e,t){const m=mins(t),s=mins(e.time);return m>=s&&m<s+Number(e.duration)}function actorName(){return isAdmin()?'Admin':(currentCoach||'未登入')}function logActivity(action,detail='',targetCoach=''){const now=new Date();activityLogs.push({id:newId(),ts:now.toISOString(),month:now.toISOString().slice(0,7),actor:actorName(),role:currentRole||'',targetCoach:targetCoach||'',action,detail});activityLogs=activityLogs.slice(-800)}function entrySummary(e){if(!e)return'';return `${e.date} ${e.time}-${addMins(e.time,e.duration||60)}｜${e.coach}｜${e.name||''}`}
@@ -697,11 +854,18 @@ function applyRoleUI(){
   document.body.classList.toggle('is-logged-out',!logged);
   if(!logged){
     if(el('schedule')) el('schedule').innerHTML='';
+    if(el('mobileDateStrip')) el('mobileDateStrip').innerHTML='';
+    if(el('mobileTodaySummary')) el('mobileTodaySummary').innerHTML='';
+    if(el('mobileAgendaList')) el('mobileAgendaList').innerHTML='';
+    if(el('mobileStatsCards')) el('mobileStatsCards').innerHTML='';
+    if(el('mobileBottomNav')) { el('mobileBottomNav').style.display='none'; el('mobileBottomNav').setAttribute('aria-hidden','true'); }
     if(el('classCount')) el('classCount').textContent='0';
     if(el('eduCount')) el('eduCount').textContent='0';
     if(chart){ try{chart.destroy()}catch(e){} chart=null; }
+    if(typeof mobileChart!=='undefined' && mobileChart){ try{mobileChart.destroy()}catch(e){} mobileChart=null; }
     return;
   }
+  if(el('mobileBottomNav')) { el('mobileBottomNav').style.display=''; el('mobileBottomNav').removeAttribute('aria-hidden'); }
   document.querySelectorAll('.admin-only').forEach(x=>x.classList.toggle('hidden',!isAdmin()));
   document.querySelectorAll('.coach-only').forEach(x=>x.classList.toggle('hidden',!isCoach()));
   if(el('roleBadge')) el('roleBadge').textContent=isAdmin()?'Admin 管理員':(isCoach()?`Coach｜${currentCoach}`:'');
@@ -711,6 +875,7 @@ function applyRoleUI(){
   initReportDates();
   if(isCoach()&&!coaches.includes(currentCoach)){ switchIdentity(); return; }
   if(isCoach()){ if(el('coach')&&el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach; if(el('noteCoach'))el('noteCoach').value=currentCoach; }
+  if(isMobileApp())setMobileTab(mobileTab||'agenda');
   render();
   if(!cloudEnabled) enableFirebaseSync(true);
 }
@@ -724,7 +889,7 @@ function bindMobileLogin(){
   bind('coachLoginBtn',enterAsCoach);
   document.querySelectorAll('.cup').forEach(btn=>{if(btn.dataset.boundCup)return;btn.dataset.boundCup='1';btn.addEventListener('touchend',ev=>{ev.preventDefault();ev.stopPropagation();const n=btn.textContent.trim().charAt(0);tapCup(n,ev);},{passive:false});});
 }
-function init(){bindMobileLogin();loadCoaches();fillSelects();fillWeekdays();loadHolidays();el('weekPicker').value=fmt(monday(new Date()));localStorage.setItem(FB_CONFIG_KEY,JSON.stringify(AUTO_FIREBASE_CONFIG));localStorage.setItem(WORKSPACE_KEY,AUTO_WORKSPACE_ID);if(el('firebaseConfigText'))el('firebaseConfigText').value=JSON.stringify(AUTO_FIREBASE_CONFIG);if(el('workspaceId'))el('workspaceId').value=AUTO_WORKSPACE_ID;applyRoleUI();setInterval(autoRefresh,3000)}
+function init(){document.body.classList.add('is-logged-out');document.body.classList.remove('is-logged-in');document.body.classList.add('mobile-tab-agenda');bindMobileLogin();loadCoaches();fillSelects();fillWeekdays();loadHolidays();el('weekPicker').value=fmt(monday(new Date()));localStorage.setItem(FB_CONFIG_KEY,JSON.stringify(AUTO_FIREBASE_CONFIG));localStorage.setItem(WORKSPACE_KEY,AUTO_WORKSPACE_ID);if(el('firebaseConfigText'))el('firebaseConfigText').value=JSON.stringify(AUTO_FIREBASE_CONFIG);if(el('workspaceId'))el('workspaceId').value=AUTO_WORKSPACE_ID;applyRoleUI();setInterval(autoRefresh,3000)}
 async function enableFirebaseSync(silent=false){try{let raw=(el('firebaseConfigText')&&el('firebaseConfigText').value.trim())||localStorage.getItem(FB_CONFIG_KEY)||JSON.stringify(AUTO_FIREBASE_CONFIG);const workspace=((el('workspaceId')&&el('workspaceId').value)||localStorage.getItem(WORKSPACE_KEY)||AUTO_WORKSPACE_ID).trim().replace(/[^a-zA-Z0-9_-]/g,'-');localStorage.setItem(FB_CONFIG_KEY,raw);localStorage.setItem(WORKSPACE_KEY,workspace);const config=JSON.parse(raw);if(typeof firebase==='undefined')throw new Error('Firebase 套件未載入，請確認有網路連線。');if(!firebase.apps.length)firebase.initializeApp(config);db=firebase.firestore();try{await firebase.auth().signInAnonymously()}catch(authErr){console.warn('匿名登入未啟用，嘗試直接連線 Firestore',authErr)}cloudDocRef=db.collection('sunriseBookingWorkspaces').doc(workspace);if(cloudUnsub)cloudUnsub();cloudEnabled=true;setCloudStatus('目前：正在連線雲端資料…');cloudUnsub=cloudDocRef.onSnapshot(async snap=>{if(snap.exists){const data=snap.data();applyState(data);if(!Array.isArray(data.coaches)||!data.coaches.length){setTimeout(()=>pushCloudNow(),300)}setCloudStatus('目前：雲端同步中｜最後更新 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));toast('已取得雲端最新資料')}else{ensureCoachFallback();await cloudDocRef.set(statePayload(),{merge:true});setCloudStatus('目前：已建立雲端工作室資料')}} , err=>{console.error(err);setCloudStatus('雲端同步中斷：'+err.message)});if(!silent)toast('已啟用雲端同步')}catch(err){console.error(err);cloudEnabled=false;setCloudStatus('啟用失敗：'+err.message);if(!silent)alert('Firebase 啟用失敗：'+err.message)}}
 function disableFirebaseSync(){if(cloudUnsub)cloudUnsub();cloudUnsub=null;cloudDocRef=null;cloudEnabled=false;localStorage.removeItem(FB_CONFIG_KEY);setCloudStatus('目前：單機模式，自動儲存在此瀏覽器。重新整理後會再嘗試連線。');toast('已改回單機模式')}
 function autoRefresh(){if(!currentRole)return;const v=localStorage.getItem(VERSION_KEY)||'';if(v&&v!==lastVersion){entries=safeParse(localStorage.getItem(KEY),[]);coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]);activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]);lastVersion=v;render();toast('已自動同步最新資料')}}
@@ -777,7 +942,7 @@ function render(){
     }
     html+='</tr>'
   });
-  el('schedule').innerHTML=html;applyScheduleZoom();updateStats()
+  el('schedule').innerHTML=html;applyScheduleZoom();updateStats();renderMobileApp()
 }
 function courseTypes(){return ['one1','one2','class','massage']}
 function countAsCourse(e){return courseTypes().includes(e.type)}
@@ -1038,6 +1203,86 @@ function openDayOverview(date){
   el('dayDetailList').innerHTML=list.length?list.map(e=>`<div class="month-detail-item"><b>${esc(e.time)}-${esc(addMins(e.time,e.duration||60))}｜${esc(typeLabel(e.type))}</b><div>學員姓名：${esc(e.name||'')}</div><div>場地：${esc(venueName(e.venue))}</div>${e.note?`<div>備註：${esc(e.note)}</div>`:''}</div>`).join(''):'<div class="history-empty">當日沒有課程、衛教或運動按摩預約。</div>';
   safeOpenDialog('dayDetailDialog');
 }
+
+
+// v47 手機 App 式介面：日期分組列表、底部導覽、統計報表卡片
+let mobileTab='agenda', mobileSelectedDate='';
+function isMobileApp(){return window.matchMedia&&window.matchMedia('(max-width:760px)').matches}
+function mobileVisibleEntries(){
+  return entries.filter(e=>{
+    if(isCoach()) return e.coach===currentCoach || e.coach===SELF_TRAINING;
+    return true;
+  }).filter(e=>e.type!=='rest');
+}
+function mobileEntriesForDate(date){
+  return mobileVisibleEntries().filter(e=>e.date===date).slice().sort((a,b)=>(a.time+a.coach).localeCompare(b.time+b.coach));
+}
+function mobileDateRange(){
+  const base=mobileSelectedDate?new Date(mobileSelectedDate+'T00:00:00'):monday(el('weekPicker')?.value||new Date());
+  const start=monday(base); const days=[];
+  for(let i=0;i<14;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}
+  return days;
+}
+function setMobileSelectedDate(date){mobileSelectedDate=date;if(el('weekPicker'))el('weekPicker').value=date;renderMobileApp()}
+function setMobileTab(tab){
+  mobileTab=tab;
+  document.body.classList.remove('mobile-tab-agenda','mobile-tab-schedule','mobile-tab-stats','mobile-tab-settings');
+  document.body.classList.add('mobile-tab-'+tab);
+  document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  renderMobileApp();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderMobileDateStrip(){
+  const box=el('mobileDateStrip'); if(!box)return;
+  if(!mobileSelectedDate) mobileSelectedDate=el('weekPicker')?.value||fmt(new Date());
+  const today=fmt(new Date());
+  box.innerHTML=mobileDateRange().map(d=>{
+    const date=fmt(d), list=mobileEntriesForDate(date);
+    return `<button type="button" class="mobile-day-pill ${date===mobileSelectedDate?'active':''} ${date===today?'today':''}" onclick="setMobileSelectedDate('${date}')"><span class="dow">${['日','一','二','三','四','五','六'][d.getDay()]}</span><span class="day">${d.getDate()}</span><span class="count">${list.length}筆</span></button>`;
+  }).join('');
+}
+function renderMobileAgenda(){
+  const listBox=el('mobileAgendaList'), summary=el('mobileTodaySummary'); if(!listBox)return;
+  if(!mobileSelectedDate) mobileSelectedDate=el('weekPicker')?.value||fmt(new Date());
+  const selected=new Date(mobileSelectedDate+'T00:00:00');
+  const monthTitle=el('mobileMonthTitle'); if(monthTitle) monthTitle.textContent=`${selected.getFullYear()}年${selected.getMonth()+1}月`;
+  const role=el('mobileRoleText'); if(role) role.textContent=isAdmin()?'Admin 管理員':'Coach｜'+(currentCoach||'');
+  const todayList=mobileEntriesForDate(mobileSelectedDate);
+  if(summary){summary.innerHTML=`<h3>${md(selected)}${holidays[mobileSelectedDate]?` <small style="color:#bd695d">${esc(holidays[mobileSelectedDate])}</small>`:''}</h3><p>${todayList.length?`今日共有 ${todayList.length} 筆預約。左右滑動日期可切換查看。`:'今日尚無預約，按下方「新增」建立預約。'}</p>`;}
+  const days=mobileDateRange();
+  const groups=days.map(d=>({date:fmt(d),d,list:mobileEntriesForDate(fmt(d))})).filter(g=>g.list.length||g.date===mobileSelectedDate).slice(0,10);
+  listBox.innerHTML=groups.map(g=>{
+    const title=`<div class="mobile-date-title">${md(g.d)}${holidays[g.date]?`<small>${esc(holidays[g.date])}</small>`:''}</div>`;
+    const cards=g.list.length?g.list.map(e=>`<div class="mobile-booking-card" onclick="${canEditEntry(e)?`edit('${e.id}')`:'void(0)'}"><div class="mobile-booking-time">${esc(e.time)}<br>${esc(addMins(e.time,e.duration||60))}</div><div class="mobile-booking-main"><div class="mobile-booking-name">${esc(e.name||'未命名')}</div><div class="mobile-booking-meta">${esc(typeLabel(e.type))}｜${esc(e.coach)}｜${esc(venueName(e.venue))}</div>${e.note?`<div class="mobile-booking-note">${esc(e.note)}</div>`:''}</div></div>`).join(''):'<div class="mobile-empty">這一天沒有預約。</div>';
+    return `<section class="mobile-date-group">${title}${cards}</section>`;
+  }).join('');
+}
+function renderMobileStats(){
+  const box=el('mobileStatsCards'); if(!box)return;
+  const base=new Date(el('weekPicker')?.value||new Date()), y=base.getFullYear(), m=base.getMonth();
+  const list=entries.filter(e=>{let d=new Date(e.date);return d.getFullYear()===y&&d.getMonth()===m&&(isAdmin()||e.coach===currentCoach)});
+  const courseN=list.filter(e=>countAsCourse(e)).length, eduN=list.filter(e=>e.type==='edu').length, massageN=list.filter(e=>e.type==='massage').length, totalMin=list.filter(e=>countAsCourse(e)||e.type==='edu').reduce((s,e)=>s+Number(e.duration||0),0);
+  box.innerHTML=`<div class="mobile-stat-card"><span>課程執行</span><b>${courseN}</b></div><div class="mobile-stat-card"><span>衛教</span><b>${eduN}</b></div><div class="mobile-stat-card"><span>運動按摩</span><b>${massageN}</b></div><div class="mobile-stat-card"><span>執行時數</span><b>${(totalMin/60).toFixed(1)}</b></div>`;
+}
+function syncMobileReportDefaults(){
+  if(el('mobileReportStart')&&el('reportStart')) el('mobileReportStart').value=el('reportStart').value;
+  if(el('mobileReportEnd')&&el('reportEnd')) el('mobileReportEnd').value=el('reportEnd').value;
+  const wrap=el('mobileReportCoachWrap'); if(wrap)wrap.style.display=isAdmin()?'block':'none';
+  const sel=el('mobileReportCoach'); if(sel){sel.innerHTML='<option value="">全部教練</option>'+coaches.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join(''); if(el('reportCoach'))sel.value=el('reportCoach').value||'';}
+}
+function syncMobileReportValues(){
+  if(el('mobileReportStart')&&el('reportStart')) el('reportStart').value=el('mobileReportStart').value;
+  if(el('mobileReportEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileReportEnd').value;
+  if(el('mobileReportCoach')&&el('reportCoach')&&isAdmin()) el('reportCoach').value=el('mobileReportCoach').value;
+}
+function syncMobileReportAndOpen(){syncMobileReportValues();openReportResult()}
+function syncMobileReportAndExport(){syncMobileReportValues();exportCSV()}
+function renderMobileApp(){
+  if(!isMobileApp()||!currentRole)return;
+  document.body.classList.add('mobile-tab-'+mobileTab);
+  renderMobileDateStrip();renderMobileAgenda();renderMobileStats();syncMobileReportDefaults();
+}
+window.addEventListener('resize',()=>{if(isMobileApp())renderMobileApp()});
 
 function backupJSON(){downloadBlob(JSON.stringify({entries,coachNotes,students,activityLogs,coaches,holidays},null,2),'煦陽預約系統備份.json','application/json')}
 function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);entries=data.entries||[];coachNotes=data.coachNotes||[];students=data.students||students||[];activityLogs=data.activityLogs||[];normalizeFreeEntries();if(data.coaches){coaches=data.coaches;localStorage.setItem(COACH_KEY,coaches.join(','));fillSelects();el('coachText').value=coaches.join(', ')}if(data.holidays){holidays=data.holidays;localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays));loadHolidays()}persist('已匯入備份');render()}catch(e){alert('匯入失敗：檔案格式不正確')}};r.readAsText(f)}
