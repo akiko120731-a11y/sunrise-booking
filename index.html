@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>煦陽內部預約登記系統 v27 手機登入修正版</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<style>
+:root{
+  --bg:#f8f6f1; --paper:#fffefb; --paper2:#fbf8f1; --ink:#3d3933; --muted:#82786b; --line:#e7ded0;
+  --accent:#b99b72; --accentDark:#8f704c; --class:#fffdf8; --massage:#fffdf8; --rest:#e8f1df; --edu:#e5f1fb; --event:#f2e8f4; --booked:#d8d4cd;
+  --note:#fff4c9; --a:#f5d98c; --b:#9fc1ad; --danger:#bd695d; --day:#fff8e9; --dayAlt:#f4efe6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",sans-serif;}
+header{position:sticky;top:0;z-index:20;background:rgba(248,246,241,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;}
+h1{font-size:20px;margin:0;letter-spacing:.08em}.sub{font-size:12px;color:var(--muted);margin-top:4px}.toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+button,input,select,textarea{font-family:inherit}button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1px solid var(--line);background:#fffaf0;color:var(--ink);border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;box-shadow:0 2px 7px rgba(70,50,20,.05)}button:hover{background:#f2eadc}.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.danger{color:#a34f45}.mini{font-size:12px;padding:5px 9px}.wrap{padding:18px;display:grid;grid-template-columns:1fr 340px;gap:16px}.card{background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:0 8px 22px rgba(80,60,30,.06);overflow:hidden}.card h2{font-size:15px;margin:0;padding:14px 16px;border-bottom:1px solid var(--line);letter-spacing:.06em}.controls{padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line);background:#fffdf8}.controls input,.controls select{border:1px solid var(--line);border-radius:12px;padding:7px 9px;background:white;color:var(--ink)}
+.schedule-wrap{overflow:auto;max-height:calc(100vh - 178px)}table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:12px}th,td{border-right:1px solid #e8ded0;border-bottom:1px solid #eadfce;min-width:90px;height:30px;text-align:center;position:relative;vertical-align:middle}th{position:sticky;top:0;z-index:6;background:#f7efe2;font-weight:700}.time{position:sticky;left:0;z-index:7;background:#faf4eb;min-width:58px;font-weight:600}.coach-head{top:58px;background:#fff7e8;z-index:5}.self-head{top:58px;background:#f5efe4!important;color:#6f5b44}.self-col{background:#fbf7ef!important;min-width:86px}.slot{cursor:pointer}.slot:hover{outline:2px solid rgba(185,155,114,.7);z-index:2}.day-start{border-left:5px solid #c5aa83!important}.day-end{border-right:5px solid #c5aa83!important}.day-shade{background:#fffefd}.day-shade-alt{background:#f6f1e9}.day-title{background:#fff3dc!important;border-left:5px solid #c5aa83;border-right:5px solid #c5aa83;font-size:13px;height:58px;line-height:1.3}.holiday-tag{display:block;margin-top:3px;font-size:11px;color:#b45e4c;font-weight:800}.coach-note{display:block;margin-top:2px;font-size:10.5px;color:#8a6b23;background:var(--note);border-radius:999px;padding:1px 6px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.today-title{box-shadow:inset 0 0 0 2px rgba(185,155,114,.55)}.today-tag{display:block;margin-top:2px;font-size:10px;color:#c7473d;font-weight:900;letter-spacing:.08em}.history-list{max-height:168px;overflow:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px} .history-list::-webkit-scrollbar{width:8px}.history-list::-webkit-scrollbar-thumb{background:#d8cab6;border-radius:999px}.history-list::-webkit-scrollbar-track{background:#fffaf0;border-radius:999px}.history-item{background:#fffdf8;border:1px solid var(--line);border-radius:14px;padding:8px 10px;font-size:12px;line-height:1.45}.history-item b{display:block;font-size:12px}.history-time{font-size:10.5px;color:var(--muted);margin-top:3px}.history-empty{font-size:12px;color:var(--muted);padding:12px 14px}.free-badge{font-size:10px;color:#8f704c;margin-left:3px}
+.entry{cursor:grab;user-select:none;border-radius:8px;margin:2px;padding:4px 4px;font-weight:700;white-space:normal;overflow:hidden;text-overflow:ellipsis;border:1px solid rgba(90,70,45,.12);line-height:1.2;min-height:calc(100% - 4px);display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffdf8}.entry:active{cursor:grabbing}.drag-over{outline:3px solid rgba(185,155,114,.85)!important;outline-offset:-3px;background:#fff4d8!important}.entry-name{display:block}.entry-meta{display:block;font-size:10px;color:var(--muted);font-weight:500;margin-top:2px}.merged{vertical-align:middle;height:auto;padding:0;background:var(--booked)!important}.type-one1{background:var(--class)}.type-one2{background:var(--class)}.type-class{background:var(--class)}.type-massage{background:var(--massage)}.type-rest{background:var(--rest)}.type-edu{background:var(--edu)}.type-event{background:var(--event)}.venue-A{box-shadow:inset 0 -3px 0 var(--a)}.venue-B{box-shadow:inset 0 -3px 0 var(--b)}
+.side{display:flex;flex-direction:column;gap:16px}.form{padding:14px 16px}.form label{display:block;font-size:12px;color:var(--muted);margin:9px 0 4px}.form input,.form select,.form textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff;color:var(--ink)}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-size:12px;color:var(--muted);line-height:1.6}.legend{display:flex;gap:7px;flex-wrap:wrap;padding:12px 16px}.pill{font-size:12px;border-radius:999px;padding:5px 9px;border:1px solid var(--line);background:white}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}.stats{padding:12px 16px}.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.stat{background:#fffaf1;border:1px solid var(--line);border-radius:16px;padding:10px}.stat b{display:block;font-size:20px}.small{font-size:12px;color:var(--muted)}dialog{border:0;border-radius:22px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.25);width:min(450px,92vw)}.report-dialog{width:min(860px,94vw)}.report-dialog table{width:100%;min-width:620px}.report-work-open #reportPanel{display:block!important}.admin-report-placeholder{display:none}.report-box table th{position:static}.report-box{max-height:62vh;overflow:auto}dialog::backdrop{background:rgba(50,40,30,.35)}.dialog-body{padding:16px;background:var(--paper)}.dialog-actions{display:flex;justify-content:space-between;gap:8px;margin-top:14px}.toast{position:fixed;right:18px;bottom:18px;background:#3f3a34;color:white;border-radius:999px;padding:9px 14px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;transform:translateY(8px);transition:.22s;z-index:99}.toast.show{opacity:1;transform:translateY(0)}.print-title{display:none}.status{font-size:11px;color:var(--muted)}
+
+.month-calendar{display:grid;grid-template-columns:repeat(7,minmax(92px,1fr));gap:8px;margin-top:12px;min-width:760px}.calendar-scroll{overflow:auto;padding:0 2px 4px}.month-head{font-size:12px;color:var(--muted);text-align:center;padding:6px 0}.month-cell{min-height:112px;background:#fffdf8;border:1px solid var(--line);border-radius:16px;padding:8px;position:relative;cursor:pointer;text-align:left;overflow:hidden}.month-cell:hover{background:#fff8ec;box-shadow:0 4px 14px rgba(80,60,30,.08)}.month-cell.muted{opacity:.42;background:#faf6ee}.month-cell .date-no{font-weight:800;font-size:13px}.month-cell.today{outline:2px solid rgba(197,74,66,.35)}.month-cell.today .date-no::after{content:' Today';font-size:9px;color:#c7473d}.month-list{margin-top:6px;display:flex;flex-direction:column;gap:4px}.month-item{font-size:10.5px;line-height:1.25;background:#f0ebe3;border-left:4px solid #c7a96e;border-radius:8px;padding:4px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.month-count{position:absolute;right:8px;top:8px;min-width:18px;height:18px;border-radius:999px;background:#b99b72;color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}.month-more{font-size:10px;color:var(--muted);margin-top:4px}.month-detail-list{max-height:285px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.day-detail-head{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:10px;min-height:34px}
+.day-detail-head .dialog-x{position:absolute!important;right:0;top:50%;transform:translateY(-50%)!important}
+#dayDetailTitle{font-size:12px;line-height:1.35;max-width:100%;white-space:normal;word-break:break-word;overflow-wrap:anywhere;text-align:center;margin:0;padding:0 42px;font-weight:900}.month-detail-item{border:1px solid var(--line);background:#fffdf8;border-radius:14px;padding:9px 11px;font-size:13px}.month-detail-item b{display:block;margin-bottom:3px}.month-tools{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;position:relative;padding-right:36px}.month-nav-left{justify-self:end}.month-nav-right{justify-self:start}.dialog-x{position:absolute;right:0;top:50%;transform:translateY(-50%);border:0;background:#fff1ee;color:#c7473d;font-size:18px;font-weight:900;width:30px;height:30px;border-radius:999px;padding:0;box-shadow:none}.dialog-x:hover{background:#ffe3df}.month-title{font-size:18px;font-weight:900;letter-spacing:.04em}.calendar-dialog{max-width:1080px;width:min(1080px,96vw);padding:18px;background:var(--paper);max-height:92vh;overflow:auto}.calendar-dialog::backdrop{background:rgba(45,36,25,.32)}
+.pink-btn{background:#f7c8d8!important;border-color:#e9aebe!important;color:#7b3f53!important}.pink-btn:hover{background:#f4b8cb!important}
+.identity-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#fbfaf6,#f3efe7)}.identity-card{width:min(760px,94vw);background:var(--paper);border:1px solid var(--line);border-radius:28px;box-shadow:0 16px 45px rgba(80,60,30,.08);padding:24px}.identity-title{font-size:24px;letter-spacing:.08em;margin:0 0 6px}.identity-sub{font-size:13px;color:var(--muted);margin-bottom:18px}.identity-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.identity-option{touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1px solid var(--line);border-radius:22px;background:#fffdf8;padding:18px;text-align:left;box-shadow:none}.identity-option b{display:block;font-size:17px;margin-bottom:6px}.identity-option span{display:block;font-size:12px;color:var(--muted);line-height:1.6}.identity-coach{margin-top:14px;padding:14px;border:1px dashed var(--line);border-radius:18px;background:#fffaf1}.hidden{display:none!important}.admin-only,.coach-only{ } .day-start{border-left:3px solid #b99b72!important}.day-end{border-right:3px solid #b99b72!important}.day-title{border-left:3px solid #b99b72!important;border-right:3px solid #b99b72!important}.readonly{opacity:.72;cursor:not-allowed!important}
+.admin-game-body{background:linear-gradient(180deg,#fff8e6,#f7efe2);text-align:center;overflow:hidden}.game-title{font-size:18px;margin:0 0 6px;letter-spacing:.08em}.game-sub{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 12px}.game-board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px auto 8px;max-width:300px;padding:14px;border-radius:22px;background:repeating-linear-gradient(45deg,#f7c66b 0,#f7c66b 10px,#f2b85d 10px,#f2b85d 20px);border:3px solid #8f704c;box-shadow:inset 0 0 0 4px rgba(255,255,255,.45)}.cup{height:74px;border-radius:18px 18px 26px 26px;background:radial-gradient(circle at 50% 20%,#fff 0 18%,#fef2d3 19% 38%,#d95f4f 39% 42%,#fff7df 43%);border:2px solid rgba(120,75,35,.25);box-shadow:0 5px 0 #b48a50,0 10px 18px rgba(70,50,20,.12);font-weight:900;color:#7b5132;position:relative}.cup span{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#fff;border-radius:999px;border:1px solid #e4c98f}.cup.hit::after{content:'●';position:absolute;left:50%;top:9px;transform:translateX(-50%);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.28);font-size:20px;animation:ballDrop .32s ease}.zero-row{display:flex;justify-content:center}.zero-cup{width:120px;height:58px;background:radial-gradient(circle at 50% 20%,#fff 0 18%,#e8f1df 19% 40%,#85a376 41% 44%,#fff7df 45%)}.zero-cup small{display:block;font-size:10px;color:var(--muted);margin-top:2px}.admin-pin{width:min(300px,100%);border:1px solid var(--line);border-radius:999px;padding:10px 14px;text-align:center;letter-spacing:.35em;background:#fffdf8;margin:10px auto 4px}.game-msg{min-height:28px;font-size:14px;font-weight:800;color:var(--accentDark);padding:6px}.game-msg.ok{color:#4f8a55}.game-msg.err{color:#b94a43}@keyframes ballDrop{0%{transform:translate(-50%,-30px) scale(.5);opacity:.2}100%{transform:translate(-50%,0) scale(1);opacity:1}}
+@media(max-width:720px){.identity-grid{grid-template-columns:1fr}}
+@media(max-width:760px){
+  header{position:relative;align-items:flex-start;flex-direction:column;padding:12px 12px}h1{font-size:18px}.sub{font-size:11px}.toolbar{width:100%;gap:6px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.toolbar button,.toolbar input{flex:0 0 auto}.wrap{padding:10px;gap:10px}.controls{padding:10px;gap:6px;align-items:flex-start}.controls select{max-width:48%;font-size:12px}.controls .hint{width:100%;font-size:11px}.schedule-wrap{max-height:62vh;border-radius:16px}th,td{min-width:76px;height:32px;font-size:11px}.time{min-width:54px}.self-col{min-width:82px}.day-title{height:50px;font-size:12px}.coach-head{font-size:11px}.entry{font-size:11px;padding:3px 2px}.entry-meta{font-size:9px}.side{gap:10px}.card{border-radius:18px}.row{grid-template-columns:1fr}.dialog-body{padding:14px}dialog{width:94vw}.calendar-dialog{width:96vw;max-height:88vh;padding:12px}.month-calendar{min-width:680px;gap:6px}.month-cell{min-height:96px;padding:6px}.month-item{font-size:9.5px}.month-tools{grid-template-columns:auto 1fr auto;padding-right:34px}.month-title{text-align:center;font-size:15px}.report-dialog table{min-width:680px}
+}
+@media(max-width:1000px){.wrap{grid-template-columns:1fr}.side{grid-row:2}.schedule-wrap{max-height:70vh}}@media print{header,.side,.controls,.no-print{display:none!important}.wrap{display:block;padding:0}.card{box-shadow:none;border:0}.schedule-wrap{max-height:none;overflow:visible}.print-title{display:block;text-align:center;margin:8px 0 12px}body{background:white}th{position:static}.time{position:static}}
+
+/* v28 mobile login fix */
+@media(max-width:700px){
+  .identity-screen{align-items:flex-start;padding:calc(env(safe-area-inset-top,0px) + 18px) 12px 28px;min-height:100dvh;overflow:auto;-webkit-overflow-scrolling:touch}
+  .identity-card{width:100%;padding:18px;border-radius:24px;margin-top:18px;box-sizing:border-box}
+  .identity-title{font-size:22px;line-height:1.25}
+  .identity-grid{grid-template-columns:1fr;gap:12px}
+  .identity-option{padding:16px;border-radius:20px;min-height:92px}
+  .identity-coach{display:grid;grid-template-columns:1fr;gap:10px;padding:14px;overflow:visible}
+  .identity-coach select,.identity-coach button{width:100%;min-height:48px;font-size:16px;position:relative;z-index:2;box-sizing:border-box}
+  .identity-coach select{appearance:auto;-webkit-appearance:menulist;background:#fffdf8;color:#3f3932}
+  .identity-coach button{margin-top:0!important;display:block}
+}
+</style>
+</head>
+<body>
+<div id="identityScreen" class="identity-screen">
+  <div class="identity-card">
+    <h1 class="identity-title">煦陽內部預約登記系統</h1>
+    <div class="identity-sub">請先選擇使用身份，系統會依權限顯示可操作功能。</div>
+    <div class="identity-grid">
+      <button id="adminLoginBtn" type="button" class="identity-option" onclick="openAdminGame()"><b>超級管理員 Admin</b><span>需輸入管理員密碼。可查看與編輯全部課表、管理教練/假日/Firebase設定、匯出報表。</span></button>
+      <div class="identity-option">
+        <b>教練身份</b><span>可查看場地使用狀況，只能新增、修改、拖曳自己的課程。</span>
+        <div class="identity-coach"><label>選擇教練身份</label><select id="loginCoach"><option>Shawn</option><option>Akiko</option><option>Jasper</option><option>Ollie</option><option>華偉</option></select><button id="coachLoginBtn" type="button" class="primary mini" style="margin-top:10px" onclick="enterAsCoach()">進入教練頁面</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<header id="appHeader" style="display:none">
+  <div><h1>煦陽內部預約登記系統</h1><div class="sub">自動雲端同步版・本館/辦公室・教練課表・休假排事・衛教統計</div></div>
+  <div class="toolbar"><span class="status" id="roleBadge"></span><button class="mini" onclick="switchIdentity()">切換身份</button><button class="mini" onclick="prevWeek()">← 上週</button><input id="weekPicker" type="date" onchange="render()"><button class="mini" onclick="nextWeek()">下週 →</button><button class="primary mini" onclick="openEditor()">＋新增預約</button><button class="mini" onclick="openNoteEditor()">＋新增記事</button><button class="mini coach-only pink-btn" onclick="openMonthOverview()">本月預約總覽</button><button class="mini admin-only" onclick="openReportWork()">報表作業</button><button class="mini danger admin-only" onclick="clearAll()">清空</button></div>
+</header>
+<div id="appWrap" class="wrap" style="display:none">
+  <section class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；free自主使用欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
+  <aside class="side no-print">
+    <section class="card"><h2 id="dashboardTitle">我的本月統計分析</h2><div class="stats"><div class="stat-grid"><div class="stat"><span class="small" id="classStatLabel">學員名稱</span><b id="classCount">0</b></div><div class="stat"><span class="small">衛教堂數</span><b id="eduCount">0</b></div></div><canvas id="chart" height="210"></canvas><div id="chartFallback" class="hint"></div></div></section>
+    <section class="card"><h2 id="historyTitle">我的預約記事歷程</h2><div id="historyList" class="history-list"></div></section>
+
+    <section class="card" id="reportPanel"><h2>輸出資料（報表）</h2><div class="form">
+      <label>查調月份（含日期區間）</label><input id="reportMonth" type="month" onchange="setReportMonthRange();renderReport(false)">
+      <div class="row"><div><label>開始日期</label><input id="reportStart" type="date" onchange="renderReport(false)"></div><div><label>結束日期</label><input id="reportEnd" type="date" onchange="renderReport(false)"></div></div>
+      <div id="reportCoachWrap"><label>教練</label><select id="reportCoach" onchange="renderReport(false)"><option value="">全部教練</option></select></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="mini primary" onclick="openReportResult()">查詢報表</button><button class="mini" onclick="exportCSV()">輸出明細CSV</button><button class="mini" onclick="exportSummaryCSV()">輸出堂數統計CSV</button></div>
+      <p class="hint" id="reportHint">管理員可查詢全部或指定教練；教練僅能查詢與輸出自己的報表。</p>
+    </div></section>
+    <section class="card admin-only"><h2>教練身份名單</h2><div class="form"><textarea id="coachText" rows="4">Shawn, Akiko, Jasper, Ollie, 華偉</textarea><button class="mini primary" style="margin-top:8px" onclick="saveCoaches()">更新教練身份</button><p class="hint">由超級管理員新增或修改，用逗號分隔；儲存後會同步到登入頁面的教練選單。</p></div></section>
+    <section class="card admin-only"><h2>國定假日標註</h2><div class="form"><textarea id="holidayText" rows="5"></textarea><button class="mini primary" style="margin-top:8px" onclick="saveHolidays()">更新假日標註</button><p class="hint">格式：YYYY-MM-DD 假日名稱，每行一筆。可自行新增公司休館日。</p></div></section>
+    <section class="card admin-only"><h2>雲端同步 / 備份</h2><div class="form"><p class="hint">系統開啟後會自動連線 Firebase 並同步資料，不需要手動啟用。所有教練使用同一個網址即可共用。</p><input id="firebaseConfigText" type="hidden"><input id="workspaceId" type="hidden" value="sunrise-main"><p class="hint" id="cloudStatus">目前：準備連線雲端同步…</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="mini" onclick="backupJSON()">備份JSON</button></div><input id="importFile" type="file" accept=".json" onchange="importJSON(event)" style="margin-top:8px"><p class="hint">若臨時離線，仍會先儲存在本機；恢復網路後會自動同步。</p></div></section>
+  </aside>
+</div>
+
+<dialog id="reportDialog" class="report-dialog"><div class="dialog-body">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px"><h2 style="margin:0">報表查詢結果</h2><button class="mini" onclick="safeCloseDialog('reportDialog')">關閉</button></div>
+  <div id="reportResultBox" class="report-box hint"></div>
+  <div class="dialog-actions"><button class="mini" onclick="window.print()">列印</button><div><button class="mini" onclick="exportCSV()">輸出明細CSV</button><button class="mini primary" onclick="exportSummaryCSV()">輸出堂數統計CSV</button></div></div>
+</div></dialog>
+
+<dialog id="reportWorkDialog" class="report-dialog"><div class="dialog-body">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px"><h2 style="margin:0">報表作業</h2><button class="mini" onclick="closeReportWork()">關閉</button></div>
+  <div id="reportWorkMount"></div>
+</div></dialog>
+
+
+<dialog id="monthOverviewDialog" class="calendar-dialog">
+  <div class="month-tools">
+    <button class="mini month-nav-left" onclick="changeOverviewMonth(-1)">← 上個月</button>
+    <div class="month-title" id="monthOverviewTitle">本月預約總覽</div>
+    <button class="mini month-nav-right" onclick="changeOverviewMonth(1)">下個月 →</button>
+    <button class="dialog-x" title="關閉" onclick="safeCloseDialog('monthOverviewDialog')">×</button>
+  </div>
+  <div class="calendar-scroll"><div id="monthOverviewCalendar" class="month-calendar"></div></div>
+</dialog>
+<dialog id="dayDetailDialog">
+  <div class="day-detail-head">
+    <h2 id="dayDetailTitle">當日完整明細</h2>
+    <button class="dialog-x" title="關閉" onclick="safeCloseDialog('dayDetailDialog')">×</button>
+  </div>
+  <div id="dayDetailList" class="month-detail-list"></div>
+</dialog>
+<dialog id="repeatDeleteDialog"><div class="dialog-body">
+  <h2 style="margin:0 0 8px">刪除重複性課程</h2>
+  <p class="hint" id="repeatDeleteText">請選擇刪除方式。</p>
+  <div class="dialog-actions" style="justify-content:flex-end;gap:8px">
+    <button onclick="cancelRepeatDelete()">取消</button>
+    <button class="primary" onclick="confirmRepeatDelete('single')">只刪除該日預約</button>
+    <button class="danger" onclick="confirmRepeatDelete('following')">刪除此日期之後的預約</button>
+  </div>
+</div></dialog>
+
+<dialog id="adminGame"><div class="dialog-body admin-game-body">
+  <h2 class="game-title">夜市九宮格・管理員挑戰</h2>
+  <p class="game-sub">把乒乓球丟進正確號碼杯，完成密碼後就能進入管理員頁面。</p>
+  <div class="game-board" id="gameBoard">
+    <button type="button" class="cup" onclick="tapCup('1', event)"><span>1</span></button>
+    <button type="button" class="cup" onclick="tapCup('2', event)"><span>2</span></button>
+    <button type="button" class="cup" onclick="tapCup('3', event)"><span>3</span></button>
+    <button type="button" class="cup" onclick="tapCup('4', event)"><span>4</span></button>
+    <button type="button" class="cup" onclick="tapCup('5', event)"><span>5</span></button>
+    <button type="button" class="cup" onclick="tapCup('6', event)"><span>6</span></button>
+    <button type="button" class="cup" onclick="tapCup('7', event)"><span>7</span></button>
+    <button type="button" class="cup" onclick="tapCup('8', event)"><span>8</span></button>
+    <button type="button" class="cup" onclick="tapCup('9', event)"><span>9</span></button>
+  </div>
+  <div class="zero-row"><button type="button" class="cup zero-cup" onclick="tapCup('0', event)"><span>0</span><small>隱藏杯</small></button></div>
+  <input id="adminPin" class="admin-pin" type="password" inputmode="numeric" maxlength="4" placeholder="也可直接輸入密碼" onkeydown="if(event.key==='Enter')checkAdminPin()">
+  <div id="adminGameMsg" class="game-msg">目標：丟中 4 顆球 🎯</div>
+  <div class="dialog-actions"><button onclick="closeAdminGame()">取消</button><div><button onclick="clearAdminPin()">重投</button><button class="primary" onclick="checkAdminPin()">確認進場</button></div></div>
+</div></dialog>
+
+<dialog id="editor"><div class="dialog-body"><h2 style="margin:0 0 8px">預約/排事登記</h2><input type="hidden" id="editId"><div class="row"><div><label>日期</label><input id="date" type="date"></div><div><label>開始時間</label><select id="time"></select></div></div><div class="row"><div><label>結束時間</label><select id="endTime"></select></div><div><label>教練</label><select id="coach"></select></div></div><label>學員/事項名稱</label><input id="name" placeholder="例：王小明、休假、衛教講座"><div class="row"><div><label>類型</label><select id="type"><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select></div><div><label>場地</label><select id="venue"><option value="auto">自動安排</option><option value="A">本館</option><option value="B">辦公室</option><option value="none">無</option></select></div></div><label>備註</label><input id="note" placeholder="可填付款、特殊狀況、器材需求">
+<div class="row"><div><label>重複類型</label><select id="repeatType" onchange="toggleRepeatFields()"><option value="none">不重複</option><option value="weekly">每週固定</option></select></div><div id="repeatEndWrap"><label>重複結束日期</label><input id="repeatEnd" type="date"></div></div>
+<div id="weeklyFields"><label>指定星期</label><div id="weekdayBox" style="display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)"></div>
+<div class="hint">選每週固定後，再指定星期與結束日期。</div></div>
+<div class="hint" id="venueHint"></div><div class="dialog-actions"><button class="danger" onclick="deleteEntry()">刪除</button><div><button onclick="safeCloseDialog('editor')">取消</button><button class="primary" onclick="saveEntry()">儲存</button></div></div></div></dialog>
+<dialog id="noteEditor"><div class="dialog-body"><h2 style="margin:0 0 8px">教練日期記事</h2><input type="hidden" id="noteId"><div class="row"><div><label>日期</label><input id="noteDate" type="date"></div><div><label>教練</label><select id="noteCoach"></select></div></div><label>提醒內容</label><input id="noteText" placeholder="例：小美生日、阿明繳費提醒"><div class="dialog-actions"><button class="danger" onclick="deleteNote()">刪除</button><div><button onclick="safeCloseDialog('noteEditor')">取消</button><button class="primary" onclick="saveCoachNote()">儲存記事</button></div></div></div></dialog>
+<div id="toast" class="toast">已儲存</div>
+<script>
+const KEY='sunrise_reservation_v2', NOTE_KEY='sunrise_coach_notes_v2', LOG_KEY='sunrise_activity_logs_v1', HOLIDAY_KEY='sunrise_holidays_v2', COACH_KEY='sunrise_coaches_v2', VERSION_KEY='sunrise_data_version_v2', FB_CONFIG_KEY='sunrise_firebase_config_v1', WORKSPACE_KEY='sunrise_workspace_id_v1', ROLE_KEY='sunrise_role_v1', ROLE_COACH_KEY='sunrise_role_coach_v1';
+const AUTO_FIREBASE_CONFIG={apiKey:'AIzaSyBMrqHb-yYkFlwJ9eSKcZ2q-k8xavGecK4',authDomain:'sunrise-booking.firebaseapp.com',projectId:'sunrise-booking',storageBucket:'sunrise-booking.firebasestorage.app',messagingSenderId:'400891552645',appId:'1:400891552645:web:7414b107fc23b3c4915aec',measurementId:'G-3S04GQ5YWV'};
+const AUTO_WORKSPACE_ID='sunrise-main';
+let entries=safeParse(localStorage.getItem(KEY),[]), coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]), activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]), chart=null, lastVersion=localStorage.getItem(VERSION_KEY)||'';
+let db=null, cloudUnsub=null, cloudEnabled=false, applyingRemote=false, pushTimer=null, cloudDocRef=null;
+let pendingRepeatDeleteId=null;
+let currentRole=sessionStorage.getItem(ROLE_KEY)||localStorage.getItem(ROLE_KEY)||'', currentCoach=localStorage.getItem(ROLE_COACH_KEY)||''; if(currentRole==='admin'&&!sessionStorage.getItem(ROLE_KEY)){currentRole='';localStorage.removeItem(ROLE_KEY)}
+const SELF_TRAINING='free自主使用';
+function normalizeFreeEntries(){entries=(entries||[]).map(e=>({...e,coach:(e.coach==='自主訓練'||e.coach==='自主訓練學員'||e.coach==='FREE'||e.coach==='free共用'||String(e.coach).toLowerCase()==='free')?SELF_TRAINING:e.coach}))}
+normalizeFreeEntries();
+const DEFAULT_COACHES=['Shawn','Akiko','Jasper','Ollie','華偉'];
+let coaches=[...DEFAULT_COACHES];
+const defaultHolidays={'2026-01-01':'元旦','2026-02-14':'春節連假','2026-02-15':'春節連假','2026-02-16':'除夕','2026-02-17':'春節','2026-02-18':'春節','2026-02-19':'春節','2026-02-20':'春節補假','2026-02-21':'春節連假','2026-02-22':'春節連假','2026-02-27':'和平紀念日補假','2026-02-28':'和平紀念日','2026-04-03':'兒童節/清明補假','2026-04-04':'兒童節','2026-04-05':'清明節','2026-04-06':'清明補假','2026-05-01':'勞動節','2026-06-19':'端午節','2026-09-25':'中秋節','2026-09-28':'教師節','2026-10-09':'國慶日補假','2026-10-10':'國慶日','2026-10-25':'光復節','2026-10-26':'光復節補假','2026-12-25':'行憲紀念日'};
+let holidays=safeParse(localStorage.getItem(HOLIDAY_KEY),defaultHolidays);
+const times=[];for(let h=7;h<=22;h++){times.push(String(h).padStart(2,'0')+':00');if(h<22)times.push(String(h).padStart(2,'0')+':30')}
+function safeParse(s,fallback){try{return s?JSON.parse(s):fallback}catch(e){return fallback}}
+function el(id){return document.getElementById(id)}function newId(){return'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}function esc(s){return String(s||'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
+function monday(d){d=new Date(d);if(isNaN(d))d=new Date();const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d}function fmt(d){return new Date(d).toISOString().slice(0,10)}function md(d){return`${d.getMonth()+1}/${d.getDate()}（${['日','一','二','三','四','五','六'][d.getDay()]}）`}function mins(t){let[h,m]=t.split(':').map(Number);return h*60+m}function addMins(t,add){const total=mins(t)+Number(add);return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0')}function venueName(v){return v==='A'?'本館':(v==='B'?'辦公室':(v==='none'?'無':v))}function durationFromTimes(start,end){return Math.max(30, mins(end)-mins(start))}function covers(e,t){const m=mins(t),s=mins(e.time);return m>=s&&m<s+Number(e.duration)}function actorName(){return isAdmin()?'Admin':(currentCoach||'未登入')}function logActivity(action,detail='',targetCoach=''){const now=new Date();activityLogs.push({id:newId(),ts:now.toISOString(),month:now.toISOString().slice(0,7),actor:actorName(),role:currentRole||'',targetCoach:targetCoach||'',action,detail});activityLogs=activityLogs.slice(-800)}function entrySummary(e){if(!e)return'';return `${e.date} ${e.time}-${addMins(e.time,e.duration||60)}｜${e.coach}｜${e.name||''}`}
+
+function persist(msg='已自動儲存'){saveLocal();const v=String(Date.now());localStorage.setItem(VERSION_KEY,v);lastVersion=v;if(el('saveStatus'))el('saveStatus').textContent='點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；free自主使用欄位所有教練皆可新增。';toast(msg);if(cloudEnabled&&!applyingRemote)scheduleCloudPush()}
+function saveLocal(){localStorage.setItem(KEY,JSON.stringify(entries));localStorage.setItem(NOTE_KEY,JSON.stringify(coachNotes));localStorage.setItem(LOG_KEY,JSON.stringify(activityLogs.slice(-800)));localStorage.setItem(COACH_KEY,coaches.join(','));localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays))}
+function statePayload(){return {entries,coachNotes,activityLogs:activityLogs.slice(-800),coaches,holidays,updatedAt:new Date().toISOString(),device:(navigator.userAgent||'browser').slice(0,80)}}
+function applyState(data){
+  if(!data)return;
+  applyingRemote=true;
+  entries=data.entries||[];coachNotes=data.coachNotes||[];activityLogs=data.activityLogs||activityLogs||[];normalizeFreeEntries();
+  if(Array.isArray(data.coaches)&&data.coaches.length)coaches=normalizeCoaches(data.coaches);
+  ensureCoachFallback();
+  if(data.holidays)holidays=data.holidays;
+  saveLocal();fillSelects();
+  const ct=el('coachText'); if(ct)ct.value=coaches.join(', ');
+  loadHolidays();render();applyingRemote=false
+}
+function setCloudStatus(text){const node=el('cloudStatus');if(node)node.textContent=text}
+function scheduleCloudPush(){clearTimeout(pushTimer);pushTimer=setTimeout(pushCloudNow,650)}
+async function pushCloudNow(){try{if(!cloudDocRef){setCloudStatus('目前：尚未啟用雲端同步。');return}await cloudDocRef.set(statePayload(),{merge:true});setCloudStatus('目前：雲端同步中｜最後上傳 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));toast('已同步到雲端')}catch(err){console.error(err);setCloudStatus('雲端上傳失敗：'+err.message);toast('雲端上傳失敗')}}
+function toast(msg){const t=el('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>t.classList.remove('show'),1500)}
+function normalizeCoaches(list){return Array.from(new Set((list||[]).map(s=>String(s).trim()).filter(Boolean).filter(s=>!['free','FREE','free自主使用','free共用','自主訓練學員','自主訓練'].includes(s))))}
+function ensureCoachFallback(){
+  coaches=normalizeCoaches(coaches);
+  if(!coaches.length) coaches=[...DEFAULT_COACHES];
+  return coaches;
+}
+function loadCoaches(){
+  const saved=localStorage.getItem(COACH_KEY);
+  if(saved){
+    const parsed=normalizeCoaches(saved.split(','));
+    coaches=parsed.length?parsed:[...DEFAULT_COACHES];
+  }else{
+    coaches=ensureCoachFallback();
+  }
+  localStorage.setItem(COACH_KEY,coaches.join(','));
+  const ct=el('coachText'); if(ct)ct.value=coaches.join(', ');
+}
+function fillSelects(){
+  ensureCoachFallback();
+  ['coach','filterCoach','noteCoach','loginCoach','reportCoach'].forEach(id=>{
+    const box=el(id);if(!box)return;
+    const oldVal=box.value;
+    const first=(id==='filterCoach'||id==='reportCoach')?'<option value="">全部教練</option>':'';
+    const list=id==='coach'?[SELF_TRAINING,...coaches]:coaches;
+    box.innerHTML=first+list.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    if(oldVal && Array.from(box.options).some(o=>o.value===oldVal)) box.value=oldVal;
+  });
+  if(el('time'))el('time').innerHTML=times.map(t=>`<option>${t}</option>`).join('');
+  if(el('endTime'))el('endTime').innerHTML=times.filter(t=>mins(t)>mins('07:00')).map(t=>`<option>${t}</option>`).join('');
+}
+function fillWeekdays(){const names=['日','一','二','三','四','五','六'];el('weekdayBox').innerHTML=names.map((n,i)=>`<label style="display:inline-flex;align-items:center;gap:3px;background:#fffaf0;border:1px solid var(--line);border-radius:999px;padding:4px 8px"><input type="checkbox" class="weekday" value="${i}">週${n}</label>`).join('')}
+function getCheckedWeekdays(){return Array.from(document.querySelectorAll('.weekday:checked')).map(x=>Number(x.value))}
+function setCheckedWeekdays(vals=[]){document.querySelectorAll('.weekday').forEach(x=>x.checked=vals.includes(Number(x.value)))}
+function resetRepeat(date){el('repeatType').value='none';el('repeatEnd').value=date||'';setCheckedWeekdays(date?[new Date(date+'T00:00:00').getDay()]:[]);toggleRepeatFields()}
+function toggleRepeatFields(){const show=el('repeatType').value==='weekly';el('repeatEndWrap').style.display=show?'block':'none';el('weeklyFields').style.display=show?'block':'none'}
+function dragStart(ev,id){ev.dataTransfer.setData('text/plain',id);ev.dataTransfer.effectAllowed='move'}
+function allowDrop(ev){ev.preventDefault();ev.currentTarget.classList.add('drag-over')}
+function dragLeave(ev){ev.currentTarget.classList.remove('drag-over')}
+function dropEntry(ev,date,time,coach){ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove('drag-over');const id=ev.dataTransfer.getData('text/plain');const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('教練身份只能拖曳自己的課程');return}if(isCoach()&&coach!==SELF_TRAINING)coach=currentCoach;e.date=date;e.time=time;e.coach=coach;if(e.venue==='auto'||!e.venue)e.venue=suggestedVenue(date,time,e.duration,id);entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));logActivity('拖曳調整時段',entrySummary(e),e.coach);persist('已拖曳調整時段');render()}
+
+function isAdmin(){return currentRole==='admin'}
+function isCoach(){return currentRole==='coach'}
+function canEditEntry(e){return isAdmin() || (isCoach() && e && (e.coach===currentCoach || e.coach===SELF_TRAINING))}
+function safeOpenDialog(id){const d=el(id);if(!d)return;try{if(typeof d.showModal==='function'){if(!d.open)d.showModal();}else{d.setAttribute('open','');d.style.display='block';}}catch(err){console.warn('dialog open fallback',err);d.setAttribute('open','');d.style.display='block';}}
+function safeCloseDialog(id){const d=el(id);if(!d)return;try{if(typeof d.close==='function')d.close();else{d.removeAttribute('open');d.style.display='none';}}catch(err){d.removeAttribute('open');d.style.display='none';}}
+function openAdminGame(){clearAdminPin();safeOpenDialog('adminGame');setTimeout(()=>{const p=el('adminPin');if(p)p.focus();},80)}
+function closeAdminGame(){safeCloseDialog('adminGame')}
+function tapCup(n,ev){const pin=el('adminPin');if(pin.value.length<4)pin.value+=n;const cups=document.querySelectorAll('.cup');cups.forEach(c=>c.classList.remove('hit'));if(ev&&ev.currentTarget)ev.currentTarget.classList.add('hit');el('adminGameMsg').className='game-msg';el('adminGameMsg').textContent='已投 '+pin.value.length+' / 4 顆球';if(pin.value.length===4)checkAdminPin()}
+function clearAdminPin(){if(el('adminPin'))el('adminPin').value='';if(el('adminGameMsg')){el('adminGameMsg').className='game-msg';el('adminGameMsg').textContent='目標：丟中 4 顆球 🎯'}}
+function checkAdminPin(){const pin=el('adminPin').value.trim();if(pin==='0731'){el('adminGameMsg').className='game-msg ok';el('adminGameMsg').textContent='你好棒棒！';setTimeout(()=>{safeCloseDialog('adminGame');enterAsAdmin()},450)}else{el('adminGameMsg').className='game-msg err';el('adminGameMsg').textContent='逼逼逼！你好好想想！';el('adminPin').value=''}}
+function enterAsAdmin(){currentRole='admin';currentCoach='';sessionStorage.setItem(ROLE_KEY,currentRole);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);applyRoleUI()}
+function enterAsCoach(){
+  fillSelects();
+  const box=el('loginCoach');
+  const c=(box&&box.value)||(coaches&&coaches[0])||'';
+  if(!c){alert('尚未建立教練名單，請先用 Admin 新增教練。');return}
+  currentRole='coach';currentCoach=c;localStorage.setItem(ROLE_KEY,currentRole);localStorage.setItem(ROLE_COACH_KEY,c);applyRoleUI()
+}
+function switchIdentity(){currentRole='';currentCoach='';sessionStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);applyRoleUI()}
+function applyRoleUI(){
+  const logged=!!currentRole;
+  el('identityScreen').style.display=logged?'none':'flex';
+  el('appHeader').style.display=logged?'flex':'none';
+  el('appWrap').style.display=logged?'grid':'none';
+  document.querySelectorAll('.admin-only').forEach(x=>x.classList.toggle('hidden',!isAdmin()));
+  document.querySelectorAll('.coach-only').forEach(x=>x.classList.toggle('hidden',!isCoach()));
+  if(el('roleBadge')) el('roleBadge').textContent=isAdmin()?'Admin 管理員':(isCoach()?`Coach｜${currentCoach}`:'');
+  if(el('dashboardTitle')) el('dashboardTitle').textContent=isAdmin()?'總儀表板':'我的本月統計分析';
+  if(el('classStatLabel')) el('classStatLabel').textContent=isAdmin()?'課程執行數':'課執行數';
+  placeReportPanel();
+  initReportDates();
+  if(isCoach()&&!coaches.includes(currentCoach)){ switchIdentity(); return; }
+  if(isCoach()){ if(el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach; el('noteCoach').value=currentCoach; }
+  render();
+}
+
+function loadHolidays(){el('holidayText').value=Object.keys(holidays).sort().map(d=>`${d} ${holidays[d]}`).join('\n')}
+function saveHolidays(){if(!isAdmin()){alert('只有管理員可以修改假日');return}const obj={};el('holidayText').value.split(/\n+/).forEach(line=>{const m=line.trim().match(/^(\d{4}-\d{2}-\d{2})\s+(.+)$/);if(m)obj[m[1]]=m[2].trim()});holidays=obj;localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays));logActivity('更新假日標註','國定假日/休館日設定已更新','');persist('假日已更新');render()}
+function saveCoaches(){if(!isAdmin()){alert('只有管理員可以修改教練名單');return}coaches=normalizeCoaches(el('coachText').value.split(','));if(!coaches.length){alert('至少需要保留一位教練');return}localStorage.setItem(COACH_KEY,coaches.join(','));fillSelects();el('coachText').value=coaches.join(', ');logActivity('更新教練身份名單',coaches.join('、'),'');persist('教練身份名單已同步');render()}
+function bindMobileLogin(){
+  const bind=(id,fn)=>{const n=el(id);if(!n||n.dataset.boundTap)return;n.dataset.boundTap='1';n.addEventListener('touchend',ev=>{ev.preventDefault();ev.stopPropagation();fn(ev);},{passive:false});n.addEventListener('pointerup',ev=>{if(ev.pointerType==='touch'){ev.preventDefault();ev.stopPropagation();fn(ev);}}, {passive:false});};
+  bind('adminLoginBtn',openAdminGame);
+  bind('coachLoginBtn',enterAsCoach);
+  document.querySelectorAll('.cup').forEach(btn=>{if(btn.dataset.boundCup)return;btn.dataset.boundCup='1';btn.addEventListener('touchend',ev=>{ev.preventDefault();ev.stopPropagation();const n=btn.textContent.trim().charAt(0);tapCup(n,ev);},{passive:false});});
+}
+function init(){bindMobileLogin();loadCoaches();fillSelects();fillWeekdays();loadHolidays();el('weekPicker').value=fmt(monday(new Date()));localStorage.setItem(FB_CONFIG_KEY,JSON.stringify(AUTO_FIREBASE_CONFIG));localStorage.setItem(WORKSPACE_KEY,AUTO_WORKSPACE_ID);if(el('firebaseConfigText'))el('firebaseConfigText').value=JSON.stringify(AUTO_FIREBASE_CONFIG);if(el('workspaceId'))el('workspaceId').value=AUTO_WORKSPACE_ID;applyRoleUI();setInterval(autoRefresh,3000);enableFirebaseSync(true)}
+async function enableFirebaseSync(silent=false){try{let raw=(el('firebaseConfigText')&&el('firebaseConfigText').value.trim())||localStorage.getItem(FB_CONFIG_KEY)||JSON.stringify(AUTO_FIREBASE_CONFIG);const workspace=((el('workspaceId')&&el('workspaceId').value)||localStorage.getItem(WORKSPACE_KEY)||AUTO_WORKSPACE_ID).trim().replace(/[^a-zA-Z0-9_-]/g,'-');localStorage.setItem(FB_CONFIG_KEY,raw);localStorage.setItem(WORKSPACE_KEY,workspace);const config=JSON.parse(raw);if(typeof firebase==='undefined')throw new Error('Firebase 套件未載入，請確認有網路連線。');if(!firebase.apps.length)firebase.initializeApp(config);db=firebase.firestore();try{await firebase.auth().signInAnonymously()}catch(authErr){console.warn('匿名登入未啟用，嘗試直接連線 Firestore',authErr)}cloudDocRef=db.collection('sunriseBookingWorkspaces').doc(workspace);if(cloudUnsub)cloudUnsub();cloudEnabled=true;setCloudStatus('目前：正在連線雲端資料…');cloudUnsub=cloudDocRef.onSnapshot(async snap=>{if(snap.exists){const data=snap.data();applyState(data);if(!Array.isArray(data.coaches)||!data.coaches.length){setTimeout(()=>pushCloudNow(),300)}setCloudStatus('目前：雲端同步中｜最後更新 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));toast('已取得雲端最新資料')}else{ensureCoachFallback();await cloudDocRef.set(statePayload(),{merge:true});setCloudStatus('目前：已建立雲端工作室資料')}} , err=>{console.error(err);setCloudStatus('雲端同步中斷：'+err.message)});if(!silent)toast('已啟用雲端同步')}catch(err){console.error(err);cloudEnabled=false;setCloudStatus('啟用失敗：'+err.message);if(!silent)alert('Firebase 啟用失敗：'+err.message)}}
+function disableFirebaseSync(){if(cloudUnsub)cloudUnsub();cloudUnsub=null;cloudDocRef=null;cloudEnabled=false;localStorage.removeItem(FB_CONFIG_KEY);setCloudStatus('目前：單機模式，自動儲存在此瀏覽器。重新整理後會再嘗試連線。');toast('已改回單機模式')}
+function autoRefresh(){const v=localStorage.getItem(VERSION_KEY)||'';if(v&&v!==lastVersion){entries=safeParse(localStorage.getItem(KEY),[]);coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]);activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]);lastVersion=v;render();toast('已自動同步最新資料')}}
+window.addEventListener('storage',autoRefresh);
+function prevWeek(){let d=new Date(el('weekPicker').value);d.setDate(d.getDate()-7);el('weekPicker').value=fmt(d);render()}function nextWeek(){let d=new Date(el('weekPicker').value);d.setDate(d.getDate()+7);el('weekPicker').value=fmt(d);render()}
+function getVisibleEntries(date,coach,t,filterT){return entries.filter(e=>e.date===date&&e.coach===coach&&covers(e,t)&&(!filterT||e.type===filterT))}
+function startsAt(e,t){return e.time===t}
+function visualCovers(e,t){const mt=mins(t),st=mins(e.time),en=st+Number(e.duration);return mt>st&&mt<=en}
+function visualRowspan(e){return Math.max(1, Math.ceil(Number(e.duration)/30)+1)}
+function isCoveredByEarlier(date,coach,t,filterT){return entries.some(e=>e.date===date&&e.coach===coach&&(!filterT||e.type===filterT)&&e.time!==t&&visualCovers(e,t))}
+function render(){
+  const start=monday(el('weekPicker').value||new Date()),filterC=el('filterCoach').value,filterT=el('filterType').value,visible=filterC?[filterC]:coaches;
+  let html='<tr><th class="time">日期</th>';
+  for(let i=0;i<7;i++){
+    let d=new Date(start);d.setDate(start.getDate()+i);
+    const date=fmt(d),holiday=holidays[date]?`<span class="holiday-tag">${esc(holidays[date])}</span>`:'',today=date===fmt(new Date())?' today-title':'';
+    const todayText=date===fmt(new Date())?'<span class="today-tag">Today</span>':'';
+    html+=`<th class="day-title${today}" colspan="${visible.length+1}">${md(d)}${todayText}${holiday}</th>`
+  }
+  html+='</tr><tr><th class="time">時間</th>';
+  for(let i=0;i<7;i++){
+    let d=new Date(start);d.setDate(start.getDate()+i);const date=fmt(d);
+    html+=`<th class="coach-head self-head day-start">${SELF_TRAINING}</th>`;
+    visible.forEach((c,ci)=>{
+      const ns=coachNotes.filter(n=>n.date===date&&n.coach===c).map(n=>`<span class="coach-note" onclick="event.stopPropagation();editNote('${n.id}')">${esc(n.text)}</span>`).join('');
+      html+=`<th class="coach-head ${ci===visible.length-1?'day-end':''}" ondblclick="openNoteEditor('${date}','${esc(c)}')">${esc(c)}${ns}</th>`
+    })
+  }
+  html+='</tr>';
+  function cellHTML(date,c,t,i,ci,total,isSelf=false){
+    if(isCoveredByEarlier(date,c,t,filterT)) return '';
+    const starting=entries.filter(e=>e.date===date&&e.coach===c&&startsAt(e,t)&&(!filterT||e.type===filterT));
+    const baseClass=`slot ${i%2?'day-shade-alt':'day-shade'} ${isSelf?'self-col day-start':''} ${(!isSelf&&ci===total-1)?'day-end':''}`;
+    const canOpen=isAdmin() || (isSelf && isCoach()) || (!isSelf && isCoach() && c===currentCoach);
+    const openAction=canOpen?`onclick="openEditor('${date}','${t}','${esc(c)}')"`:'';
+    const dropAction=canOpen?`ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="dropEntry(event,'${date}','${t}','${esc(c)}')"`:'';
+    if(starting.length){
+      const span=Math.max(...starting.map(e=>visualRowspan(e)));
+      const blocks=starting.map(e=>`<div class="entry type-${e.type} venue-${e.venue} ${canEditEntry(e)?'':'readonly'}" draggable="${canEditEntry(e)}" ondragstart="dragStart(event,'${e.id}')" title="${esc(e.name)}｜${venueName(e.venue)}｜${e.time}-${addMins(e.time,e.duration)}" onclick="event.stopPropagation();edit('${e.id}')"><span class="entry-name">${esc(e.name)}</span><span class="entry-meta">${e.time}-${addMins(e.time,e.duration)}｜${venueName(e.venue)}</span></div>`).join('');
+      return `<td rowspan="${span}" class="${baseClass} merged" ${dropAction} ${openAction}>${blocks}</td>`;
+    }
+    return `<td class="${baseClass}" ${dropAction} ${openAction}></td>`;
+  }
+  times.forEach(t=>{
+    html+=`<tr><td class="time">${t}</td>`;
+    for(let i=0;i<7;i++){
+      let d=new Date(start);d.setDate(start.getDate()+i);const date=fmt(d);
+      html+=cellHTML(date,SELF_TRAINING,t,i,0,visible.length,true);
+      visible.forEach((c,ci)=>{ html+=cellHTML(date,c,t,i,ci,visible.length,false); })
+    }
+    html+='</tr>'
+  });
+  el('schedule').innerHTML=html;updateStats()
+}
+function courseTypes(){return ['one1','one2','class','massage']}
+function countAsCourse(e){return courseTypes().includes(e.type)}
+function occupancyUnits(eOrType){const t=typeof eOrType==='string'?eOrType:eOrType.type;if(t==='rest'||t==='event')return 0;if(t==='one2')return 2;return 1}
+function venueCap(v){return v==='A'?3:(v==='B'?2:999)}
+function loadAt(date,venue,slot,id=''){return entries.filter(e=>e.id!==id&&e.date===date&&e.venue===venue&&e.type!=='rest'&&e.venue!=='none').reduce((sum,e)=>{return sum+(mins(e.time)<=slot&&slot<mins(e.time)+Number(e.duration||0)?occupancyUnits(e):0)},0)}
+function venueFits(date,time,duration,venue,type,id=''){if(venue==='none'||venue==='auto')return true;const unit=occupancyUnits(type);if(unit===0)return true;for(let m=mins(time);m<mins(time)+Number(duration);m+=30){if(loadAt(date,venue,m,id)+unit>venueCap(venue))return false}return true}
+function suggestedVenue(date,time,duration,id='',type='one1'){if(venueFits(date,time,duration,'A',type,id))return 'A';if(venueFits(date,time,duration,'B',type,id))return 'B';return 'full'}
+function syncEndTime(){const start=el('time').value||'09:00';const current=el('endTime').value;if(!current||mins(current)<=mins(start)) el('endTime').value=addMins(start,60)}
+function venueCheck(){syncEndTime();const duration=durationFromTimes(el('time').value,el('endTime').value);const type=el('type').value;if(el('venue').value==='none'||type==='rest'){el('venueHint').textContent='此筆設定為無場地，適合休假、排事或不需佔用空間的提醒。';return}const v=suggestedVenue(el('date').value,el('time').value,duration,el('editId').value,type);if(v==='full'){el('venueHint').textContent='提醒：此時段本館與辦公室可能已達人數上限，請調整時間或場地。';return}const selected=el('venue').value;if(selected!=='auto'&&!venueFits(el('date').value,el('time').value,duration,selected,type,el('editId').value)){el('venueHint').textContent=`提醒：${venueName(selected)} 此時段可能超過人數上限。建議改為 ${venueName(v)}。`;return}el('venueHint').textContent=`建議場地：${venueName(v)}。1對2課程會以2人佔用場地判讀。`}
+['date','time','endTime','venue','type'].forEach(id=>document.addEventListener('change',e=>{if(e.target.id===id){if(e.target.id==='type'&&e.target.value==='rest'&&el('venue').value==='auto')el('venue').value='none';if(e.target.id==='type'&&e.target.value!=='rest'&&el('venue').value==='none')el('venue').value='auto';venueCheck()}}));
+function openEditor(date='',time='09:00',coach=coaches[0]){el('editId').value='';el('date').value=date||fmt(new Date());el('time').value=time;el('endTime').value=addMins(time,60);el('coach').value=(isCoach()&&coach!==SELF_TRAINING)?currentCoach:coach;el('coach').disabled=isCoach();el('name').value='';el('type').value='one1';el('venue').value='auto';el('note').value='';resetRepeat(el('date').value);venueCheck();safeOpenDialog('editor')}
+function edit(id){const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('教練身份只能修改自己的課程');return}['date','time','coach','name','type','venue','note'].forEach(k=>el(k).value=e[k]||'');el('coach').disabled=isCoach();el('endTime').value=addMins(e.time,e.duration||60);el('editId').value=id;resetRepeat(e.date);el('repeatType').value='none';venueCheck();safeOpenDialog('editor')}
+function saveEntry(){try{
+  const editingId=el('editId').value;
+  if(isCoach()&&el('coach').value!==SELF_TRAINING) el('coach').value=currentCoach;
+  if(editingId){const old=entries.find(x=>x.id===editingId);if(!canEditEntry(old)){alert('教練身份只能修改自己的課程');return}}
+  if(!el('date').value){alert('請選擇日期');return}
+  if(!el('name').value.trim()){alert('請填寫學員或事項名稱');return}
+  if(mins(el('endTime').value)<=mins(el('time').value)){alert('結束時間必須晚於開始時間');return}
+  const duration=durationFromTimes(el('time').value,el('endTime').value);
+  const makeEntry=(date,id='',seriesId='')=>{const realId=id||newId();const rawVenue=el('venue').value;const type=el('type').value;const suggested=type==='rest'?'none':suggestedVenue(date,el('time').value,duration,realId,type);const v=rawVenue==='auto'?suggested:rawVenue;if(v==='full')throw new Error('此時段本館與辦公室皆已達人數上限，請調整時間或場地。');if(!venueFits(date,el('time').value,duration,v,type,realId))throw new Error(`${venueName(v)} 此時段會超過人數上限，請調整場地或時間。`);return {id:realId,date,time:el('time').value,duration:String(duration),coach:el('coach').value,name:el('name').value.trim(),type,venue:v,note:el('note').value.trim(),seriesId:seriesId||''}}
+  if(editingId){
+    const saved=makeEntry(el('date').value,editingId);entries=entries.filter(x=>x.id!==editingId).concat(saved);
+    logActivity('修改預約',entrySummary(saved),saved.coach);persist('預約已儲存');
+  }else if(el('repeatType').value==='weekly'){
+    const end=el('repeatEnd').value;if(!end){alert('請選擇重複結束日期');return}
+    const weekdays=getCheckedWeekdays();if(!weekdays.length){alert('請至少指定一個星期');return}
+    const begin=new Date(el('date').value+'T00:00:00'), finish=new Date(end+'T00:00:00');
+    if(finish<begin){alert('重複結束日期不可早於開始日期');return}
+    const seriesId='series_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);let added=[];for(let d=new Date(begin);d<=finish;d.setDate(d.getDate()+1)){if(weekdays.includes(d.getDay())) added.push(makeEntry(fmt(d),'',seriesId))}
+    entries=entries.concat(added);
+    logActivity('新增固定課程',`${el('name').value.trim()}｜${added.length}筆｜${el('date').value} 至 ${el('repeatEnd').value}`,el('coach').value);persist(`固定課程已新增 ${added.length} 筆`);
+  }else{
+    const saved=makeEntry(el('date').value);entries=entries.concat(saved);
+    logActivity('新增預約',entrySummary(saved),saved.coach);persist('預約已儲存');
+  }
+  entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));
+  safeCloseDialog('editor');render()
+}catch(err){console.error(err);alert('儲存失敗：'+err.message)}}
+function deleteEntry(){
+  const id=el('editId').value;if(!id){safeCloseDialog('editor');return}
+  const target=entries.find(e=>e.id===id);if(!target)return;if(!canEditEntry(target)){alert('教練身份只能刪除自己的課程');return;}
+  if(target.seriesId){
+    pendingRepeatDeleteId=id;
+    if(el('repeatDeleteText')) el('repeatDeleteText').textContent=`${entrySummary(target)}｜請選擇刪除方式。`;
+    safeCloseDialog('editor');
+    safeOpenDialog('repeatDeleteDialog');
+    return;
+  }
+  if(confirm('確定刪除此筆資料？')){entries=entries.filter(e=>e.id!==id);logActivity('刪除預約',entrySummary(target),target.coach);persist('已刪除');safeCloseDialog('editor');render()}
+}
+function cancelRepeatDelete(){pendingRepeatDeleteId=null;safeCloseDialog('repeatDeleteDialog')}
+function confirmRepeatDelete(mode){
+  const id=pendingRepeatDeleteId;const target=entries.find(e=>e.id===id);if(!target)return cancelRepeatDelete();
+  if(!canEditEntry(target)){alert('教練身份只能刪除自己的課程');return cancelRepeatDelete();}
+  if(mode==='following'){
+    const gid=target.seriesId, date=target.date;let count=0;
+    entries=entries.filter(e=>{const del=e.seriesId===gid&&e.date>=date;if(del)count++;return !del});
+    logActivity('刪除此日期之後的預約',`${entrySummary(target)}｜共${count}筆`,target.coach);persist('已刪除此日期之後的預約');
+  }else{
+    entries=entries.filter(e=>e.id!==id);
+    logActivity('只刪除該日預約',entrySummary(target),target.coach);persist('已刪除該日預約');
+  }
+  pendingRepeatDeleteId=null;safeCloseDialog('repeatDeleteDialog');safeCloseDialog('editor');render();
+}
+function openNoteEditor(date='',coach=coaches[0]){el('noteId').value='';el('noteDate').value=date||fmt(new Date());el('noteCoach').value=isCoach()?currentCoach:coach;el('noteCoach').disabled=isCoach();el('noteText').value='';safeOpenDialog('noteEditor')}
+function editNote(id){const n=coachNotes.find(x=>x.id===id);if(!n)return;if(isCoach()&&n.coach!==currentCoach){alert('教練身份只能修改自己的記事');return}el('noteId').value=id;el('noteDate').value=n.date;el('noteCoach').value=n.coach;el('noteCoach').disabled=isCoach();el('noteText').value=n.text;safeOpenDialog('noteEditor')}
+function saveCoachNote(){const id=el('noteId').value||newId();if(isCoach())el('noteCoach').value=currentCoach;if(!el('noteDate').value||!el('noteText').value.trim()){alert('請填寫日期與提醒內容');return}const old=coachNotes.find(x=>x.id===id);if(old&&isCoach()&&old.coach!==currentCoach){alert('教練身份只能修改自己的記事');return}const n={id,date:el('noteDate').value,coach:el('noteCoach').value,text:el('noteText').value.trim()};coachNotes=coachNotes.filter(x=>x.id!==id).concat(n);logActivity('新增/修改教練記事',`${n.date}｜${n.coach}｜${n.text}`,n.coach);persist('記事已儲存');safeCloseDialog('noteEditor');render()}
+function deleteNote(){const id=el('noteId').value;if(!id){safeCloseDialog('noteEditor');return}if(confirm('確定刪除此記事？')){const old=coachNotes.find(n=>n.id===id);coachNotes=coachNotes.filter(n=>n.id!==id);logActivity('刪除教練記事',old?`${old.date}｜${old.coach}｜${old.text}`:'',old?old.coach:'');persist('記事已刪除');safeCloseDialog('noteEditor');render()}}
+function updateStats(){
+  const base=new Date(el('weekPicker').value),y=base.getFullYear(),m=base.getMonth();
+  const monthEntries=entries.filter(e=>{let d=new Date(e.date);return d.getFullYear()===y&&d.getMonth()===m&&(isAdmin()||e.coach===currentCoach)});
+  const courseN=monthEntries.filter(e=>countAsCourse(e)).length;
+  const classN=monthEntries.filter(e=>e.type==='one1'||e.type==='one2'||e.type==='class').length,eduN=monthEntries.filter(e=>e.type==='edu').length;
+  el('classCount').textContent=courseN;el('eduCount').textContent=eduN;
+  const labels=isAdmin()?coaches:[currentCoach],data=labels.map(c=>monthEntries.filter(e=>e.coach===c&&(countAsCourse(e))).length),data2=labels.map(c=>monthEntries.filter(e=>e.coach===c&&e.type==='edu').length);
+  if(typeof Chart==='undefined'){
+    el('chartFallback').innerHTML='圖表套件未載入，但統計數字與CSV仍可正常使用。<br>'+labels.map((c,i)=>`${esc(c)}：${isAdmin()?'課程執行數':'課執行數'} ${data[i]}／衛教 ${data2[i]}`).join('<br>');
+    renderHistory();
+    renderReport(false);
+    return;
+  }
+  el('chartFallback').innerHTML='';
+  if(chart)chart.destroy();
+  chart=new Chart(el('chart'),{type:'bar',data:{labels,datasets:[{label:isAdmin()?'課程執行數':'課執行數',data},{label:'衛教',data:data2}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  renderHistory();
+  renderReport(false);
+}
+function renderHistory(){
+  const box=el('historyList');if(!box)return;
+  const section=box.closest('section');
+  if(!isAdmin()){
+    if(section)section.classList.add('hidden');
+    box.innerHTML='';
+    return;
+  }
+  if(section)section.classList.remove('hidden');
+  const base=new Date(el('weekPicker').value||new Date()), month=base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0');
+  const list=activityLogs.filter(l=>l.month===month).slice().reverse();
+  if(el('historyTitle'))el('historyTitle').textContent='所有表單修訂活動';
+  if(!list.length){box.innerHTML='<div class="history-empty">本月尚無修訂紀錄。</div>';return}
+  box.innerHTML=list.map(l=>{const time=new Date(l.ts).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});return `<div class="history-item"><b>${esc(l.action)}｜${esc(l.actor)}</b><div>${esc(l.detail||'')}</div><div class="history-time">${time}</div></div>`}).join('');
+}
+
+
+function placeReportPanel(){
+  const panel=el('reportPanel');if(!panel)return;
+  const side=document.querySelector('.side');
+  const mount=el('reportWorkMount');
+  if(isAdmin()){
+    if(panel.parentElement!==mount)mount.appendChild(panel);
+    panel.classList.remove('hidden');
+  }else{
+    const history=document.querySelector('#historyList')?.closest('section');
+    if(side && panel.parentElement!==side){
+      if(history && history.nextSibling)side.insertBefore(panel,history.nextSibling);else side.appendChild(panel);
+    }
+    panel.classList.remove('hidden');
+  }
+}
+function openReportWork(){
+  if(!isAdmin()){openReportResult();return}
+  placeReportPanel();initReportDates();renderReport(false);el('reportWorkDialog').showModal();
+}
+function closeReportWork(){el('reportWorkDialog').close();placeReportPanel()}
+
+function initReportDates(){
+  if(!el('reportStart'))return;
+  const base=new Date(el('weekPicker')?.value||new Date());
+  const ym=base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0');
+  if(el('reportMonth')&&!el('reportMonth').value)el('reportMonth').value=ym;
+  const first=new Date(base.getFullYear(),base.getMonth(),1);
+  const last=new Date(base.getFullYear(),base.getMonth()+1,0);
+  if(!el('reportStart').value)el('reportStart').value=fmt(first);
+  if(!el('reportEnd').value)el('reportEnd').value=fmt(last);
+  if(el('reportCoachWrap'))el('reportCoachWrap').style.display=isAdmin()?'block':'none';
+  if(el('reportHint'))el('reportHint').textContent=isAdmin()?'可用於月報、年報、薪資核對；可查全部或指定教練。':'教練身份僅能查詢、輸出自己的報表。';
+}
+function setReportMonthRange(){
+  if(!el('reportMonth')||!el('reportMonth').value)return;
+  const [y,m]=el('reportMonth').value.split('-').map(Number);
+  const first=new Date(y,m-1,1), last=new Date(y,m,0);
+  el('reportStart').value=fmt(first);el('reportEnd').value=fmt(last);
+}
+function getReportEntries(){
+  initReportDates();
+  const sdate=el('reportStart')?.value||'0000-01-01', edate=el('reportEnd')?.value||'9999-12-31';
+  const c=isAdmin()?(el('reportCoach')?.value||''):currentCoach;
+  return entries.filter(e=>e.date>=sdate&&e.date<=edate&&(!c||e.coach===c));
+}
+function typeLabel(t){return {one1:'1對1課程',one2:'1對2課程',class:'上課',massage:'運動按摩',edu:'衛教',rest:'休假/排事',event:'其他'}[t]||t}
+function reportSummaryRows(){
+  const list=getReportEntries().filter(e=>['one1','one2','class','massage','edu'].includes(e.type));
+  const selected=isAdmin()?(el('reportCoach')?.value||''):currentCoach;
+  const coachList=(selected?[selected]:coaches).filter(Boolean);
+  return coachList.map(c=>{
+    const mine=list.filter(e=>e.coach===c);
+    const classN=mine.filter(e=>e.type==='one1'||e.type==='one2'||e.type==='class').length;
+    const massageN=mine.filter(e=>e.type==='massage').length;
+    const eduN=mine.filter(e=>e.type==='edu').length;
+    const totalMin=mine.reduce((sum,e)=>sum+Number(e.duration||0),0);
+    return {coach:c,classN,massageN,eduN,totalMin,totalHours:(totalMin/60).toFixed(1)};
+  });
+}
+function buildReportHTML(){
+  const rows=reportSummaryRows();
+  const reportEntries=getReportEntries().filter(e=>['one1','one2','class','massage','edu'].includes(e.type)).slice().sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));
+  if(!rows.length && !reportEntries.length)return '此條件下沒有資料。';
+  const total={classN:0,massageN:0,eduN:0,totalMin:0};
+  rows.forEach(r=>{total.classN+=r.classN;total.massageN+=r.massageN;total.eduN+=r.eduN;total.totalMin+=Number(r.totalMin)});
+  const range=`${esc(el('reportStart').value)} ～ ${esc(el('reportEnd').value)}`;
+  const who=isAdmin()?(el('reportCoach')?.value||'全部教練'):currentCoach;
+  const summary=`<div style="margin-bottom:8px"><b>統計區間：</b>${range}　<b>教練：</b>${esc(who)}</div>`;
+  const table=`<div style="overflow:auto;margin-top:10px"><table style="width:100%;min-width:520px;font-size:12px"><thead><tr><th>教練</th><th>上課（堂數）</th><th>衛教</th><th>運動按摩</th><th>執行時數</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.coach)}</td><td>${r.classN}</td><td>${r.eduN}</td><td>${r.massageN}</td><td>${r.totalHours}</td></tr>`).join('')}<tr><td><b>合計</b></td><td><b>${total.classN}</b></td><td><b>${total.eduN}</b></td><td><b>${total.massageN}</b></td><td><b>${(total.totalMin/60).toFixed(1)}</b></td></tr></tbody></table></div>`;
+  const detailTitle=isAdmin()?'預約明細':'我的上課明細';
+  const detailRows=reportEntries.map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.time)}-${esc(addMins(e.time,e.duration))}</td><td>${esc(e.coach)}</td><td>${esc(e.name)}</td><td>${esc(typeLabel(e.type))}</td><td>${esc(venueName(e.venue))}</td><td>${esc(e.note||'')}</td></tr>`).join('');
+  const details=`<h3 style="margin:16px 0 8px">${detailTitle}</h3><div style="overflow:auto;max-height:360px;border:1px solid var(--line);border-radius:16px"><table style="width:100%;min-width:760px;font-size:12px"><thead><tr><th>上課日期</th><th>時間</th><th>教練</th><th>學員姓名</th><th>類型</th><th>場地</th><th>備註</th></tr></thead><tbody>${detailRows||'<tr><td colspan="7">此區間沒有上課明細。</td></tr>'}</tbody></table></div>`;
+  return summary+table+details;
+}
+function renderReport(showToast=false){
+  initReportDates();
+  if(el('reportResultBox'))el('reportResultBox').innerHTML=buildReportHTML();
+  if(showToast)toast('報表已更新');
+}
+function renderAdminReport(showToast=false){renderReport(showToast)}
+function openReportResult(){
+  renderReport(false);
+  safeOpenDialog('reportDialog');
+}
+function exportSummaryCSV(){
+  initReportDates();
+  const rows=[['統計區間',el('reportStart').value+' 至 '+el('reportEnd').value],['教練',isAdmin()?(el('reportCoach')?.value||'全部教練'):currentCoach],[],['教練','上課（堂數）','衛教','運動按摩','執行時數']].concat(reportSummaryRows().map(r=>[r.coach,r.classN,r.eduN,r.massageN,r.totalHours]));
+  let csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x||'').replaceAll('"','""')+'"').join(',')).join('\n');
+  downloadBlob(csv,`煦陽堂數統計_${el('reportStart').value}_${el('reportEnd').value}.csv`,'text/csv')
+}
+function exportCSV(){
+  initReportDates();
+  const list=getReportEntries().filter(e=>['one1','one2','class','massage','edu'].includes(e.type)).slice().sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));
+  let rows=[['日期','開始時間','結束時間','長度','教練','學員名稱','類型','場地','備註']].concat(list.map(e=>[e.date,e.time,addMins(e.time,e.duration),e.duration,e.coach,e.name,typeLabel(e.type),venueName(e.venue),e.note]));
+  let csv='\ufeff'+rows.map(r=>r.map(x=>'"'+String(x||'').replaceAll('"','""')+'"').join(',')).join('\n');
+  const who=isAdmin()?(el('reportCoach')?.value||'全部教練'):currentCoach;
+  downloadBlob(csv,`煦陽預約明細_${who}_${el('reportStart').value}_${el('reportEnd').value}.csv`,'text/csv')
+}
+
+function overviewEntryTypes(){return ['one1','one2','class','edu','massage']}
+function overviewListForDate(date){
+  return entries.filter(e=>e.date===date && e.coach===currentCoach && overviewEntryTypes().includes(e.type))
+    .slice().sort((a,b)=>a.time.localeCompare(b.time));
+}
+function overviewItemText(e){return `${e.time}-${typeLabel(e.type)}-${e.name||''}`}
+function openMonthOverview(){
+  if(!isCoach()){alert('此功能提供教練查看自己的預約總覽。');return}
+  overviewMonth=new Date(el('weekPicker')?.value||new Date());
+  overviewMonth.setDate(1);
+  renderMonthOverview();
+  safeOpenDialog('monthOverviewDialog');
+}
+function changeOverviewMonth(delta){
+  overviewMonth.setMonth(overviewMonth.getMonth()+delta);
+  overviewMonth.setDate(1);
+  renderMonthOverview();
+}
+function renderMonthOverview(){
+  const y=overviewMonth.getFullYear(), m=overviewMonth.getMonth();
+  const monthLabel=`${y}年${String(m+1).padStart(2,'0')}月`;
+  el('monthOverviewTitle').textContent=`${monthLabel}｜${currentCoach} 預約總覽`;
+  const first=new Date(y,m,1);
+  const start=new Date(first); start.setDate(first.getDate()-first.getDay());
+  const today=fmt(new Date());
+  const weekNames=['日','一','二','三','四','五','六'];
+  let html=weekNames.map(w=>`<div class="month-head">${w}</div>`).join('');
+  for(let i=0;i<42;i++){
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    const date=fmt(d), list=overviewListForDate(date), inMonth=d.getMonth()===m;
+    const preview=list.slice(0,3).map(e=>`<div class="month-item">${esc(overviewItemText(e))}</div>`).join('');
+    const more=list.length>3?`<div class="month-more">＋${list.length-3} 筆更多</div>`:'';
+    const count=list.length?`<span class="month-count">${list.length}</span>`:'';
+    html+=`<div class="month-cell ${inMonth?'':'muted'} ${date===today?'today':''}" onclick="openDayOverview('${date}')"><span class="date-no">${d.getDate()}</span>${count}<div class="month-list">${preview}${more}</div></div>`;
+  }
+  el('monthOverviewCalendar').innerHTML=html;
+}
+function openDayOverview(date){
+  const list=overviewListForDate(date);
+  const d=new Date(date+'T00:00:00');
+  el('dayDetailTitle').textContent=`${d.getMonth()+1}/${d.getDate()}（${['日','一','二','三','四','五','六'][d.getDay()]}） 預約明細（${list.length}筆）`;
+  el('dayDetailList').innerHTML=list.length?list.map(e=>`<div class="month-detail-item"><b>${esc(e.time)}-${esc(addMins(e.time,e.duration||60))}｜${esc(typeLabel(e.type))}</b><div>學員姓名：${esc(e.name||'')}</div><div>場地：${esc(venueName(e.venue))}</div>${e.note?`<div>備註：${esc(e.note)}</div>`:''}</div>`).join(''):'<div class="history-empty">當日沒有課程、衛教或運動按摩預約。</div>';
+  safeOpenDialog('dayDetailDialog');
+}
+
+function backupJSON(){downloadBlob(JSON.stringify({entries,coachNotes,activityLogs,coaches,holidays},null,2),'煦陽預約系統備份.json','application/json')}
+function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);entries=data.entries||[];coachNotes=data.coachNotes||[];activityLogs=data.activityLogs||[];normalizeFreeEntries();if(data.coaches){coaches=data.coaches;localStorage.setItem(COACH_KEY,coaches.join(','));fillSelects();el('coachText').value=coaches.join(', ')}if(data.holidays){holidays=data.holidays;localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays));loadHolidays()}persist('已匯入備份');render()}catch(e){alert('匯入失敗：檔案格式不正確')}};r.readAsText(f)}
+function downloadBlob(content,name,type){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click()}
+function clearAll(){if(!isAdmin()){alert('只有管理員可以清空資料');return}if(confirm('會清空此瀏覽器內所有預約與記事資料，確定嗎？')){entries=[];coachNotes=[];persist('已清空');render()}}
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('close',()=>{if(el('coach'))el('coach').disabled=false;if(el('noteCoach'))el('noteCoach').disabled=false}));
+init();
+</script>
+</body>
+</html>
