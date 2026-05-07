@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-<title>煦陽內部預約登記系統 v48 手機登入獨立版</title>
+<title>煦陽內部預約登記系統 v49 色塊延伸文字優先版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -475,6 +475,534 @@ body.is-logged-out{
   }
 }
 
+
+
+/* v49 預約表顯示邏輯：30分鐘一格、色塊可延伸/重疊、文字只在開始時間格 */
+.schedule-cell-covered{background:var(--booked)!important;}
+.schedule-cell-start{vertical-align:top!important;}
+.start-entry{
+  position:relative;
+  z-index:5;
+  display:block!important;
+  width:calc(100% - 4px);
+  min-height:auto!important;
+  margin:2px!important;
+  padding:4px 6px!important;
+  border-radius:8px;
+  text-align:left!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  line-height:1.18!important;
+  box-sizing:border-box!important;
+}
+.start-entry .entry-name{
+  display:block!important;
+  width:100%;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  word-break:break-word!important;
+  line-height:1.15!important;
+}
+.start-entry .entry-meta{
+  display:block!important;
+  width:100%;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  line-height:1.15!important;
+}
+@media(max-width:760px){
+  #schedule td.schedule-cell-covered{background:var(--booked)!important;}
+  #schedule td.schedule-cell-start{padding:0!important;vertical-align:top!important;}
+  #schedule td.schedule-cell-start .start-entry{
+    position:relative!important;
+    inset:auto!important;
+    width:calc(100% - 4px)!important;
+    height:auto!important;
+    max-height:calc(100% - 4px)!important;
+    min-height:0!important;
+    margin:2px!important;
+    padding:2px 3px!important;
+    display:block!important;
+    text-align:left!important;
+    overflow:hidden!important;
+    line-height:1.02!important;
+  }
+  #schedule td.schedule-cell-start .entry-name{
+    display:block!important;
+    -webkit-line-clamp:unset!important;
+    font-size:clamp(6px, calc(9.5px * var(--schedule-scale, .68)), 9px)!important;
+    line-height:1.02!important;
+    text-align:left!important;
+    white-space:normal!important;
+    word-break:break-word!important;
+  }
+  #schedule td.schedule-cell-start .entry-meta{
+    display:block!important;
+    -webkit-line-clamp:unset!important;
+    font-size:clamp(5px, calc(7.5px * var(--schedule-scale, .68)), 7px)!important;
+    line-height:1.02!important;
+    text-align:left!important;
+    margin-top:1px!important;
+    white-space:normal!important;
+  }
+}
+
+
+/* v50 權限提示與圓餅圖：其他教練預約不變色 */
+.entry.readonly,
+#schedule .entry.readonly,
+.mobile-booking-card.readonly{
+  opacity:1!important;
+  filter:none!important;
+  cursor:pointer!important;
+}
+.entry.readonly .entry-name,
+.entry.readonly .entry-meta{
+  opacity:1!important;
+}
+
+
+/* v51 sticky header 疊層修正：教練名稱列永遠高於預約色塊 */
+.schedule-wrap{
+  position:relative!important;
+  overflow:auto!important;
+}
+#schedule{
+  position:relative!important;
+  isolation:isolate!important;
+}
+#schedule th{
+  position:sticky!important;
+  z-index:1000!important;
+  background:#f7efe2!important;
+  background-clip:padding-box!important;
+  box-shadow:0 1px 0 #eadfce,0 2px 8px rgba(80,60,30,.04)!important;
+}
+#schedule .day-title{
+  top:0!important;
+  z-index:1300!important;
+  background:#fff3dc!important;
+}
+#schedule .coach-head{
+  top:58px!important;
+  z-index:1200!important;
+  background:#fff7e8!important;
+}
+#schedule .self-head{
+  z-index:1210!important;
+  background:#fff7e8!important;
+}
+#schedule th.time{
+  left:0!important;
+  z-index:1350!important;
+  background:#faf4eb!important;
+}
+#schedule tr:first-child th.time{
+  top:0!important;
+  z-index:1400!important;
+}
+#schedule tr:nth-child(2) th.time{
+  top:58px!important;
+  z-index:1360!important;
+}
+#schedule td,
+#schedule .slot{
+  z-index:1!important;
+}
+#schedule .entry,
+#schedule .start-entry{
+  z-index:5!important;
+}
+#schedule .drag-over{
+  z-index:10!important;
+}
+#schedule td.merged .entry{
+  z-index:5!important;
+}
+@media(max-width:760px){
+  #schedule .day-title{
+    top:0!important;
+    z-index:1300!important;
+    background:#fff3dc!important;
+  }
+  #schedule .coach-head{
+    top:42px!important;
+    z-index:1200!important;
+    background:#fff7e8!important;
+  }
+  #schedule th.time{
+    left:0!important;
+    z-index:1350!important;
+    background:#faf4eb!important;
+  }
+  #schedule tr:first-child th.time{
+    top:0!important;
+    z-index:1400!important;
+  }
+  #schedule tr:nth-child(2) th.time{
+    top:42px!important;
+    z-index:1360!important;
+  }
+  #schedule .entry,
+  #schedule .start-entry{
+    z-index:5!important;
+  }
+}
+
+
+
+/* v52 表格尺寸一致與手機版顯示優化：固定格線、固定欄寬、卡片不撐開 */
+:root{
+  --schedule-row-h:52px;
+  --schedule-time-w:64px;
+  --schedule-col-w:118px;
+  --schedule-date-h:58px;
+  --schedule-coach-h:44px;
+}
+.schedule-wrap{
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  position:relative!important;
+}
+#schedule{
+  table-layout:fixed!important;
+  width:max-content!important;
+  min-width:0!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  position:relative!important;
+  isolation:isolate!important;
+}
+#schedule th,
+#schedule td{
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  white-space:normal!important;
+  border-right:1px solid #e8ded0!important;
+  border-bottom:1px solid #eadfce!important;
+}
+#schedule td.slot,
+#schedule td:not(.time){
+  width:var(--schedule-col-w)!important;
+  min-width:var(--schedule-col-w)!important;
+  max-width:var(--schedule-col-w)!important;
+  height:var(--schedule-row-h)!important;
+  min-height:var(--schedule-row-h)!important;
+  max-height:var(--schedule-row-h)!important;
+  padding:0!important;
+  vertical-align:top!important;
+  position:relative!important;
+}
+#schedule .time{
+  width:var(--schedule-time-w)!important;
+  min-width:var(--schedule-time-w)!important;
+  max-width:var(--schedule-time-w)!important;
+  position:sticky!important;
+  left:0!important;
+  z-index:1350!important;
+  background:#faf4eb!important;
+  background-clip:padding-box!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  padding:0 4px!important;
+}
+#schedule tr:not(:first-child):not(:nth-child(2)) .time{
+  height:var(--schedule-row-h)!important;
+  min-height:var(--schedule-row-h)!important;
+  max-height:var(--schedule-row-h)!important;
+  line-height:var(--schedule-row-h)!important;
+}
+#schedule .day-title{
+  height:var(--schedule-date-h)!important;
+  min-height:var(--schedule-date-h)!important;
+  max-height:var(--schedule-date-h)!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:1300!important;
+  background:#fff3dc!important;
+  background-clip:padding-box!important;
+  white-space:normal!important;
+}
+#schedule .coach-head,
+#schedule .self-head{
+  width:var(--schedule-col-w)!important;
+  min-width:var(--schedule-col-w)!important;
+  max-width:var(--schedule-col-w)!important;
+  height:var(--schedule-coach-h)!important;
+  min-height:var(--schedule-coach-h)!important;
+  max-height:var(--schedule-coach-h)!important;
+  position:sticky!important;
+  top:var(--schedule-date-h)!important;
+  z-index:1200!important;
+  background:#fff7e8!important;
+  background-clip:padding-box!important;
+  white-space:nowrap!important;
+  text-overflow:ellipsis!important;
+  padding:6px 4px!important;
+}
+#schedule tr:first-child th.time{
+  top:0!important;
+  z-index:1400!important;
+  height:var(--schedule-date-h)!important;
+  line-height:var(--schedule-date-h)!important;
+}
+#schedule tr:nth-child(2) th.time{
+  top:var(--schedule-date-h)!important;
+  z-index:1360!important;
+  height:var(--schedule-coach-h)!important;
+  line-height:var(--schedule-coach-h)!important;
+}
+#schedule .schedule-cell-covered{
+  background:var(--booked)!important;
+}
+#schedule td.schedule-cell-start{
+  padding:0!important;
+  vertical-align:top!important;
+}
+#schedule td.schedule-cell-start .start-entry,
+#schedule td.schedule-cell-start .entry{
+  position:absolute!important;
+  top:3px!important;
+  left:3px!important;
+  right:3px!important;
+  bottom:auto!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:calc(var(--schedule-row-h) - 6px)!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:4px 5px!important;
+  display:block!important;
+  text-align:left!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  z-index:8!important;
+  line-height:1.15!important;
+  border-radius:9px!important;
+}
+#schedule td.schedule-cell-start .entry-name{
+  display:block!important;
+  max-width:100%!important;
+  font-size:12px!important;
+  line-height:1.18!important;
+  font-weight:900!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  word-break:break-word!important;
+  overflow-wrap:anywhere!important;
+}
+#schedule td.schedule-cell-start .entry-meta{
+  display:block!important;
+  max-width:100%!important;
+  font-size:10px!important;
+  line-height:1.15!important;
+  text-align:left!important;
+  color:var(--muted)!important;
+  margin-top:2px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#schedule .entry,
+#schedule .start-entry{
+  contain:layout paint!important;
+}
+#schedule td,
+#schedule .slot{
+  z-index:1!important;
+}
+#schedule .entry,
+#schedule .start-entry{
+  z-index:8!important;
+}
+#schedule th{
+  z-index:1000!important;
+}
+
+@media(max-width:760px){
+  :root{
+    --schedule-row-h:54px;
+    --schedule-time-w:58px;
+    --schedule-col-w:124px;
+    --schedule-date-h:50px;
+    --schedule-coach-h:46px;
+  }
+  body.is-logged-in{
+    overflow-y:auto!important;
+  }
+  #desktopScheduleCard{
+    overflow:visible!important;
+  }
+  #desktopScheduleCard .controls{
+    gap:8px!important;
+    padding:10px!important;
+    align-items:center!important;
+  }
+  #desktopScheduleCard .controls select,
+  #desktopScheduleCard .controls button,
+  #desktopScheduleCard .controls input{
+    min-height:44px!important;
+    font-size:15px!important;
+    padding:9px 12px!important;
+  }
+  .schedule-wrap{
+    width:100%!important;
+    max-width:100vw!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    max-height:none!important;
+    min-height:0!important;
+    border-radius:18px!important;
+  }
+  #schedule{
+    transform:none!important;
+    font-size:13px!important;
+  }
+  #schedule th,
+  #schedule td{
+    font-size:13px!important;
+  }
+  #schedule tr:not(:first-child):not(:nth-child(2)) .time{
+    font-size:12px!important;
+    line-height:var(--schedule-row-h)!important;
+  }
+  #schedule .coach-head,
+  #schedule .self-head{
+    font-size:13px!important;
+    line-height:1.15!important;
+  }
+  #schedule .day-title{
+    font-size:13px!important;
+    line-height:1.25!important;
+  }
+  #schedule td.schedule-cell-start .entry-name{
+    font-size:13px!important;
+    line-height:1.15!important;
+  }
+  #schedule td.schedule-cell-start .entry-meta{
+    font-size:10.5px!important;
+  }
+  .side,
+  .side .card,
+  .side .card:first-child,
+  #reportPanel,
+  .stats,
+  .form,
+  .report-box,
+  .history-list,
+  .mobile-soft-section,
+  .mobile-app-shell,
+  .mobile-agenda-list{
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  .side{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:12px!important;
+  }
+  .side .card,
+  #reportPanel,
+  .mobile-soft-section{
+    flex:0 0 auto!important;
+  }
+  .side .card:first-child canvas,
+  .mobile-chart-wrap canvas{
+    max-height:none!important;
+    height:190px!important;
+  }
+  .mobile-stat-cards,
+  .stat-grid{
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+  .mobile-soft-section{
+    padding:15px!important;
+    border-radius:24px!important;
+  }
+}
+
+
+
+/* v53 實際佔用與視覺延伸分離：延伸格只做背景，不阻擋新增 */
+#schedule td.schedule-cell-covered{
+  background:var(--booked)!important;
+  cursor:pointer!important;
+}
+#schedule td.schedule-cell-start{
+  position:relative!important;
+  vertical-align:top!important;
+  overflow:hidden!important;
+}
+#schedule td.schedule-cell-start .start-entry{
+  position:absolute!important;
+  top:3px!important;
+  left:3px!important;
+  right:3px!important;
+  bottom:auto!important;
+  z-index:20!important;
+  pointer-events:auto!important;
+  text-align:left!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+}
+#schedule td.schedule-cell-start .entry-name{
+  text-align:left!important;
+}
+#schedule td.schedule-cell-start .entry-meta{
+  text-align:left!important;
+}
+#schedule td.schedule-cell-covered:not(.schedule-cell-start)::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+#schedule td.slot{
+  position:relative!important;
+}
+#schedule th,
+#schedule .day-title,
+#schedule .coach-head,
+#schedule .time{
+  z-index:1500!important;
+  background:#fff7e8!important;
+}
+@media(max-width:760px){
+  #schedule td.schedule-cell-start .start-entry{
+    top:2px!important;
+    left:2px!important;
+    right:2px!important;
+    max-height:calc(var(--schedule-row-h,48px) - 4px)!important;
+    padding:4px 5px!important;
+  }
+  #schedule td.schedule-cell-start .entry-name{
+    font-size:12px!important;
+    line-height:1.15!important;
+    display:block!important;
+    white-space:normal!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    word-break:break-word!important;
+  }
+  #schedule td.schedule-cell-start .entry-meta{
+    font-size:10px!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+}
+
 </style>
 </head>
 <body class="is-logged-out">
@@ -823,7 +1351,7 @@ function toggleRepeatFields(){const show=el('repeatType').value==='weekly';el('r
 function dragStart(ev,id){ev.dataTransfer.setData('text/plain',id);ev.dataTransfer.effectAllowed='move'}
 function allowDrop(ev){ev.preventDefault();ev.currentTarget.classList.add('drag-over')}
 function dragLeave(ev){ev.currentTarget.classList.remove('drag-over')}
-function dropEntry(ev,date,time,coach){ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove('drag-over');const id=ev.dataTransfer.getData('text/plain');const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('教練身份只能拖曳自己的課程');return}if(isCoach()&&coach!==SELF_TRAINING)coach=currentCoach;e.date=date;e.time=time;e.coach=coach;if(e.venue==='auto'||!e.venue)e.venue=suggestedVenue(date,time,e.duration,id);entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));logActivity('拖曳調整時段',entrySummary(e),e.coach);persist('已拖曳調整時段');render()}
+function dropEntry(ev,date,time,coach){ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove('drag-over');const id=ev.dataTransfer.getData('text/plain');const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('小提醒：只能修改自己的預約課程唷！');return}if(isCoach()&&coach!==SELF_TRAINING)coach=currentCoach;e.date=date;e.time=time;e.coach=coach;if(e.venue==='auto'||!e.venue)e.venue=suggestedVenue(date,time,e.duration,id);entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));logActivity('拖曳調整時段',entrySummary(e),e.coach);persist('已拖曳調整時段');render()}
 
 function isAdmin(){return currentRole==='admin'}
 function isCoach(){return currentRole==='coach'}
@@ -955,11 +1483,11 @@ function syncEndTime(){const start=el('time').value||'09:00';const current=el('e
 function venueCheck(){syncEndTime();const duration=durationFromTimes(el('time').value,el('endTime').value);const type=el('type').value;if(el('venue').value==='none'||type==='rest'){el('venueHint').textContent='此筆設定為無場地，適合休假、排事或不需佔用空間的提醒。';return}const v=suggestedVenue(el('date').value,el('time').value,duration,el('editId').value,type);if(v==='full'){el('venueHint').textContent='提醒：此時段本館與辦公室可能已達人數上限，請調整時間或場地。';return}const selected=el('venue').value;if(selected!=='auto'&&!venueFits(el('date').value,el('time').value,duration,selected,type,el('editId').value)){el('venueHint').textContent=`提醒：${venueName(selected)} 此時段可能超過人數上限。建議改為 ${venueName(v)}。`;return}el('venueHint').textContent=`建議場地：${venueName(v)}。1對2課程會以2人佔用場地判讀。`}
 ['date','time','endTime','venue','type'].forEach(id=>document.addEventListener('change',e=>{if(e.target.id===id){if(e.target.id==='type'&&e.target.value==='rest'&&el('venue').value==='auto')el('venue').value='none';if(e.target.id==='type'&&e.target.value!=='rest'&&el('venue').value==='none')el('venue').value='auto';venueCheck()}}));
 function openEditor(date='',time='09:00',coach=coaches[0]){el('editId').value='';el('date').value=date||fmt(new Date());el('time').value=time;el('endTime').value=addMins(time,60);el('coach').value=(isCoach()&&coach!==SELF_TRAINING)?currentCoach:coach;el('coach').disabled=isCoach();el('name').value='';el('type').value='one1';el('venue').value='auto';el('note').value='';resetRepeat(el('date').value);venueCheck();safeOpenDialog('editor')}
-function edit(id){const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('教練身份只能修改自己的課程');return}['date','time','coach','name','type','venue','note'].forEach(k=>el(k).value=e[k]||'');el('coach').disabled=isCoach();el('endTime').value=addMins(e.time,e.duration||60);el('editId').value=id;resetRepeat(e.date);el('repeatType').value='none';venueCheck();safeOpenDialog('editor')}
+function edit(id){const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('小提醒：只能修改自己的預約課程唷！');return}['date','time','coach','name','type','venue','note'].forEach(k=>el(k).value=e[k]||'');el('coach').disabled=isCoach();el('endTime').value=addMins(e.time,e.duration||60);el('editId').value=id;resetRepeat(e.date);el('repeatType').value='none';venueCheck();safeOpenDialog('editor')}
 function saveEntry(){try{
   const editingId=el('editId').value;
   if(isCoach()&&el('coach').value!==SELF_TRAINING) el('coach').value=currentCoach;
-  if(editingId){const old=entries.find(x=>x.id===editingId);if(!canEditEntry(old)){alert('教練身份只能修改自己的課程');return}}
+  if(editingId){const old=entries.find(x=>x.id===editingId);if(!canEditEntry(old)){alert('小提醒：只能修改自己的預約課程唷！');return}}
   if(!el('date').value){alert('請選擇日期');return}
   if(!el('name').value.trim()){alert('請填寫學員或事項名稱');return}
   if(mins(el('endTime').value)<=mins(el('time').value)){alert('結束時間必須晚於開始時間');return}
@@ -985,7 +1513,7 @@ function saveEntry(){try{
 }catch(err){console.error(err);alert('儲存失敗：'+err.message)}}
 function deleteEntry(){
   const id=el('editId').value;if(!id){safeCloseDialog('editor');return}
-  const target=entries.find(e=>e.id===id);if(!target)return;if(!canEditEntry(target)){alert('教練身份只能刪除自己的課程');return;}
+  const target=entries.find(e=>e.id===id);if(!target)return;if(!canEditEntry(target)){alert('小提醒：只能修改自己的預約課程唷！');return;}
   if(target.seriesId){
     pendingRepeatDeleteId=id;
     if(el('repeatDeleteText')) el('repeatDeleteText').textContent=`${entrySummary(target)}｜請選擇刪除方式。`;
@@ -998,7 +1526,7 @@ function deleteEntry(){
 function cancelRepeatDelete(){pendingRepeatDeleteId=null;safeCloseDialog('repeatDeleteDialog')}
 function confirmRepeatDelete(mode){
   const id=pendingRepeatDeleteId;const target=entries.find(e=>e.id===id);if(!target)return cancelRepeatDelete();
-  if(!canEditEntry(target)){alert('教練身份只能刪除自己的課程');return cancelRepeatDelete();}
+  if(!canEditEntry(target)){alert('小提醒：只能修改自己的預約課程唷！');return cancelRepeatDelete();}
   if(mode==='following'){
     const gid=target.seriesId, date=target.date;let count=0;
     entries=entries.filter(e=>{const del=e.seriesId===gid&&e.date>=date;if(del)count++;return !del});
@@ -1028,7 +1556,14 @@ function updateStats(){
   }
   el('chartFallback').innerHTML='';
   if(chart)chart.destroy();
-  chart=new Chart(el('chart'),{type:'bar',data:{labels,datasets:[{label:isAdmin()?'課程執行數':'課執行數',data},{label:'衛教',data:data2}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  const pieCourse=courseN, pieEdu=eduN;
+  const pieLabels=(pieCourse+pieEdu)>0?['課程執行','衛教']:['尚無資料'];
+  const pieData=(pieCourse+pieEdu)>0?[pieCourse,pieEdu]:[1];
+  chart=new Chart(el('chart'),{
+    type:'pie',
+    data:{labels:pieLabels,datasets:[{label:'本月統計',data:pieData}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:(ctx)=>`${ctx.label}：${(pieCourse+pieEdu)>0?ctx.raw:0}`}}}}
+  });
   renderHistory();
   renderReport(false);
 }
@@ -1263,6 +1798,12 @@ function renderMobileStats(){
   const list=entries.filter(e=>{let d=new Date(e.date);return d.getFullYear()===y&&d.getMonth()===m&&(isAdmin()||e.coach===currentCoach)});
   const courseN=list.filter(e=>countAsCourse(e)).length, eduN=list.filter(e=>e.type==='edu').length, massageN=list.filter(e=>e.type==='massage').length, totalMin=list.filter(e=>countAsCourse(e)||e.type==='edu').reduce((s,e)=>s+Number(e.duration||0),0);
   box.innerHTML=`<div class="mobile-stat-card"><span>課程執行</span><b>${courseN}</b></div><div class="mobile-stat-card"><span>衛教</span><b>${eduN}</b></div><div class="mobile-stat-card"><span>運動按摩</span><b>${massageN}</b></div><div class="mobile-stat-card"><span>執行時數</span><b>${(totalMin/60).toFixed(1)}</b></div>`;
+  if(typeof Chart!=='undefined' && el('mobileChart')){
+    if(typeof mobileChart!=='undefined' && mobileChart){try{mobileChart.destroy()}catch(err){}}
+    const pieLabels=(courseN+eduN)>0?['課程執行','衛教']:['尚無資料'];
+    const pieData=(courseN+eduN)>0?[courseN,eduN]:[1];
+    mobileChart=new Chart(el('mobileChart'),{type:'pie',data:{labels:pieLabels,datasets:[{label:'本月統計',data:pieData}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:(ctx)=>`${ctx.label}：${(courseN+eduN)>0?ctx.raw:0}`}}}}});
+  }
 }
 function syncMobileReportDefaults(){
   if(el('mobileReportStart')&&el('reportStart')) el('mobileReportStart').value=el('reportStart').value;
@@ -1308,9 +1849,9 @@ function realOverlap(a,b){const as=mins(a.time),ae=as+Number(a.duration||60),bs=
 function hasColumnConflict(candidate,ignoreId=''){return entries.some(e=>e.id!==ignoreId&&e.date===candidate.date&&e.coach===candidate.coach&&realOverlap(candidate,e));}
 function canPlaceCandidate(candidate,ignoreId=''){if(hasColumnConflict(candidate,ignoreId))return {ok:false,msg:'此時段已有預約，無法覆蓋。'};if(candidate.venue&&candidate.venue!=='auto'&&candidate.venue!=='none'&&!venueFits(candidate.date,candidate.time,candidate.duration,candidate.venue,candidate.type,ignoreId))return {ok:false,msg:'此時段已有預約，無法覆蓋。'};return {ok:true,msg:''}}
 const __oldDropEntry=dropEntry;
-dropEntry=function(ev,date,time,coach){ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove('drag-over');const id=ev.dataTransfer.getData('text/plain');const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('教練身份只能拖曳自己的課程');return}if(isCoach()&&coach!==SELF_TRAINING)coach=currentCoach;const proposed={...e,date,time,coach};if(proposed.venue==='auto'||!proposed.venue)proposed.venue=suggestedVenue(date,time,proposed.duration,id,proposed.type);const check=canPlaceCandidate(proposed,id);if(!check.ok){alert(check.msg);render();return}Object.assign(e,proposed);entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));logActivity('拖曳調整時段',entrySummary(e),e.coach);persist('已拖曳調整時段');render()}
+dropEntry=function(ev,date,time,coach){ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove('drag-over');const id=ev.dataTransfer.getData('text/plain');const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('小提醒：只能修改自己的預約課程唷！');return}if(isCoach()&&coach!==SELF_TRAINING)coach=currentCoach;const proposed={...e,date,time,coach};if(proposed.venue==='auto'||!proposed.venue)proposed.venue=suggestedVenue(date,time,proposed.duration,id,proposed.type);const check=canPlaceCandidate(proposed,id);if(!check.ok){alert(check.msg);render();return}Object.assign(e,proposed);entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));logActivity('拖曳調整時段',entrySummary(e),e.coach);persist('已拖曳調整時段');render()}
 const __oldSaveEntry=saveEntry;
-saveEntry=function(){try{const editingId=el('editId').value;if(isCoach()&&el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach;if(editingId){const old=entries.find(x=>x.id===editingId);if(!canEditEntry(old)){alert('教練身份只能修改自己的課程');return}}if(!el('date').value){alert('請選擇日期');return}if(!el('name').value.trim()){alert('請填寫學員或事項名稱');return}if(mins(el('endTime').value)<=mins(el('time').value)){alert('結束時間必須晚於開始時間');return}const duration=durationFromTimes(el('time').value,el('endTime').value);const makeEntry=(date,id='',seriesId='')=>{const realId=id||newId();const rawVenue=el('venue').value;const type=el('type').value;const suggested=type==='rest'?'none':suggestedVenue(date,el('time').value,duration,realId,type);const v=rawVenue==='auto'?suggested:rawVenue;if(v==='full')throw new Error('此時段已有預約，無法覆蓋。');const candidate={id:realId,date,time:el('time').value,duration:String(duration),coach:el('coach').value,name:el('name').value.trim(),type,venue:v,note:el('note').value.trim(),seriesId:seriesId||''};const check=canPlaceCandidate(candidate,realId);if(!check.ok)throw new Error(check.msg);return candidate};if(editingId){const saved=makeEntry(el('date').value,editingId);entries=entries.filter(x=>x.id!==editingId).concat(saved);logActivity('修改預約',entrySummary(saved),saved.coach);persist('預約已儲存');}else if(el('repeatType').value==='weekly'){const end=el('repeatEnd').value;if(!end){alert('請選擇重複結束日期');return}const weekdays=getCheckedWeekdays();if(!weekdays.length){alert('請至少指定一個星期');return}const begin=new Date(el('date').value+'T00:00:00'), finish=new Date(end+'T00:00:00');if(finish<begin){alert('重複結束日期不可早於開始日期');return}const seriesId='series_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);let added=[];for(let d=new Date(begin);d<=finish;d.setDate(d.getDate()+1)){if(weekdays.includes(d.getDay())) added.push(makeEntry(fmt(d),'',seriesId))}entries=entries.concat(added);logActivity('新增固定課程',`${el('name').value.trim()}｜${added.length}筆｜${el('date').value} 至 ${el('repeatEnd').value}`,el('coach').value);persist(`固定課程已新增 ${added.length} 筆`);}else{const saved=makeEntry(el('date').value);entries=entries.concat(saved);logActivity('新增預約',entrySummary(saved),saved.coach);persist('預約已儲存');}entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));safeCloseDialog('editor');render()}catch(err){console.error(err);alert(err.message||'儲存失敗')}}
+saveEntry=function(){try{const editingId=el('editId').value;if(isCoach()&&el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach;if(editingId){const old=entries.find(x=>x.id===editingId);if(!canEditEntry(old)){alert('小提醒：只能修改自己的預約課程唷！');return}}if(!el('date').value){alert('請選擇日期');return}if(!el('name').value.trim()){alert('請填寫學員或事項名稱');return}if(mins(el('endTime').value)<=mins(el('time').value)){alert('結束時間必須晚於開始時間');return}const duration=durationFromTimes(el('time').value,el('endTime').value);const makeEntry=(date,id='',seriesId='')=>{const realId=id||newId();const rawVenue=el('venue').value;const type=el('type').value;const suggested=type==='rest'?'none':suggestedVenue(date,el('time').value,duration,realId,type);const v=rawVenue==='auto'?suggested:rawVenue;if(v==='full')throw new Error('此時段已有預約，無法覆蓋。');const candidate={id:realId,date,time:el('time').value,duration:String(duration),coach:el('coach').value,name:el('name').value.trim(),type,venue:v,note:el('note').value.trim(),seriesId:seriesId||''};const check=canPlaceCandidate(candidate,realId);if(!check.ok)throw new Error(check.msg);return candidate};if(editingId){const saved=makeEntry(el('date').value,editingId);entries=entries.filter(x=>x.id!==editingId).concat(saved);logActivity('修改預約',entrySummary(saved),saved.coach);persist('預約已儲存');}else if(el('repeatType').value==='weekly'){const end=el('repeatEnd').value;if(!end){alert('請選擇重複結束日期');return}const weekdays=getCheckedWeekdays();if(!weekdays.length){alert('請至少指定一個星期');return}const begin=new Date(el('date').value+'T00:00:00'), finish=new Date(end+'T00:00:00');if(finish<begin){alert('重複結束日期不可早於開始日期');return}const seriesId='series_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);let added=[];for(let d=new Date(begin);d<=finish;d.setDate(d.getDate()+1)){if(weekdays.includes(d.getDay())) added.push(makeEntry(fmt(d),'',seriesId))}entries=entries.concat(added);logActivity('新增固定課程',`${el('name').value.trim()}｜${added.length}筆｜${el('date').value} 至 ${el('repeatEnd').value}`,el('coach').value);persist(`固定課程已新增 ${added.length} 筆`);}else{const saved=makeEntry(el('date').value);entries=entries.concat(saved);logActivity('新增預約',entrySummary(saved),saved.coach);persist('預約已儲存');}entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));safeCloseDialog('editor');render()}catch(err){console.error(err);alert(err.message||'儲存失敗')}}
 function birthdayTagsForDate(date){const [_,mm,dd]=date.split('-');const list=(students||[]).filter(s=>s.birthday&&s.birthday.slice(5,10)===`${mm}-${dd}`).slice(0,3);return list.map(s=>`<span class="birthday-tag">🎂 ${esc(s.name)}生日</span>`).join('')}
 function studentAge(bday){if(!bday)return'';const b=new Date(bday+'T00:00:00'),n=new Date();let age=n.getFullYear()-b.getFullYear();const m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))age--;return age>=0?age:''}
 function updateStudentAge(){el('stAge').value=studentAge(el('stBirthday').value)}
@@ -1329,6 +1870,167 @@ const __oldApplyRoleUI=applyRoleUI;
 applyRoleUI=function(){__oldApplyRoleUI();setTimeout(()=>{fillSelects();if(isCoach()&&el('stCoach'))el('stCoach').value=currentCoach;applyScheduleZoom();bindPinchZoom();},0)}
 const __oldRender=render;
 render=function(){if(!currentRole)return;__oldRender();applyScheduleZoom();}
+
+
+/* ===== v49 override: 色塊可延伸到結束後收尾格，但文字只顯示在開始時間格 ===== */
+function visualCoveringEntriesAt(date, coach, t, filterT){
+  const mt = mins(t);
+  return entries.filter(e=>{
+    if(e.date!==date || e.coach!==coach) return false;
+    if(filterT && e.type!==filterT) return false;
+    const st = mins(e.time), en = st + Number(e.duration||60);
+    // 30分鐘一格；色塊含開始格、過程格、結束時間收尾格
+    return mt>=st && mt<=en;
+  });
+}
+function startingEntriesAt(date, coach, t, filterT){
+  return entries.filter(e=>e.date===date && e.coach===coach && e.time===t && (!filterT || e.type===filterT));
+}
+render=function(){
+  if(!currentRole) return;
+  const start=monday(el('weekPicker').value||new Date()), filterC=el('filterCoach').value, filterT=el('filterType').value, visible=filterC?[filterC]:coaches;
+  let html='<tr><th class="time">日期</th>';
+  for(let i=0;i<7;i++){
+    let d=new Date(start); d.setDate(start.getDate()+i);
+    const date=fmt(d), holiday=holidays[date]?`<span class="holiday-tag">${esc(holidays[date])}</span>`:'', today=date===fmt(new Date())?' today-title':'';
+    const birthdayText=birthdayTagsForDate(date);
+    html+=`<th class="day-title${today}" colspan="${visible.length+1}">${md(d)}${holiday}${birthdayText}</th>`;
+  }
+  html+='</tr><tr><th class="time">時間</th>';
+  for(let i=0;i<7;i++){
+    let d=new Date(start); d.setDate(start.getDate()+i); const date=fmt(d);
+    html+=`<th class="coach-head self-head day-start">${SELF_TRAINING}</th>`;
+    visible.forEach((c,ci)=>{
+      const ns=coachNotes.filter(n=>n.date===date&&n.coach===c).map(n=>`<span class="coach-note" onclick="event.stopPropagation();editNote('${n.id}')">${esc(n.text)}</span>`).join('');
+      html+=`<th class="coach-head ${ci===visible.length-1?'day-end':''}" ondblclick="openNoteEditor('${date}','${esc(c)}')">${esc(c)}${ns}</th>`;
+    });
+  }
+  html+='</tr>';
+  function cellHTML(date,c,t,i,ci,total,isSelf=false){
+    const covering=visualCoveringEntriesAt(date,c,t,filterT);
+    const starting=startingEntriesAt(date,c,t,filterT);
+    const hasCover=covering.length>0;
+    const hasStart=starting.length>0;
+    const baseClass=`slot ${i%2?'day-shade-alt':'day-shade'} ${isSelf?'self-col day-start':''} ${(!isSelf&&ci===total-1)?'day-end':''} ${hasCover?'schedule-cell-covered':''} ${hasStart?'schedule-cell-start':''}`;
+    const canOpen=isAdmin() || (isSelf && isCoach()) || (!isSelf && isCoach() && c===currentCoach);
+    // 即使此格是上一筆預約的延伸色塊，仍允許在該時間格新增下一筆接續課程。
+    const openAction=canOpen?`onclick="openEditor('${date}','${t}','${esc(c)}')"`:'';
+    const dropAction=canOpen?`ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="dropEntry(event,'${date}','${t}','${esc(c)}')"`:'';
+    const blocks=starting.map(e=>`<div class="entry start-entry type-${e.type} venue-${e.venue} ${canEditEntry(e)?'':'readonly'}" draggable="${canEditEntry(e)}" ondragstart="dragStart(event,'${e.id}')" title="${esc(e.name)}｜${venueName(e.venue)}｜${e.time}-${addMins(e.time,e.duration)}" onclick="event.stopPropagation();edit('${e.id}')"><span class="entry-name">${esc(e.name)}</span><span class="entry-meta">${e.time}-${addMins(e.time,e.duration)}｜${venueName(e.venue)}</span></div>`).join('');
+    return `<td class="${baseClass}" ${dropAction} ${openAction}>${blocks}</td>`;
+  }
+  times.forEach(t=>{
+    html+=`<tr><td class="time">${t}</td>`;
+    for(let i=0;i<7;i++){
+      let d=new Date(start); d.setDate(start.getDate()+i); const date=fmt(d);
+      html+=cellHTML(date,SELF_TRAINING,t,i,0,visible.length,true);
+      visible.forEach((c,ci)=>{ html+=cellHTML(date,c,t,i,ci,visible.length,false); });
+    }
+    html+='</tr>';
+  });
+  el('schedule').innerHTML=html;
+  applyScheduleZoom();
+  updateStats();
+  renderMobileApp();
+};
+
+
+
+/* ===== v53 override: 新增/衝突判斷只看實際開始與結束，不看視覺延伸格 ===== */
+function actualStartMin(e){return mins(e.time)}
+function actualEndMin(e){return mins(e.time)+Number(e.duration||60)}
+function actualOverlapOnly(a,b){
+  const as=actualStartMin(a), ae=actualEndMin(a), bs=actualStartMin(b), be=actualEndMin(b);
+  return as<be && bs<ae;
+}
+// 真正佔用只看 [開始, 結束)，例如 10:00–11:00 不佔用 11:00。
+realOverlap=actualOverlapOnly;
+hasColumnConflict=function(candidate,ignoreId=''){
+  return entries.some(e=>e.id!==ignoreId && e.date===candidate.date && e.coach===candidate.coach && actualOverlapOnly(candidate,e));
+};
+loadAt=function(date,venue,slot,id=''){
+  return entries
+    .filter(e=>e.id!==id && e.date===date && e.venue===venue && e.type!=='rest' && e.venue!=='none')
+    .reduce((sum,e)=>sum+((actualStartMin(e)<=slot && slot<actualEndMin(e))?occupancyUnits(e):0),0);
+};
+venueFits=function(date,time,duration,venue,type,id=''){
+  if(venue==='none'||venue==='auto')return true;
+  const unit=occupancyUnits(type);
+  if(unit===0)return true;
+  const start=mins(time), end=start+Number(duration);
+  for(let m=start;m<end;m+=30){
+    if(loadAt(date,venue,m,id)+unit>venueCap(venue))return false;
+  }
+  return true;
+};
+suggestedVenue=function(date,time,duration,id='',type='one1'){
+  if(venueFits(date,time,duration,'A',type,id))return 'A';
+  if(venueFits(date,time,duration,'B',type,id))return 'B';
+  return 'full';
+};
+canPlaceCandidate=function(candidate,ignoreId=''){
+  if(hasColumnConflict(candidate,ignoreId))return {ok:false,msg:'此時段已有預約，無法覆蓋。'};
+  if(candidate.venue&&candidate.venue!=='auto'&&candidate.venue!=='none'&&!venueFits(candidate.date,candidate.time,candidate.duration,candidate.venue,candidate.type,ignoreId))return {ok:false,msg:'此時段已有預約，無法覆蓋。'};
+  return {ok:true,msg:''};
+};
+// 視覺色塊可以多延伸 1 格到結束時間，但這一格不進入任何衝突/容量判斷。
+visualCoveringEntriesAt=function(date,coach,t,filterT){
+  const mt=mins(t);
+  return entries.filter(e=>{
+    if(e.date!==date||e.coach!==coach)return false;
+    if(filterT&&e.type!==filterT)return false;
+    const st=actualStartMin(e), visualEnd=actualEndMin(e)+30;
+    return mt>=st && mt<visualEnd;
+  });
+};
+startingEntriesAt=function(date,coach,t,filterT){
+  return entries.filter(e=>e.date===date&&e.coach===coach&&e.time===t&&(!filterT||e.type===filterT));
+};
+render=function(){
+  if(!currentRole)return;
+  const start=monday(el('weekPicker').value||new Date()), filterC=el('filterCoach').value, filterT=el('filterType').value, visible=filterC?[filterC]:coaches;
+  let html='<tr><th class="time">日期</th>';
+  for(let i=0;i<7;i++){
+    let d=new Date(start);d.setDate(start.getDate()+i);
+    const date=fmt(d),holiday=holidays[date]?`<span class="holiday-tag">${esc(holidays[date])}</span>`:'',today=date===fmt(new Date())?' today-title':'';
+    html+=`<th class="day-title${today}" colspan="${visible.length+1}">${md(d)}${holiday}${birthdayTagsForDate(date)}</th>`;
+  }
+  html+='</tr><tr><th class="time">時間</th>';
+  for(let i=0;i<7;i++){
+    let d=new Date(start);d.setDate(start.getDate()+i);const date=fmt(d);
+    html+=`<th class="coach-head self-head day-start">${SELF_TRAINING}</th>`;
+    visible.forEach((c,ci)=>{
+      const ns=coachNotes.filter(n=>n.date===date&&n.coach===c).map(n=>`<span class="coach-note" onclick="event.stopPropagation();editNote('${n.id}')">${esc(n.text)}</span>`).join('');
+      html+=`<th class="coach-head ${ci===visible.length-1?'day-end':''}" ondblclick="openNoteEditor('${date}','${esc(c)}')">${esc(c)}${ns}</th>`;
+    });
+  }
+  html+='</tr>';
+  function cellHTML(date,c,t,i,ci,total,isSelf=false){
+    const covering=visualCoveringEntriesAt(date,c,t,filterT);
+    const starting=startingEntriesAt(date,c,t,filterT);
+    const hasCover=covering.length>0;
+    const hasStart=starting.length>0;
+    const baseClass=`slot ${i%2?'day-shade-alt':'day-shade'} ${isSelf?'self-col day-start':''} ${(!isSelf&&ci===total-1)?'day-end':''} ${hasCover?'schedule-cell-covered':''} ${hasStart?'schedule-cell-start':''}`;
+    const canOpen=isAdmin() || (isSelf && isCoach()) || (!isSelf && isCoach() && c===currentCoach);
+    const openAction=canOpen?`onclick="openEditor('${date}','${t}','${esc(c)}')"`:'';
+    const dropAction=canOpen?`ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="dropEntry(event,'${date}','${t}','${esc(c)}')"`:'';
+    const blocks=starting.map(e=>`<div class="entry start-entry type-${e.type} venue-${e.venue} ${canEditEntry(e)?'':'readonly'}" draggable="${canEditEntry(e)}" ondragstart="dragStart(event,'${e.id}')" title="${esc(e.name)}｜${venueName(e.venue)}｜${e.time}-${addMins(e.time,e.duration)}" onclick="event.stopPropagation();edit('${e.id}')"><span class="entry-name">${esc(e.name)}</span><span class="entry-meta">${e.time}-${addMins(e.time,e.duration)}｜${venueName(e.venue)}</span></div>`).join('');
+    return `<td class="${baseClass}" ${dropAction} ${openAction}>${blocks}</td>`;
+  }
+  times.forEach(t=>{
+    html+=`<tr><td class="time">${t}</td>`;
+    for(let i=0;i<7;i++){
+      let d=new Date(start);d.setDate(start.getDate()+i);const date=fmt(d);
+      html+=cellHTML(date,SELF_TRAINING,t,i,0,visible.length,true);
+      visible.forEach((c,ci)=>{html+=cellHTML(date,c,t,i,ci,visible.length,false);});
+    }
+    html+='</tr>';
+  });
+  el('schedule').innerHTML=html;
+  applyScheduleZoom();
+  updateStats();
+  renderMobileApp();
+};
 
 init();
 setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
