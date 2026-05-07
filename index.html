@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-<title>煦陽內部預約登記系統 v39 手機比例優化版</title>
+<title>煦陽內部預約登記系統 v43 手機登入長頁版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -252,6 +252,31 @@ button,input,select,textarea{font-family:inherit}button{touch-action:manipulatio
   .month-zoom-tools .mini{padding:4px 7px!important;font-size:11px!important;}
 }
 
+
+
+/* v43 手機登入獨立頁＋自然長頁修正 */
+body.is-logged-out #appHeader,
+body.is-logged-out #appWrap,
+body.is-logged-out .toast{display:none!important;}
+body.is-logged-out{min-height:100dvh;overflow-x:hidden;}
+body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
+@media(max-width:760px){
+  body.is-logged-out #appHeader,
+  body.is-logged-out #appWrap{display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;}
+  body.is-logged-out #identityScreen{position:relative!important;z-index:9999!important;background:linear-gradient(180deg,#fbfaf6,#f3efe7)!important;}
+  body.is-logged-in{overflow-y:auto!important;}
+  .wrap{height:auto!important;min-height:0!important;overflow:visible!important;}
+  .wrap>section.card{min-height:0!important;height:auto!important;}
+  .side,.side .card,.side .card:first-child,#reportPanel,.stats,.form,.report-box,.history-list{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;}
+  .side{display:flex!important;flex-direction:column!important;}
+  .side .card{flex:0 0 auto!important;}
+  .side .card:first-child canvas{max-height:none!important;height:160px!important;}
+  .schedule-wrap{height:auto!important;max-height:none!important;min-height:0!important;overflow-x:auto!important;overflow-y:visible!important;}
+  #schedule .time{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:0 1px!important;}
+  #schedule th,#schedule td{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;overflow:hidden!important;}
+  #schedule .coach-head{font-size:clamp(7px, calc(9.8px * var(--schedule-scale, .58)), 10px)!important;}
+}
+
 </style>
 </head>
 <body>
@@ -489,7 +514,9 @@ const AUTO_WORKSPACE_ID='sunrise-main';
 let entries=safeParse(localStorage.getItem(KEY),[]), coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]), students=safeParse(localStorage.getItem(STUDENT_KEY),[]), activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]), chart=null, lastVersion=localStorage.getItem(VERSION_KEY)||'', scheduleZoom=(localStorage.getItem('sunrise_schedule_zoom')?Number(localStorage.getItem('sunrise_schedule_zoom')):(window.innerWidth<=760?.58:1));
 let db=null, cloudUnsub=null, cloudEnabled=false, applyingRemote=false, pushTimer=null, cloudDocRef=null;
 let pendingRepeatDeleteId=null;
-let currentRole=sessionStorage.getItem(ROLE_KEY)||localStorage.getItem(ROLE_KEY)||'', currentCoach=localStorage.getItem(ROLE_COACH_KEY)||''; if(currentRole==='admin'&&!sessionStorage.getItem(ROLE_KEY)){currentRole='';localStorage.removeItem(ROLE_KEY)}
+// v43：登入狀態只保留在本分頁工作階段，避免手機重新開啟時未選身份就露出系統畫面。
+localStorage.removeItem(ROLE_KEY);
+let currentRole=sessionStorage.getItem(ROLE_KEY)||'', currentCoach=sessionStorage.getItem(ROLE_COACH_KEY)||'';
 const SELF_TRAINING='FREE';
 function normalizeFreeEntries(){entries=(entries||[]).map(e=>({...e,coach:(e.coach==='自主訓練'||e.coach==='自主訓練學員'||e.coach==='FREE'||e.coach==='free共用'||String(e.coach).toLowerCase()==='free'||e.coach==='FREE')?SELF_TRAINING:e.coach}))}
 normalizeFreeEntries();
@@ -570,20 +597,30 @@ function closeAdminGame(){safeCloseDialog('adminGame')}
 function tapCup(n,ev){const pin=el('adminPin');if(pin.value.length<4)pin.value+=n;const cups=document.querySelectorAll('.cup');cups.forEach(c=>c.classList.remove('hit'));if(ev&&ev.currentTarget)ev.currentTarget.classList.add('hit');el('adminGameMsg').className='game-msg';el('adminGameMsg').textContent='已投 '+pin.value.length+' / 4 顆球';if(pin.value.length===4)checkAdminPin()}
 function clearAdminPin(){if(el('adminPin'))el('adminPin').value='';if(el('adminGameMsg')){el('adminGameMsg').className='game-msg';el('adminGameMsg').textContent='目標：丟中 4 顆球 🎯'}}
 function checkAdminPin(){const pin=el('adminPin').value.trim();if(pin==='0731'){el('adminGameMsg').className='game-msg ok';el('adminGameMsg').textContent='你好棒棒！';setTimeout(()=>{safeCloseDialog('adminGame');enterAsAdmin()},450)}else{el('adminGameMsg').className='game-msg err';el('adminGameMsg').textContent='逼逼逼！你好好想想！';el('adminPin').value=''}}
-function enterAsAdmin(){currentRole='admin';currentCoach='';sessionStorage.setItem(ROLE_KEY,currentRole);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);applyRoleUI()}
+function enterAsAdmin(){currentRole='admin';currentCoach='';sessionStorage.setItem(ROLE_KEY,currentRole);sessionStorage.removeItem(ROLE_COACH_KEY);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);applyRoleUI()}
 function enterAsCoach(){
   fillSelects();
   const box=el('loginCoach');
   const c=(box&&box.value)||(coaches&&coaches[0])||'';
   if(!c){alert('尚未建立教練名單，請先用 Admin 新增教練。');return}
-  currentRole='coach';currentCoach=c;localStorage.setItem(ROLE_KEY,currentRole);localStorage.setItem(ROLE_COACH_KEY,c);applyRoleUI()
+  currentRole='coach';currentCoach=c;sessionStorage.setItem(ROLE_KEY,currentRole);sessionStorage.setItem(ROLE_COACH_KEY,c);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);applyRoleUI()
 }
-function switchIdentity(){currentRole='';currentCoach='';sessionStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);applyRoleUI()}
+function switchIdentity(){currentRole='';currentCoach='';sessionStorage.removeItem(ROLE_KEY);sessionStorage.removeItem(ROLE_COACH_KEY);localStorage.removeItem(ROLE_KEY);localStorage.removeItem(ROLE_COACH_KEY);if(cloudUnsub){try{cloudUnsub()}catch(e){} cloudUnsub=null;}cloudEnabled=false;applyRoleUI()}
 function applyRoleUI(){
   const logged=!!currentRole;
+  // v43：未登入前只保留登入頁，不 render 課表／統計／報表／月曆，也不啟動 Firebase。
   el('identityScreen').style.display=logged?'none':'flex';
   el('appHeader').style.display=logged?'flex':'none';
   el('appWrap').style.display=logged?'grid':'none';
+  document.body.classList.toggle('is-logged-in',logged);
+  document.body.classList.toggle('is-logged-out',!logged);
+  if(!logged){
+    if(el('schedule')) el('schedule').innerHTML='';
+    if(el('classCount')) el('classCount').textContent='0';
+    if(el('eduCount')) el('eduCount').textContent='0';
+    if(chart){ try{chart.destroy()}catch(e){} chart=null; }
+    return;
+  }
   document.querySelectorAll('.admin-only').forEach(x=>x.classList.toggle('hidden',!isAdmin()));
   document.querySelectorAll('.coach-only').forEach(x=>x.classList.toggle('hidden',!isCoach()));
   if(el('roleBadge')) el('roleBadge').textContent=isAdmin()?'Admin 管理員':(isCoach()?`Coach｜${currentCoach}`:'');
@@ -592,8 +629,9 @@ function applyRoleUI(){
   placeReportPanel();
   initReportDates();
   if(isCoach()&&!coaches.includes(currentCoach)){ switchIdentity(); return; }
-  if(isCoach()){ if(el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach; el('noteCoach').value=currentCoach; }
+  if(isCoach()){ if(el('coach')&&el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach; if(el('noteCoach'))el('noteCoach').value=currentCoach; }
   render();
+  if(!cloudEnabled) enableFirebaseSync(true);
 }
 
 function loadHolidays(){el('holidayText').value=Object.keys(holidays).sort().map(d=>`${d} ${holidays[d]}`).join('\n')}
@@ -605,10 +643,10 @@ function bindMobileLogin(){
   bind('coachLoginBtn',enterAsCoach);
   document.querySelectorAll('.cup').forEach(btn=>{if(btn.dataset.boundCup)return;btn.dataset.boundCup='1';btn.addEventListener('touchend',ev=>{ev.preventDefault();ev.stopPropagation();const n=btn.textContent.trim().charAt(0);tapCup(n,ev);},{passive:false});});
 }
-function init(){bindMobileLogin();loadCoaches();fillSelects();fillWeekdays();loadHolidays();el('weekPicker').value=fmt(monday(new Date()));localStorage.setItem(FB_CONFIG_KEY,JSON.stringify(AUTO_FIREBASE_CONFIG));localStorage.setItem(WORKSPACE_KEY,AUTO_WORKSPACE_ID);if(el('firebaseConfigText'))el('firebaseConfigText').value=JSON.stringify(AUTO_FIREBASE_CONFIG);if(el('workspaceId'))el('workspaceId').value=AUTO_WORKSPACE_ID;applyRoleUI();setInterval(autoRefresh,3000);enableFirebaseSync(true)}
+function init(){bindMobileLogin();loadCoaches();fillSelects();fillWeekdays();loadHolidays();el('weekPicker').value=fmt(monday(new Date()));localStorage.setItem(FB_CONFIG_KEY,JSON.stringify(AUTO_FIREBASE_CONFIG));localStorage.setItem(WORKSPACE_KEY,AUTO_WORKSPACE_ID);if(el('firebaseConfigText'))el('firebaseConfigText').value=JSON.stringify(AUTO_FIREBASE_CONFIG);if(el('workspaceId'))el('workspaceId').value=AUTO_WORKSPACE_ID;applyRoleUI();setInterval(autoRefresh,3000)}
 async function enableFirebaseSync(silent=false){try{let raw=(el('firebaseConfigText')&&el('firebaseConfigText').value.trim())||localStorage.getItem(FB_CONFIG_KEY)||JSON.stringify(AUTO_FIREBASE_CONFIG);const workspace=((el('workspaceId')&&el('workspaceId').value)||localStorage.getItem(WORKSPACE_KEY)||AUTO_WORKSPACE_ID).trim().replace(/[^a-zA-Z0-9_-]/g,'-');localStorage.setItem(FB_CONFIG_KEY,raw);localStorage.setItem(WORKSPACE_KEY,workspace);const config=JSON.parse(raw);if(typeof firebase==='undefined')throw new Error('Firebase 套件未載入，請確認有網路連線。');if(!firebase.apps.length)firebase.initializeApp(config);db=firebase.firestore();try{await firebase.auth().signInAnonymously()}catch(authErr){console.warn('匿名登入未啟用，嘗試直接連線 Firestore',authErr)}cloudDocRef=db.collection('sunriseBookingWorkspaces').doc(workspace);if(cloudUnsub)cloudUnsub();cloudEnabled=true;setCloudStatus('目前：正在連線雲端資料…');cloudUnsub=cloudDocRef.onSnapshot(async snap=>{if(snap.exists){const data=snap.data();applyState(data);if(!Array.isArray(data.coaches)||!data.coaches.length){setTimeout(()=>pushCloudNow(),300)}setCloudStatus('目前：雲端同步中｜最後更新 '+new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));toast('已取得雲端最新資料')}else{ensureCoachFallback();await cloudDocRef.set(statePayload(),{merge:true});setCloudStatus('目前：已建立雲端工作室資料')}} , err=>{console.error(err);setCloudStatus('雲端同步中斷：'+err.message)});if(!silent)toast('已啟用雲端同步')}catch(err){console.error(err);cloudEnabled=false;setCloudStatus('啟用失敗：'+err.message);if(!silent)alert('Firebase 啟用失敗：'+err.message)}}
 function disableFirebaseSync(){if(cloudUnsub)cloudUnsub();cloudUnsub=null;cloudDocRef=null;cloudEnabled=false;localStorage.removeItem(FB_CONFIG_KEY);setCloudStatus('目前：單機模式，自動儲存在此瀏覽器。重新整理後會再嘗試連線。');toast('已改回單機模式')}
-function autoRefresh(){const v=localStorage.getItem(VERSION_KEY)||'';if(v&&v!==lastVersion){entries=safeParse(localStorage.getItem(KEY),[]);coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]);activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]);lastVersion=v;render();toast('已自動同步最新資料')}}
+function autoRefresh(){if(!currentRole)return;const v=localStorage.getItem(VERSION_KEY)||'';if(v&&v!==lastVersion){entries=safeParse(localStorage.getItem(KEY),[]);coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]);activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]);lastVersion=v;render();toast('已自動同步最新資料')}}
 window.addEventListener('storage',autoRefresh);
 function prevWeek(){let d=new Date(el('weekPicker').value);d.setDate(d.getDate()-7);el('weekPicker').value=fmt(d);render()}function nextWeek(){let d=new Date(el('weekPicker').value);d.setDate(d.getDate()+7);el('weekPicker').value=fmt(d);render()}
 function getVisibleEntries(date,coach,t,filterT){return entries.filter(e=>e.date===date&&e.coach===coach&&covers(e,t)&&(!filterT||e.type===filterT))}
@@ -964,7 +1002,7 @@ function deleteStudent(){const id=el('studentId').value;if(!id){newStudentForm()
 const __oldApplyRoleUI=applyRoleUI;
 applyRoleUI=function(){__oldApplyRoleUI();setTimeout(()=>{fillSelects();if(isCoach()&&el('stCoach'))el('stCoach').value=currentCoach;applyScheduleZoom();bindPinchZoom();},0)}
 const __oldRender=render;
-render=function(){__oldRender();applyScheduleZoom();}
+render=function(){if(!currentRole)return;__oldRender();applyScheduleZoom();}
 
 init();
 setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
