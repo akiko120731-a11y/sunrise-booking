@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>煦陽內部預約登記系統 v27 手機登入修正版</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+<title>煦陽內部預約登記系統 v36 預約記事風格統一版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -48,6 +48,166 @@ button,input,select,textarea{font-family:inherit}button{touch-action:manipulatio
   .identity-coach select{appearance:auto;-webkit-appearance:menulist;background:#fffdf8;color:#3f3932}
   .identity-coach button{margin-top:0!important;display:block}
 }
+
+/* v29 sync/mobile/student upgrades */
+.student-btn{background:#fff3dc!important;border-color:#e6cfa9!important;color:#7a6042!important}.zoom-tools{display:inline-flex;gap:4px}.schedule-wrap{touch-action:pan-x pan-y pinch-zoom;-webkit-overflow-scrolling:touch}.schedule-wrap table{transform-origin:top left}.day-start{border-left:4px solid #b99b72!important}.day-end{border-right:4px solid #b99b72!important}.day-title{border-left:4px solid #b99b72!important;border-right:4px solid #b99b72!important}.today-title{box-shadow:inset 0 0 0 2.5px #c7473d!important}.today-tag{display:none!important}.birthday-tag{display:inline-block;margin-top:3px;margin-left:4px;font-size:10px;color:#9d5a2e;background:#fff0d6;border:1px solid #efd3a2;border-radius:999px;padding:1px 6px;font-weight:800}.month-cell.today{outline:2px solid #c7473d!important}.month-cell.today .date-no::after{content:''!important}.student-dialog{width:min(1040px,96vw);max-height:92vh;overflow:auto}.student-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.static-x{position:static!important;transform:none!important}.student-tools{display:flex;gap:8px;align-items:center;margin-bottom:10px}.student-tools input{flex:1;border:1px solid var(--line);border-radius:999px;padding:9px 12px;background:#fff}.student-layout{display:grid;grid-template-columns:300px 1fr;gap:12px}.student-list{border:1px solid var(--line);border-radius:18px;background:#fffdf8;max-height:66vh;overflow:auto;padding:8px}.student-item{border:1px solid var(--line);border-radius:14px;background:#fffaf1;margin-bottom:7px;padding:9px;cursor:pointer;font-size:12px}.student-item b{display:block;font-size:13px}.student-item small{color:var(--muted)}.student-form{border:1px solid var(--line);border-radius:18px;background:#fffdf8;padding:12px;max-height:66vh;overflow:auto}.student-form h3{font-size:13px;margin:14px 0 6px;color:var(--accentDark)}.health-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px;align-items:center}.health-grid label{margin:0!important;background:#fffaf1;border:1px solid var(--line);border-radius:12px;padding:8px}.health-grid input{min-width:0}.form input[type="date"], .dialog-body input[type="date"]{min-height:38px;-webkit-appearance:none;appearance:auto;background:#fff}.day-detail-list{max-height:315px}.month-detail-list{max-height:315px}
+@media(max-width:760px){
+  .wrap{grid-template-columns:1fr;padding:8px}.side{grid-row:auto}.schedule-wrap{max-height:68vh}.controls{position:sticky;top:0;z-index:12;background:#fffdf8}th,td{min-width:58px;height:24px;font-size:9.5px}.time{min-width:44px}.self-col{min-width:66px}.day-title{height:42px;font-size:11px}.coach-head{font-size:10px;top:42px}.entry{font-size:10px;line-height:1.15}.entry-meta{font-size:8.5px}.zoom-tools{order:3}.student-layout{grid-template-columns:1fr}.student-list{max-height:190px}.student-form{max-height:58vh}.student-tools{flex-direction:column;align-items:stretch}.health-grid{grid-template-columns:1fr}.student-dialog{width:96vw;max-height:88vh}.student-form input,.student-form select,.student-form textarea{font-size:16px}.toolbar{padding-bottom:6px}.toolbar button,.toolbar input{min-height:34px}.month-cell.today{outline:2px solid #c7473d!important}
+}
+
+
+
+/* v30 學員管理柔和版 */
+.student-dialog{width:min(1120px,96vw)!important;}
+.student-dialog .dialog-body{background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%);}
+.student-head{padding:4px 2px 8px;border-bottom:1px dashed #eadfce;}
+.student-head h2::before{content:'🌿 ';font-size:16px}.student-tools{margin:12px 0 12px!important}.student-tools input{border:0!important;background:#fffaf1!important;box-shadow:inset 0 0 0 1px #eadfce,0 4px 12px rgba(90,70,45,.04);height:40px}.student-tools button{background:#fff3dc;border-color:#e6cfa9;color:#7a6042}.student-layout{grid-template-columns:280px 1fr!important;gap:14px!important}.student-list{background:#fffaf1!important;border:1px solid #eadfce!important;border-radius:24px!important;padding:10px!important}.student-item{border:0!important;background:#fffefb!important;border-radius:18px!important;box-shadow:0 3px 12px rgba(80,60,30,.04);padding:11px!important}.student-item:hover{background:#fff7e8!important}.student-form{border:0!important;background:transparent!important;padding:0!important;max-height:68vh!important}.student-section{background:rgba(255,253,248,.92);border:1px solid #eadfce;border-radius:24px;padding:15px;margin-bottom:12px;box-shadow:0 8px 24px rgba(80,60,30,.045)}.student-section-title{display:flex;align-items:center;gap:7px;margin:0 0 12px;font-size:14px;color:#7a6042;letter-spacing:.04em;font-weight:900}.student-section-title .leaf{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:999px;background:#f3eadb;font-size:12px}.soft-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.soft-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.soft-grid.one{grid-template-columns:1fr}.soft-field label,.health-row-title{display:block;font-size:11.5px;color:#8a7c6d;margin:0 0 5px;font-weight:700;letter-spacing:.02em}.soft-field input,.soft-field select,.soft-field textarea,.health-row input,.health-row textarea{width:100%;border:0!important;background:#fffaf1!important;border-radius:18px!important;padding:10px 12px!important;box-shadow:inset 0 0 0 1px #eadfce,0 2px 8px rgba(80,60,30,.035);color:#3d3933;outline:none;transition:.18s}.soft-field input:focus,.soft-field select:focus,.soft-field textarea:focus,.health-row input:focus,.health-row textarea:focus{background:#fffefb!important;box-shadow:inset 0 0 0 2px #d6ba8d,0 3px 12px rgba(185,155,114,.13)}.soft-note{font-size:10.5px;color:#a08d78;margin-top:4px;line-height:1.45}.required-dot{color:#bd695d;margin-left:2px}.health-soft-list{display:flex;flex-direction:column;gap:9px}.health-row{display:grid;grid-template-columns:190px 1fr;gap:10px;align-items:start;background:#fffaf1;border:1px solid #eadfce;border-radius:20px;padding:10px}.health-row-main{display:flex;align-items:center;gap:8px;min-height:38px}.health-row-main input[type="checkbox"]{width:18px;height:18px;accent-color:#b99b72}.health-row-main label{font-weight:900;color:#6f5b44;font-size:13px}.health-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.health-inputs.single{grid-template-columns:1fr}.student-actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(251,247,238,0),#fbf7ee 22%,#fbf7ee 100%);padding:14px 0 2px;margin-top:2px}.student-actions-inner{display:flex;justify-content:space-between;gap:8px;background:#fffefb;border:1px solid #eadfce;border-radius:999px;padding:8px;box-shadow:0 -4px 18px rgba(80,60,30,.06)}.student-actions-inner button{min-width:82px}.student-form input:disabled{background:#f3eee5!important;color:#8a7c6d!important}.student-birthday-row{grid-template-columns:1.2fr .8fr!important}
+@media(max-width:760px){.student-layout{grid-template-columns:1fr!important}.student-list{max-height:168px!important}.student-form{max-height:60vh!important}.student-section{border-radius:20px;padding:13px}.soft-grid,.soft-grid.three,.student-birthday-row{grid-template-columns:1fr!important}.health-row{grid-template-columns:1fr;border-radius:18px}.health-inputs{grid-template-columns:1fr}.student-actions-inner{border-radius:22px;flex-direction:column}.student-actions-inner>div{display:flex;gap:8px}.student-actions-inner button{flex:1;min-height:42px}.student-tools input,.soft-field input,.soft-field select,.soft-field textarea,.health-row input,.health-row textarea{font-size:16px!important}.student-section-title{font-size:13px}.health-row-main label{font-size:13px}}
+
+
+/* v32 學員列表主畫面＋移除月曆今日紅框 */
+.month-cell.today{outline:none!important;box-shadow:none!important;}
+.month-cell.today .date-no::after{content:''!important;}
+.student-total-chip{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;background:#f3eadb;color:#7a6042;border:1px solid #e6d5bd;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;box-shadow:0 3px 10px rgba(80,60,30,.04)}
+.student-layout.list-mode{display:block!important;}
+.student-layout.list-mode .student-form{display:none!important;}
+.student-layout.list-mode .student-list{max-height:66vh!important;width:100%;}
+.student-layout.form-mode{display:block!important;}
+.student-layout.form-mode .student-list{display:none!important;}
+.student-layout.form-mode .student-form{display:block!important;max-height:70vh!important;}
+.student-row-item{display:grid;grid-template-columns:1.3fr .8fr 1fr .8fr auto;gap:8px;align-items:center;border:0;background:#fffefb;border-radius:18px;box-shadow:0 3px 12px rgba(80,60,30,.045);padding:10px 12px;margin-bottom:8px;font-size:12px;}
+.student-row-item b{font-size:13px}.student-row-item small{color:var(--muted)}
+.student-row-label{font-size:10px;color:#a1907e;display:block;margin-bottom:2px}.student-row-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.student-list-head{display:grid;grid-template-columns:1.3fr .8fr 1fr .8fr auto;gap:8px;padding:6px 12px 8px;color:#9a8a78;font-size:11px;font-weight:800}.student-back-btn{background:#fffaf0!important;border-color:#eadfce!important;color:#7a6042!important}
+@media(max-width:760px){.student-tools{gap:8px}.student-total-chip{width:100%;min-height:38px}.student-row-item{grid-template-columns:1fr auto;gap:4px 8px}.student-row-item .student-row-meta{grid-column:1 / -1}.student-list-head{display:none}.student-row-item button{grid-row:1 / span 2;grid-column:2}.student-layout.list-mode .student-list{max-height:64vh!important}.student-layout.form-mode .student-form{max-height:68vh!important}}
+
+
+
+/* v35 預約登記＋教練日期記事柔和可愛版 */
+#editor.soft-work-dialog,#noteEditor.soft-work-dialog{width:min(760px,94vw)!important;max-height:92vh;overflow:auto;border-radius:28px!important;}
+.soft-work-dialog .dialog-body{background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%)!important;padding:18px!important;}
+.soft-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 10px;border-bottom:1px dashed #eadfce;margin-bottom:12px;}
+.soft-dialog-head h2{margin:0;font-size:17px;letter-spacing:.06em;color:#6f5b44;display:flex;align-items:center;gap:7px;}
+.soft-dialog-head h2::before{content:'🌿';font-size:16px;}
+.soft-dialog-close{position:static!important;transform:none!important;border:0!important;background:#fff1ee!important;color:#c7473d!important;font-size:18px!important;font-weight:900!important;width:32px!important;height:32px!important;border-radius:999px!important;padding:0!important;box-shadow:none!important;}
+.booking-section{background:rgba(255,253,248,.92);border:1px solid #eadfce;border-radius:24px;padding:15px;margin-bottom:12px;box-shadow:0 8px 24px rgba(80,60,30,.045)}
+.booking-section-title{display:flex;align-items:center;gap:7px;margin:0 0 12px;font-size:14px;color:#7a6042;letter-spacing:.04em;font-weight:900}
+.booking-section-title .leaf{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:999px;background:#f3eadb;font-size:12px}
+.booking-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.booking-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.booking-grid.one{grid-template-columns:1fr}
+.booking-field label{display:block;font-size:11.5px;color:#8a7c6d;margin:0 0 5px;font-weight:700;letter-spacing:.02em}
+.booking-field input,.booking-field select,.booking-field textarea{width:100%;border:0!important;background:#fffaf1!important;border-radius:18px!important;padding:10px 12px!important;box-shadow:inset 0 0 0 1px #eadfce,0 2px 8px rgba(80,60,30,.035);color:#3d3933;outline:none;transition:.18s;min-height:40px}
+.booking-field input:focus,.booking-field select:focus,.booking-field textarea:focus{background:#fffefb!important;box-shadow:inset 0 0 0 2px #d6ba8d,0 3px 12px rgba(185,155,114,.13)}
+.booking-note{font-size:10.5px;color:#a08d78;margin-top:5px;line-height:1.45}.booking-required{color:#bd695d;margin-left:2px}
+.booking-weekday-box{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.booking-weekday-box label{display:inline-flex!important;align-items:center;gap:3px;background:#fffaf0!important;border:1px solid #eadfce!important;border-radius:999px!important;padding:5px 9px!important;margin:0!important;color:#7a6042!important;font-weight:700!important;box-shadow:0 2px 8px rgba(80,60,30,.03)}
+.booking-actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(251,247,238,0),#fbf7ee 22%,#fbf7ee 100%);padding:14px 0 2px;margin-top:2px}
+.booking-actions-inner{display:flex;justify-content:space-between;gap:8px;background:#fffefb;border:1px solid #eadfce;border-radius:999px;padding:8px;box-shadow:0 -4px 18px rgba(80,60,30,.06)}
+.booking-actions-inner button{min-width:82px}.booking-subtle-btn{background:#fffaf0!important;border-color:#eadfce!important;color:#7a6042!important}
+@media(max-width:760px){#editor.soft-work-dialog,#noteEditor.soft-work-dialog{width:96vw!important;max-height:88vh}.soft-work-dialog .dialog-body{padding:14px!important}.booking-section{border-radius:20px;padding:13px}.booking-grid,.booking-grid.three{grid-template-columns:1fr!important}.booking-actions-inner{border-radius:22px;flex-direction:column}.booking-actions-inner>div{display:flex;gap:8px}.booking-actions-inner button{flex:1;min-height:42px}.booking-field input,.booking-field select,.booking-field textarea{font-size:16px!important}.booking-section-title{font-size:13px}}
+
+
+
+/* v36 最終風格統一修正：預約登記／教練日期記事／自主使用欄 */
+#editor.soft-work-dialog .soft-dialog-head h2,
+#noteEditor.soft-work-dialog .soft-dialog-head h2{color:#6f5b44!important;}
+#editor.soft-work-dialog .dialog-body,
+#noteEditor.soft-work-dialog .dialog-body{background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%)!important;}
+#editor.soft-work-dialog .booking-section,
+#noteEditor.soft-work-dialog .booking-section{background:rgba(255,253,248,.94)!important;border:1px solid #eadfce!important;border-radius:24px!important;box-shadow:0 8px 24px rgba(80,60,30,.045)!important;}
+#editor.soft-work-dialog .booking-field input,
+#editor.soft-work-dialog .booking-field select,
+#editor.soft-work-dialog .booking-field textarea,
+#noteEditor.soft-work-dialog .booking-field input,
+#noteEditor.soft-work-dialog .booking-field select,
+#noteEditor.soft-work-dialog .booking-field textarea{border:0!important;background:#fffaf1!important;border-radius:18px!important;box-shadow:inset 0 0 0 1px #eadfce,0 2px 8px rgba(80,60,30,.035)!important;}
+/* 固定課程星期：只保留勾選，不顯示膠囊底框 */
+.booking-weekday-box{gap:10px!important;align-items:center!important;}
+.booking-weekday-box label{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:2px 4px!important;color:#7a6042!important;font-weight:700!important;}
+.booking-weekday-box input[type="checkbox"]{accent-color:#b99b72;width:16px;height:16px;margin:0 3px 0 0;}
+/* 預約表 free自主使用欄底色與一般教練欄位一致 */
+.self-head{background:#fff7e8!important;color:#6f5b44!important;}
+.self-col{background:inherit!important;}
+.self-col.day-shade{background:#fffefd!important;}
+.self-col.day-shade-alt{background:#f6f1e9!important;}
+@media(max-width:760px){
+  #editor.soft-work-dialog .booking-section,
+  #noteEditor.soft-work-dialog .booking-section{border-radius:20px!important;padding:13px!important;}
+  .booking-weekday-box{gap:8px!important;}
+  .booking-weekday-box label{padding:3px 2px!important;min-height:28px;}
+  .booking-actions-inner button{min-height:44px!important;}
+}
+
+
+/* v37 重複類型星期：移除外框，只保留勾選欄與文字 */
+.booking-weekday-box{display:flex!important;gap:18px!important;flex-wrap:wrap!important;align-items:center!important;padding:4px 0!important;}
+.booking-weekday-box label,
+.booking-weekday-box .weekday-clean-label{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:2px 0!important;
+  margin:0!important;
+  color:#7a6042!important;
+  font-weight:700!important;
+}
+.booking-weekday-box input[type="checkbox"]{
+  appearance:auto!important;
+  -webkit-appearance:checkbox!important;
+  accent-color:#b99b72!important;
+  width:17px!important;
+  height:17px!important;
+  margin:0!important;
+  padding:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  border-radius:3px!important;
+}
+@media(max-width:760px){.booking-weekday-box{gap:14px!important}.booking-weekday-box label,.booking-weekday-box .weekday-clean-label{min-height:28px!important}}
+
+
+
+/* v38 重複類型星期勾選欄縮小：避免超出範圍 */
+.booking-weekday-box{
+  gap:12px!important;
+  row-gap:8px!important;
+  align-items:center!important;
+}
+.booking-weekday-box label,
+.booking-weekday-box .weekday-clean-label{
+  min-height:22px!important;
+  line-height:1.2!important;
+  padding:1px 0!important;
+  gap:5px!important;
+}
+.booking-weekday-box input[type="checkbox"],
+.booking-weekday-box .weekday{
+  width:13px!important;
+  height:13px!important;
+  min-width:13px!important;
+  min-height:13px!important;
+  max-width:13px!important;
+  max-height:13px!important;
+  flex:0 0 13px!important;
+  margin:0 3px 0 0!important;
+  padding:0!important;
+  transform:none!important;
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+}
+.booking-weekday-box span{
+  line-height:1.2!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px){
+  .booking-weekday-box{gap:10px!important;row-gap:8px!important;}
+  .booking-weekday-box label,.booking-weekday-box .weekday-clean-label{min-height:22px!important;font-size:12px!important;}
+  .booking-weekday-box input[type="checkbox"],.booking-weekday-box .weekday{width:12px!important;height:12px!important;min-width:12px!important;min-height:12px!important;max-width:12px!important;max-height:12px!important;flex-basis:12px!important;}
+}
+
 </style>
 </head>
 <body>
@@ -66,16 +226,15 @@ button,input,select,textarea{font-family:inherit}button{touch-action:manipulatio
 </div>
 <header id="appHeader" style="display:none">
   <div><h1>煦陽內部預約登記系統</h1><div class="sub">自動雲端同步版・本館/辦公室・教練課表・休假排事・衛教統計</div></div>
-  <div class="toolbar"><span class="status" id="roleBadge"></span><button class="mini" onclick="switchIdentity()">切換身份</button><button class="mini" onclick="prevWeek()">← 上週</button><input id="weekPicker" type="date" onchange="render()"><button class="mini" onclick="nextWeek()">下週 →</button><button class="primary mini" onclick="openEditor()">＋新增預約</button><button class="mini" onclick="openNoteEditor()">＋新增記事</button><button class="mini coach-only pink-btn" onclick="openMonthOverview()">本月預約總覽</button><button class="mini admin-only" onclick="openReportWork()">報表作業</button><button class="mini danger admin-only" onclick="clearAll()">清空</button></div>
+  <div class="toolbar"><span class="status" id="roleBadge"></span><button class="mini" onclick="switchIdentity()">切換身份</button><button class="mini" onclick="prevWeek()">← 上週</button><input id="weekPicker" type="date" onchange="render()"><button class="mini" onclick="nextWeek()">下週 →</button><button class="primary mini" onclick="openEditor()">＋新增預約</button><button class="mini" onclick="openNoteEditor()">＋新增記事</button><button class="mini coach-only pink-btn" onclick="openMonthOverview()">本月預約總覽</button><button class="mini student-btn" onclick="openStudentManager()">學員管理</button><button class="mini admin-only" onclick="openReportWork()">報表作業</button><button class="mini danger admin-only" onclick="clearAll()">清空</button></div>
 </header>
 <div id="appWrap" class="wrap" style="display:none">
-  <section class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；free自主使用欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
+  <section class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="zoom-tools no-print"><button class="mini" onclick="zoomSchedule(-0.08)">－</button><button class="mini" onclick="zoomSchedule(0.08)">＋</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；free自主使用欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
   <aside class="side no-print">
     <section class="card"><h2 id="dashboardTitle">我的本月統計分析</h2><div class="stats"><div class="stat-grid"><div class="stat"><span class="small" id="classStatLabel">學員名稱</span><b id="classCount">0</b></div><div class="stat"><span class="small">衛教堂數</span><b id="eduCount">0</b></div></div><canvas id="chart" height="210"></canvas><div id="chartFallback" class="hint"></div></div></section>
     <section class="card"><h2 id="historyTitle">我的預約記事歷程</h2><div id="historyList" class="history-list"></div></section>
 
     <section class="card" id="reportPanel"><h2>輸出資料（報表）</h2><div class="form">
-      <label>查調月份（含日期區間）</label><input id="reportMonth" type="month" onchange="setReportMonthRange();renderReport(false)">
       <div class="row"><div><label>開始日期</label><input id="reportStart" type="date" onchange="renderReport(false)"></div><div><label>結束日期</label><input id="reportEnd" type="date" onchange="renderReport(false)"></div></div>
       <div id="reportCoachWrap"><label>教練</label><select id="reportCoach" onchange="renderReport(false)"><option value="">全部教練</option></select></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="mini primary" onclick="openReportResult()">查詢報表</button><button class="mini" onclick="exportCSV()">輸出明細CSV</button><button class="mini" onclick="exportSummaryCSV()">輸出堂數統計CSV</button></div>
@@ -145,18 +304,144 @@ button,input,select,textarea{font-family:inherit}button{touch-action:manipulatio
   <div class="dialog-actions"><button onclick="closeAdminGame()">取消</button><div><button onclick="clearAdminPin()">重投</button><button class="primary" onclick="checkAdminPin()">確認進場</button></div></div>
 </div></dialog>
 
-<dialog id="editor"><div class="dialog-body"><h2 style="margin:0 0 8px">預約/排事登記</h2><input type="hidden" id="editId"><div class="row"><div><label>日期</label><input id="date" type="date"></div><div><label>開始時間</label><select id="time"></select></div></div><div class="row"><div><label>結束時間</label><select id="endTime"></select></div><div><label>教練</label><select id="coach"></select></div></div><label>學員/事項名稱</label><input id="name" placeholder="例：王小明、休假、衛教講座"><div class="row"><div><label>類型</label><select id="type"><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select></div><div><label>場地</label><select id="venue"><option value="auto">自動安排</option><option value="A">本館</option><option value="B">辦公室</option><option value="none">無</option></select></div></div><label>備註</label><input id="note" placeholder="可填付款、特殊狀況、器材需求">
-<div class="row"><div><label>重複類型</label><select id="repeatType" onchange="toggleRepeatFields()"><option value="none">不重複</option><option value="weekly">每週固定</option></select></div><div id="repeatEndWrap"><label>重複結束日期</label><input id="repeatEnd" type="date"></div></div>
-<div id="weeklyFields"><label>指定星期</label><div id="weekdayBox" style="display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)"></div>
-<div class="hint">選每週固定後，再指定星期與結束日期。</div></div>
-<div class="hint" id="venueHint"></div><div class="dialog-actions"><button class="danger" onclick="deleteEntry()">刪除</button><div><button onclick="safeCloseDialog('editor')">取消</button><button class="primary" onclick="saveEntry()">儲存</button></div></div></div></dialog>
-<dialog id="noteEditor"><div class="dialog-body"><h2 style="margin:0 0 8px">教練日期記事</h2><input type="hidden" id="noteId"><div class="row"><div><label>日期</label><input id="noteDate" type="date"></div><div><label>教練</label><select id="noteCoach"></select></div></div><label>提醒內容</label><input id="noteText" placeholder="例：小美生日、阿明繳費提醒"><div class="dialog-actions"><button class="danger" onclick="deleteNote()">刪除</button><div><button onclick="safeCloseDialog('noteEditor')">取消</button><button class="primary" onclick="saveCoachNote()">儲存記事</button></div></div></div></dialog>
+<dialog id="editor" class="soft-work-dialog"><div class="dialog-body">
+  <div class="soft-dialog-head"><h2>預約登記</h2><button class="soft-dialog-close" title="關閉" onclick="safeCloseDialog('editor')">×</button></div>
+  <input type="hidden" id="editId">
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">時</span>預約時間</h3>
+    <div class="booking-grid three">
+      <div class="booking-field"><label>日期<span class="booking-required">＊</span></label><input id="date" type="date"></div>
+      <div class="booking-field"><label>開始時間<span class="booking-required">＊</span></label><select id="time"></select></div>
+      <div class="booking-field"><label>結束時間<span class="booking-required">＊</span></label><select id="endTime"></select></div>
+    </div>
+  </section>
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">課</span>預約內容</h3>
+    <div class="booking-grid">
+      <div class="booking-field"><label>教練<span class="booking-required">＊</span></label><select id="coach"></select></div>
+      <div class="booking-field"><label>場地</label><select id="venue"><option value="auto">自動安排</option><option value="A">本館</option><option value="B">辦公室</option><option value="none">無</option></select></div>
+    </div>
+    <div class="booking-grid" style="margin-top:10px">
+      <div class="booking-field"><label>類型<span class="booking-required">＊</span></label><select id="type"><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select></div>
+      <div class="booking-field"><label>學員／事項名稱<span class="booking-required">＊</span></label><input id="name" placeholder="例：王小花、休假、衛教講座"></div>
+    </div>
+    <div class="booking-grid one" style="margin-top:10px"><div class="booking-field"><label>備註</label><input id="note" placeholder="可填付款、特殊狀況、器材需求"></div></div>
+    <div class="booking-note" id="venueHint"></div>
+  </section>
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">固</span>固定課程</h3>
+    <div class="booking-grid">
+      <div class="booking-field"><label>重複類型</label><select id="repeatType" onchange="toggleRepeatFields()"><option value="none">不重複</option><option value="weekly">每週固定</option></select></div>
+      <div class="booking-field" id="repeatEndWrap"><label>重複結束日期</label><input id="repeatEnd" type="date"></div>
+    </div>
+    <div id="weeklyFields" style="margin-top:10px">
+      <div class="booking-field"><label>指定星期</label><div id="weekdayBox" class="booking-weekday-box"></div></div>
+      <div class="booking-note">選每週固定後，再指定星期與結束日期。</div>
+    </div>
+  </section>
+  <div class="booking-actions"><div class="booking-actions-inner"><button class="danger" onclick="deleteEntry()">刪除</button><div><button class="booking-subtle-btn" onclick="safeCloseDialog('editor')">取消</button><button class="primary" onclick="saveEntry()">儲存</button></div></div></div>
+</div></dialog>
+<dialog id="noteEditor" class="soft-work-dialog"><div class="dialog-body">
+  <div class="soft-dialog-head"><h2>教練日期記事</h2><button class="soft-dialog-close" title="關閉" onclick="safeCloseDialog('noteEditor')">×</button></div>
+  <input type="hidden" id="noteId">
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">記</span>提醒內容</h3>
+    <div class="booking-grid">
+      <div class="booking-field"><label>日期<span class="booking-required">＊</span></label><input id="noteDate" type="date"></div>
+      <div class="booking-field"><label>教練<span class="booking-required">＊</span></label><select id="noteCoach"></select></div>
+    </div>
+    <div class="booking-grid one" style="margin-top:10px"><div class="booking-field"><label>提醒內容<span class="booking-required">＊</span></label><input id="noteText" placeholder="例：小美生日、阿明繳費提醒"></div></div>
+    <div class="booking-note">記事會顯示在對應日期下方，方便提醒生日、繳費或特殊事項。</div>
+  </section>
+  <div class="booking-actions"><div class="booking-actions-inner"><button class="danger" onclick="deleteNote()">刪除</button><div><button class="booking-subtle-btn" onclick="safeCloseDialog('noteEditor')">取消</button><button class="primary" onclick="saveCoachNote()">儲存記事</button></div></div></div>
+</div></dialog>
+
+<dialog id="studentDialog" class="student-dialog"><div class="dialog-body">
+  <div class="student-head"><h2 style="margin:0">學員管理</h2><button class="dialog-x static-x" title="關閉" onclick="safeCloseDialog('studentDialog')">×</button></div>
+  <div class="student-tools"><input id="studentSearch" placeholder="搜尋姓名、電話、教練..." oninput="renderStudents()"><span id="studentTotal" class="student-total-chip">學員總人數：0</span><button class="mini primary" onclick="newStudentForm()">＋新增學員</button></div>
+  <div class="student-layout">
+    <div id="studentList" class="student-list"></div>
+    <div class="student-form">
+      <input type="hidden" id="studentId">
+
+      <section class="student-section">
+        <h3 class="student-section-title"><span class="leaf">基</span>學員基本資料</h3>
+        <div class="soft-grid three">
+          <div class="soft-field"><label>姓名<span class="required-dot">＊</span></label><input id="stName" required placeholder="例：王小花"></div>
+          <div class="soft-field"><label>性別<span class="required-dot">＊</span></label><select id="stGender"><option value="">請選擇</option><option>女</option><option>男</option><option>其他/不透露</option></select></div>
+          <div class="soft-field"><label>連絡電話<span class="required-dot">＊</span></label><input id="stPhone" inputmode="tel" placeholder="例：09xx-xxx-xxx"></div>
+        </div>
+        <div class="soft-grid three" style="margin-top:10px">
+          <div class="soft-field"><label>身分證字號</label><input id="stIdNo" placeholder="可選填"></div>
+          <div class="soft-field"><label>所屬教練</label><select id="stCoach"></select></div>
+          <div class="soft-field"><label>共課家人姓名</label><input id="stFamily" placeholder="若有共課家人可填寫"></div>
+        </div>
+        <div class="soft-grid student-birthday-row" style="margin-top:10px">
+          <div class="soft-field"><label>出生年月日</label><input id="stBirthday" type="date" onchange="updateStudentAge()"><div class="soft-note">西元年＝民國年＋1911；年齡會依生日自動計算。</div></div>
+          <div class="soft-field"><label>年齡</label><input id="stAge" disabled placeholder="依生日自動計算"></div>
+        </div>
+        <div class="soft-grid one" style="margin-top:10px"><div class="soft-field"><label>地址</label><input id="stAddress" placeholder="可選填通訊地址"></div></div>
+      </section>
+
+      <section class="student-section">
+        <h3 class="student-section-title"><span class="leaf">急</span>緊急聯絡</h3>
+        <div class="soft-grid three">
+          <div class="soft-field"><label>緊急聯絡人</label><input id="stEmergencyName" placeholder="例：王媽媽"></div>
+          <div class="soft-field"><label>關係</label><input id="stEmergencyRelation" placeholder="例：母女、配偶"></div>
+          <div class="soft-field"><label>緊急聯絡人電話</label><input id="stEmergencyPhone" inputmode="tel" placeholder="例：09xx-xxx-xxx"></div>
+        </div>
+      </section>
+
+      <section class="student-section">
+        <h3 class="student-section-title"><span class="leaf">健</span>健康資料</h3>
+        <div class="health-soft-list">
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stDiabetes"><label for="stDiabetes">糖尿病</label></div>
+            <div class="health-inputs"><input id="stHbA1c" placeholder="糖化血色素"><input id="stFastingGlucose" placeholder="飯前血糖"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stHypertension"><label for="stHypertension">高血壓</label></div>
+            <div class="health-inputs"><input id="stSBP" placeholder="收縮壓"><input id="stDBP" placeholder="舒張壓"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stHeartDisease"><label for="stHeartDisease">心臟相關疾病</label></div>
+            <div class="health-inputs single"><input id="stHeartNote" placeholder="簡述疾病類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stScoliosis"><label for="stScoliosis">脊椎側彎</label></div>
+            <div class="health-inputs single"><input id="stScoliosisNote" placeholder="簡述側彎類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stJointIssue"><label for="stJointIssue">肌肉、關節問題</label></div>
+            <div class="health-inputs single"><input id="stJointNote" placeholder="簡述疾病類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stBoneLoss"><label for="stBoneLoss">骨質流失／疏鬆</label></div>
+            <div class="health-inputs single"><input id="stBoneNote" placeholder="骨密度數值／量測部位"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stSurgery"><label for="stSurgery">三年內動過任何手術</label></div>
+            <div class="health-inputs single"><input id="stSurgeryNote" placeholder="簡述手術類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stMedication"><label for="stMedication">長期服用藥物</label></div>
+            <div class="health-inputs single"><input id="stMedicationNote" placeholder="簡述藥物用途"></div>
+          </div>
+          <div class="soft-field"><label>其他健康狀況（若有請說明）</label><textarea id="stOtherHealth" rows="3" placeholder="例如：近期不適、特殊注意事項、醫師提醒等"></textarea></div>
+        </div>
+      </section>
+
+      <div class="student-actions"><div class="student-actions-inner"><button class="danger" onclick="deleteStudent()">刪除</button><div><button class="student-back-btn" onclick="setStudentMode('list');renderStudents()">返回列表</button><button onclick="newStudentForm()">清空</button><button class="primary" onclick="saveStudent()">儲存學員</button></div></div></div>
+    </div>
+  </div>
+</div></dialog>
+
 <div id="toast" class="toast">已儲存</div>
 <script>
-const KEY='sunrise_reservation_v2', NOTE_KEY='sunrise_coach_notes_v2', LOG_KEY='sunrise_activity_logs_v1', HOLIDAY_KEY='sunrise_holidays_v2', COACH_KEY='sunrise_coaches_v2', VERSION_KEY='sunrise_data_version_v2', FB_CONFIG_KEY='sunrise_firebase_config_v1', WORKSPACE_KEY='sunrise_workspace_id_v1', ROLE_KEY='sunrise_role_v1', ROLE_COACH_KEY='sunrise_role_coach_v1';
+const KEY='sunrise_reservation_v2', NOTE_KEY='sunrise_coach_notes_v2', LOG_KEY='sunrise_activity_logs_v1', HOLIDAY_KEY='sunrise_holidays_v2', COACH_KEY='sunrise_coaches_v2', STUDENT_KEY='sunrise_students_v1', VERSION_KEY='sunrise_data_version_v2', FB_CONFIG_KEY='sunrise_firebase_config_v1', WORKSPACE_KEY='sunrise_workspace_id_v1', ROLE_KEY='sunrise_role_v1', ROLE_COACH_KEY='sunrise_role_coach_v1';
 const AUTO_FIREBASE_CONFIG={apiKey:'AIzaSyBMrqHb-yYkFlwJ9eSKcZ2q-k8xavGecK4',authDomain:'sunrise-booking.firebaseapp.com',projectId:'sunrise-booking',storageBucket:'sunrise-booking.firebasestorage.app',messagingSenderId:'400891552645',appId:'1:400891552645:web:7414b107fc23b3c4915aec',measurementId:'G-3S04GQ5YWV'};
 const AUTO_WORKSPACE_ID='sunrise-main';
-let entries=safeParse(localStorage.getItem(KEY),[]), coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]), activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]), chart=null, lastVersion=localStorage.getItem(VERSION_KEY)||'';
+let entries=safeParse(localStorage.getItem(KEY),[]), coachNotes=safeParse(localStorage.getItem(NOTE_KEY),[]), students=safeParse(localStorage.getItem(STUDENT_KEY),[]), activityLogs=safeParse(localStorage.getItem(LOG_KEY),[]), chart=null, lastVersion=localStorage.getItem(VERSION_KEY)||'', scheduleZoom=(localStorage.getItem('sunrise_schedule_zoom')?Number(localStorage.getItem('sunrise_schedule_zoom')):(window.innerWidth<=760?.58:1));
 let db=null, cloudUnsub=null, cloudEnabled=false, applyingRemote=false, pushTimer=null, cloudDocRef=null;
 let pendingRepeatDeleteId=null;
 let currentRole=sessionStorage.getItem(ROLE_KEY)||localStorage.getItem(ROLE_KEY)||'', currentCoach=localStorage.getItem(ROLE_COACH_KEY)||''; if(currentRole==='admin'&&!sessionStorage.getItem(ROLE_KEY)){currentRole='';localStorage.removeItem(ROLE_KEY)}
@@ -173,18 +458,18 @@ function el(id){return document.getElementById(id)}function newId(){return'id_'+
 function monday(d){d=new Date(d);if(isNaN(d))d=new Date();const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d}function fmt(d){return new Date(d).toISOString().slice(0,10)}function md(d){return`${d.getMonth()+1}/${d.getDate()}（${['日','一','二','三','四','五','六'][d.getDay()]}）`}function mins(t){let[h,m]=t.split(':').map(Number);return h*60+m}function addMins(t,add){const total=mins(t)+Number(add);return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0')}function venueName(v){return v==='A'?'本館':(v==='B'?'辦公室':(v==='none'?'無':v))}function durationFromTimes(start,end){return Math.max(30, mins(end)-mins(start))}function covers(e,t){const m=mins(t),s=mins(e.time);return m>=s&&m<s+Number(e.duration)}function actorName(){return isAdmin()?'Admin':(currentCoach||'未登入')}function logActivity(action,detail='',targetCoach=''){const now=new Date();activityLogs.push({id:newId(),ts:now.toISOString(),month:now.toISOString().slice(0,7),actor:actorName(),role:currentRole||'',targetCoach:targetCoach||'',action,detail});activityLogs=activityLogs.slice(-800)}function entrySummary(e){if(!e)return'';return `${e.date} ${e.time}-${addMins(e.time,e.duration||60)}｜${e.coach}｜${e.name||''}`}
 
 function persist(msg='已自動儲存'){saveLocal();const v=String(Date.now());localStorage.setItem(VERSION_KEY,v);lastVersion=v;if(el('saveStatus'))el('saveStatus').textContent='點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；free自主使用欄位所有教練皆可新增。';toast(msg);if(cloudEnabled&&!applyingRemote)scheduleCloudPush()}
-function saveLocal(){localStorage.setItem(KEY,JSON.stringify(entries));localStorage.setItem(NOTE_KEY,JSON.stringify(coachNotes));localStorage.setItem(LOG_KEY,JSON.stringify(activityLogs.slice(-800)));localStorage.setItem(COACH_KEY,coaches.join(','));localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays))}
-function statePayload(){return {entries,coachNotes,activityLogs:activityLogs.slice(-800),coaches,holidays,updatedAt:new Date().toISOString(),device:(navigator.userAgent||'browser').slice(0,80)}}
+function saveLocal(){localStorage.setItem(KEY,JSON.stringify(entries));localStorage.setItem(NOTE_KEY,JSON.stringify(coachNotes));localStorage.setItem(STUDENT_KEY,JSON.stringify(students));localStorage.setItem(LOG_KEY,JSON.stringify(activityLogs.slice(-800)));localStorage.setItem(COACH_KEY,coaches.join(','));localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays))}
+function statePayload(){return {entries,coachNotes,activityLogs:activityLogs.slice(-800),coaches,holidays,students,updatedAt:new Date().toISOString(),device:(navigator.userAgent||'browser').slice(0,80)}}
 function applyState(data){
   if(!data)return;
   applyingRemote=true;
-  entries=data.entries||[];coachNotes=data.coachNotes||[];activityLogs=data.activityLogs||activityLogs||[];normalizeFreeEntries();
+  entries=data.entries||[];coachNotes=data.coachNotes||[];activityLogs=data.activityLogs||activityLogs||[];students=Array.isArray(data.students)?data.students:students;normalizeFreeEntries();
   if(Array.isArray(data.coaches)&&data.coaches.length)coaches=normalizeCoaches(data.coaches);
   ensureCoachFallback();
   if(data.holidays)holidays=data.holidays;
   saveLocal();fillSelects();
   const ct=el('coachText'); if(ct)ct.value=coaches.join(', ');
-  loadHolidays();render();applyingRemote=false
+  loadHolidays();render();if(typeof renderStudents==='function')renderStudents();applyingRemote=false
 }
 function setCloudStatus(text){const node=el('cloudStatus');if(node)node.textContent=text}
 function scheduleCloudPush(){clearTimeout(pushTimer);pushTimer=setTimeout(pushCloudNow,650)}
@@ -209,7 +494,7 @@ function loadCoaches(){
 }
 function fillSelects(){
   ensureCoachFallback();
-  ['coach','filterCoach','noteCoach','loginCoach','reportCoach'].forEach(id=>{
+  ['coach','filterCoach','noteCoach','loginCoach','reportCoach','stCoach'].forEach(id=>{
     const box=el(id);if(!box)return;
     const oldVal=box.value;
     const first=(id==='filterCoach'||id==='reportCoach')?'<option value="">全部教練</option>':'';
@@ -220,7 +505,7 @@ function fillSelects(){
   if(el('time'))el('time').innerHTML=times.map(t=>`<option>${t}</option>`).join('');
   if(el('endTime'))el('endTime').innerHTML=times.filter(t=>mins(t)>mins('07:00')).map(t=>`<option>${t}</option>`).join('');
 }
-function fillWeekdays(){const names=['日','一','二','三','四','五','六'];el('weekdayBox').innerHTML=names.map((n,i)=>`<label style="display:inline-flex;align-items:center;gap:3px;background:#fffaf0;border:1px solid var(--line);border-radius:999px;padding:4px 8px"><input type="checkbox" class="weekday" value="${i}">週${n}</label>`).join('')}
+function fillWeekdays(){const names=['日','一','二','三','四','五','六'];el('weekdayBox').innerHTML=names.map((n,i)=>`<label class="weekday-clean-label"><input type="checkbox" class="weekday" value="${i}"><span>週${n}</span></label>`).join('')}
 function getCheckedWeekdays(){return Array.from(document.querySelectorAll('.weekday:checked')).map(x=>Number(x.value))}
 function setCheckedWeekdays(vals=[]){document.querySelectorAll('.weekday').forEach(x=>x.checked=vals.includes(Number(x.value)))}
 function resetRepeat(date){el('repeatType').value='none';el('repeatEnd').value=date||'';setCheckedWeekdays(date?[new Date(date+'T00:00:00').getDay()]:[]);toggleRepeatFields()}
@@ -292,8 +577,8 @@ function render(){
   for(let i=0;i<7;i++){
     let d=new Date(start);d.setDate(start.getDate()+i);
     const date=fmt(d),holiday=holidays[date]?`<span class="holiday-tag">${esc(holidays[date])}</span>`:'',today=date===fmt(new Date())?' today-title':'';
-    const todayText=date===fmt(new Date())?'<span class="today-tag">Today</span>':'';
-    html+=`<th class="day-title${today}" colspan="${visible.length+1}">${md(d)}${todayText}${holiday}</th>`
+    const birthdayText=birthdayTagsForDate(date);
+    html+=`<th class="day-title${today}" colspan="${visible.length+1}">${md(d)}${holiday}${birthdayText}</th>`
   }
   html+='</tr><tr><th class="time">時間</th>';
   for(let i=0;i<7;i++){
@@ -459,8 +744,6 @@ function closeReportWork(){el('reportWorkDialog').close();placeReportPanel()}
 function initReportDates(){
   if(!el('reportStart'))return;
   const base=new Date(el('weekPicker')?.value||new Date());
-  const ym=base.getFullYear()+'-'+String(base.getMonth()+1).padStart(2,'0');
-  if(el('reportMonth')&&!el('reportMonth').value)el('reportMonth').value=ym;
   const first=new Date(base.getFullYear(),base.getMonth(),1);
   const last=new Date(base.getFullYear(),base.getMonth()+1,0);
   if(!el('reportStart').value)el('reportStart').value=fmt(first);
@@ -579,12 +862,51 @@ function openDayOverview(date){
   safeOpenDialog('dayDetailDialog');
 }
 
-function backupJSON(){downloadBlob(JSON.stringify({entries,coachNotes,activityLogs,coaches,holidays},null,2),'煦陽預約系統備份.json','application/json')}
-function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);entries=data.entries||[];coachNotes=data.coachNotes||[];activityLogs=data.activityLogs||[];normalizeFreeEntries();if(data.coaches){coaches=data.coaches;localStorage.setItem(COACH_KEY,coaches.join(','));fillSelects();el('coachText').value=coaches.join(', ')}if(data.holidays){holidays=data.holidays;localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays));loadHolidays()}persist('已匯入備份');render()}catch(e){alert('匯入失敗：檔案格式不正確')}};r.readAsText(f)}
+function backupJSON(){downloadBlob(JSON.stringify({entries,coachNotes,students,activityLogs,coaches,holidays},null,2),'煦陽預約系統備份.json','application/json')}
+function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);entries=data.entries||[];coachNotes=data.coachNotes||[];students=data.students||students||[];activityLogs=data.activityLogs||[];normalizeFreeEntries();if(data.coaches){coaches=data.coaches;localStorage.setItem(COACH_KEY,coaches.join(','));fillSelects();el('coachText').value=coaches.join(', ')}if(data.holidays){holidays=data.holidays;localStorage.setItem(HOLIDAY_KEY,JSON.stringify(holidays));loadHolidays()}persist('已匯入備份');render()}catch(e){alert('匯入失敗：檔案格式不正確')}};r.readAsText(f)}
 function downloadBlob(content,name,type){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click()}
 function clearAll(){if(!isAdmin()){alert('只有管理員可以清空資料');return}if(confirm('會清空此瀏覽器內所有預約與記事資料，確定嗎？')){entries=[];coachNotes=[];persist('已清空');render()}}
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('close',()=>{if(el('coach'))el('coach').disabled=false;if(el('noteCoach'))el('noteCoach').disabled=false}));
+
+
+/* ===== v29 overrides: zoom, collision, students, birthday ===== */
+function applyScheduleZoom(){const table=el('schedule');if(!table)return;table.style.zoom=scheduleZoom;table.style.transformOrigin='top left';localStorage.setItem('sunrise_schedule_zoom',String(scheduleZoom));}
+function zoomSchedule(delta){scheduleZoom=Math.max(.5,Math.min(1.45,+(scheduleZoom+delta).toFixed(2)));applyScheduleZoom();toast(`縮放 ${Math.round(scheduleZoom*100)}%`)}
+let pinchStartDist=0,pinchStartZoom=1;
+function bindPinchZoom(){const wrap=document.querySelector('.schedule-wrap');if(!wrap||wrap.dataset.pinchBound)return;wrap.dataset.pinchBound='1';wrap.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchStartZoom=scheduleZoom;}},{passive:true});wrap.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchStartDist){const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);scheduleZoom=Math.max(.5,Math.min(1.45,+(pinchStartZoom*(dist/pinchStartDist)).toFixed(2)));applyScheduleZoom();}},{passive:true});}
+function entryEnd(e){return mins(e.time)+Number(e.duration||60)}
+function nextStartsAtEnd(e){return entries.some(x=>x.id!==e.id&&x.date===e.date&&x.coach===e.coach&&mins(x.time)===entryEnd(e));}
+function visualEnd(e){return entryEnd(e)+(nextStartsAtEnd(e)?0:30)}
+function visualRowspan(e){return Math.max(1,Math.ceil((visualEnd(e)-mins(e.time))/30))}
+function visualCovers(e,t){const mt=mins(t),st=mins(e.time);return mt>st&&mt<visualEnd(e)}
+function realOverlap(a,b){const as=mins(a.time),ae=as+Number(a.duration||60),bs=mins(b.time),be=bs+Number(b.duration||60);return as<be&&bs<ae}
+function hasColumnConflict(candidate,ignoreId=''){return entries.some(e=>e.id!==ignoreId&&e.date===candidate.date&&e.coach===candidate.coach&&realOverlap(candidate,e));}
+function canPlaceCandidate(candidate,ignoreId=''){if(hasColumnConflict(candidate,ignoreId))return {ok:false,msg:'此時段已有預約，無法覆蓋。'};if(candidate.venue&&candidate.venue!=='auto'&&candidate.venue!=='none'&&!venueFits(candidate.date,candidate.time,candidate.duration,candidate.venue,candidate.type,ignoreId))return {ok:false,msg:'此時段已有預約，無法覆蓋。'};return {ok:true,msg:''}}
+const __oldDropEntry=dropEntry;
+dropEntry=function(ev,date,time,coach){ev.preventDefault();ev.stopPropagation();ev.currentTarget.classList.remove('drag-over');const id=ev.dataTransfer.getData('text/plain');const e=entries.find(x=>x.id===id);if(!e)return;if(!canEditEntry(e)){alert('教練身份只能拖曳自己的課程');return}if(isCoach()&&coach!==SELF_TRAINING)coach=currentCoach;const proposed={...e,date,time,coach};if(proposed.venue==='auto'||!proposed.venue)proposed.venue=suggestedVenue(date,time,proposed.duration,id,proposed.type);const check=canPlaceCandidate(proposed,id);if(!check.ok){alert(check.msg);render();return}Object.assign(e,proposed);entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));logActivity('拖曳調整時段',entrySummary(e),e.coach);persist('已拖曳調整時段');render()}
+const __oldSaveEntry=saveEntry;
+saveEntry=function(){try{const editingId=el('editId').value;if(isCoach()&&el('coach').value!==SELF_TRAINING)el('coach').value=currentCoach;if(editingId){const old=entries.find(x=>x.id===editingId);if(!canEditEntry(old)){alert('教練身份只能修改自己的課程');return}}if(!el('date').value){alert('請選擇日期');return}if(!el('name').value.trim()){alert('請填寫學員或事項名稱');return}if(mins(el('endTime').value)<=mins(el('time').value)){alert('結束時間必須晚於開始時間');return}const duration=durationFromTimes(el('time').value,el('endTime').value);const makeEntry=(date,id='',seriesId='')=>{const realId=id||newId();const rawVenue=el('venue').value;const type=el('type').value;const suggested=type==='rest'?'none':suggestedVenue(date,el('time').value,duration,realId,type);const v=rawVenue==='auto'?suggested:rawVenue;if(v==='full')throw new Error('此時段已有預約，無法覆蓋。');const candidate={id:realId,date,time:el('time').value,duration:String(duration),coach:el('coach').value,name:el('name').value.trim(),type,venue:v,note:el('note').value.trim(),seriesId:seriesId||''};const check=canPlaceCandidate(candidate,realId);if(!check.ok)throw new Error(check.msg);return candidate};if(editingId){const saved=makeEntry(el('date').value,editingId);entries=entries.filter(x=>x.id!==editingId).concat(saved);logActivity('修改預約',entrySummary(saved),saved.coach);persist('預約已儲存');}else if(el('repeatType').value==='weekly'){const end=el('repeatEnd').value;if(!end){alert('請選擇重複結束日期');return}const weekdays=getCheckedWeekdays();if(!weekdays.length){alert('請至少指定一個星期');return}const begin=new Date(el('date').value+'T00:00:00'), finish=new Date(end+'T00:00:00');if(finish<begin){alert('重複結束日期不可早於開始日期');return}const seriesId='series_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);let added=[];for(let d=new Date(begin);d<=finish;d.setDate(d.getDate()+1)){if(weekdays.includes(d.getDay())) added.push(makeEntry(fmt(d),'',seriesId))}entries=entries.concat(added);logActivity('新增固定課程',`${el('name').value.trim()}｜${added.length}筆｜${el('date').value} 至 ${el('repeatEnd').value}`,el('coach').value);persist(`固定課程已新增 ${added.length} 筆`);}else{const saved=makeEntry(el('date').value);entries=entries.concat(saved);logActivity('新增預約',entrySummary(saved),saved.coach);persist('預約已儲存');}entries=entries.sort((a,b)=>(a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach));safeCloseDialog('editor');render()}catch(err){console.error(err);alert(err.message||'儲存失敗')}}
+function birthdayTagsForDate(date){const [_,mm,dd]=date.split('-');const list=(students||[]).filter(s=>s.birthday&&s.birthday.slice(5,10)===`${mm}-${dd}`).slice(0,3);return list.map(s=>`<span class="birthday-tag">🎂 ${esc(s.name)}生日</span>`).join('')}
+function studentAge(bday){if(!bday)return'';const b=new Date(bday+'T00:00:00'),n=new Date();let age=n.getFullYear()-b.getFullYear();const m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))age--;return age>=0?age:''}
+function updateStudentAge(){el('stAge').value=studentAge(el('stBirthday').value)}
+function blankStudent(){return {id:'',coach:isAdmin()?(coaches[0]||''):currentCoach,name:'',gender:'',phone:'',idNo:'',birthday:'',address:'',family:'',emergencyName:'',emergencyRelation:'',emergencyPhone:'',diabetes:false,hbA1c:'',fastingGlucose:'',hypertension:false,sbp:'',dbp:'',heartDisease:false,heartNote:'',scoliosis:false,scoliosisNote:'',jointIssue:false,jointNote:'',boneLoss:false,boneNote:'',surgery:false,surgeryNote:'',medication:false,medicationNote:'',otherHealth:''}}
+function studentVisibleList(){const q=(el('studentSearch')?.value||'').toLowerCase().trim();return (students||[]).filter(s=>(isAdmin()||s.coach===currentCoach)&&(!q||[s.name,s.phone,s.coach,s.gender].join(' ').toLowerCase().includes(q))).sort((a,b)=>(a.name||'').localeCompare(b.name||''));}
+function setStudentMode(mode){const layout=document.querySelector('.student-layout');if(!layout)return;layout.classList.toggle('list-mode',mode==='list');layout.classList.toggle('form-mode',mode==='form');}
+function openStudentManager(){fillSelects();if(isCoach())el('stCoach').value=currentCoach;setStudentMode('list');renderStudents();safeOpenDialog('studentDialog')}
+function renderStudents(){const box=el('studentList');if(!box)return;const list=studentVisibleList();const total=el('studentTotal');if(total)total.textContent=`學員總人數：${list.length}`;if(!list.length){box.innerHTML='<div class="history-empty">尚無學員資料，點右上「＋新增學員」建立第一筆。</div>';return;}box.innerHTML=`<div class="student-list-head"><span>姓名</span><span>性別/年齡</span><span>電話</span><span>教練</span><span></span></div>`+list.map(s=>`<div class="student-row-item"><div class="student-row-value"><span class="student-row-label">姓名</span><b>${esc(s.name||'未命名')}</b></div><div class="student-row-value student-row-meta"><span class="student-row-label">性別/年齡</span>${esc(s.gender||'-')}${s.birthday?`｜${studentAge(s.birthday)}歲`:''}</div><div class="student-row-value student-row-meta"><span class="student-row-label">電話</span>${esc(s.phone||'-')}</div><div class="student-row-value student-row-meta"><span class="student-row-label">教練</span>${esc(s.coach||'-')}</div><button class="mini primary" onclick="loadStudent('${s.id}')">編輯</button></div>`).join('')}
+function setStudentForm(s){el('studentId').value=s.id||'';el('stName').value=s.name||'';el('stGender').value=s.gender||'';el('stPhone').value=s.phone||'';el('stCoach').value=s.coach||currentCoach||coaches[0]||'';el('stCoach').disabled=isCoach();el('stBirthday').value=s.birthday||'';el('stAge').value=studentAge(s.birthday);el('stIdNo').value=s.idNo||'';el('stAddress').value=s.address||'';el('stFamily').value=s.family||'';el('stEmergencyName').value=s.emergencyName||'';el('stEmergencyRelation').value=s.emergencyRelation||'';el('stEmergencyPhone').value=s.emergencyPhone||'';['Diabetes','Hypertension','HeartDisease','Scoliosis','JointIssue','BoneLoss','Surgery','Medication'].forEach(k=>{const key=k.charAt(0).toLowerCase()+k.slice(1);el('st'+k).checked=!!s[key]});el('stHbA1c').value=s.hbA1c||'';el('stFastingGlucose').value=s.fastingGlucose||'';el('stSBP').value=s.sbp||'';el('stDBP').value=s.dbp||'';el('stHeartNote').value=s.heartNote||'';el('stScoliosisNote').value=s.scoliosisNote||'';el('stJointNote').value=s.jointNote||'';el('stBoneNote').value=s.boneNote||'';el('stSurgeryNote').value=s.surgeryNote||'';el('stMedicationNote').value=s.medicationNote||'';el('stOtherHealth').value=s.otherHealth||'';}
+function newStudentForm(){setStudentForm(blankStudent());setStudentMode('form')}
+function loadStudent(id){const s=students.find(x=>x.id===id);if(!s)return;if(isCoach()&&s.coach!==currentCoach){alert('只能查看自己的學員');return}setStudentForm(s);setStudentMode('form')}
+function readStudentForm(){return {id:el('studentId').value||newId(),coach:isCoach()?currentCoach:el('stCoach').value,name:el('stName').value.trim(),gender:el('stGender').value,phone:el('stPhone').value.trim(),idNo:el('stIdNo').value.trim(),birthday:el('stBirthday').value,address:el('stAddress').value.trim(),family:el('stFamily').value.trim(),emergencyName:el('stEmergencyName').value.trim(),emergencyRelation:el('stEmergencyRelation').value.trim(),emergencyPhone:el('stEmergencyPhone').value.trim(),diabetes:el('stDiabetes').checked,hbA1c:el('stHbA1c').value.trim(),fastingGlucose:el('stFastingGlucose').value.trim(),hypertension:el('stHypertension').checked,sbp:el('stSBP').value.trim(),dbp:el('stDBP').value.trim(),heartDisease:el('stHeartDisease').checked,heartNote:el('stHeartNote').value.trim(),scoliosis:el('stScoliosis').checked,scoliosisNote:el('stScoliosisNote').value.trim(),jointIssue:el('stJointIssue').checked,jointNote:el('stJointNote').value.trim(),boneLoss:el('stBoneLoss').checked,boneNote:el('stBoneNote').value.trim(),surgery:el('stSurgery').checked,surgeryNote:el('stSurgeryNote').value.trim(),medication:el('stMedication').checked,medicationNote:el('stMedicationNote').value.trim(),otherHealth:el('stOtherHealth').value.trim(),updatedAt:new Date().toISOString()}}
+function saveStudent(){const s=readStudentForm();if(!s.name||!s.gender||!s.phone){alert('姓名、性別、連絡電話為必填');return}const old=students.find(x=>x.id===s.id);if(old&&isCoach()&&old.coach!==currentCoach){alert('只能修改自己的學員');return}students=students.filter(x=>x.id!==s.id).concat(s);logActivity(old?'修改學員資料':'新增學員資料',`${s.coach}｜${s.name}`,s.coach);persist('學員資料已儲存');setStudentMode('list');renderStudents();render()}
+function deleteStudent(){const id=el('studentId').value;if(!id){newStudentForm();return}const old=students.find(x=>x.id===id);if(!old)return;if(isCoach()&&old.coach!==currentCoach){alert('只能刪除自己的學員');return}if(confirm(`確定刪除 ${old.name} 的學員資料？`)){students=students.filter(x=>x.id!==id);logActivity('刪除學員資料',`${old.coach}｜${old.name}`,old.coach);persist('學員資料已刪除');setStudentMode('list');renderStudents();render()}}
+const __oldApplyRoleUI=applyRoleUI;
+applyRoleUI=function(){__oldApplyRoleUI();setTimeout(()=>{fillSelects();if(isCoach()&&el('stCoach'))el('stCoach').value=currentCoach;applyScheduleZoom();bindPinchZoom();},0)}
+const __oldRender=render;
+render=function(){__oldRender();applyScheduleZoom();}
+
 init();
+setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 </script>
 </body>
 </html>
