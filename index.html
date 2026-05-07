@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-<title>煦陽內部預約登記系統 v43 手機登入長頁版</title>
+<title>煦陽內部預約登記系統 v45 手機表格對齊版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -275,6 +275,87 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
   #schedule .time{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:0 1px!important;}
   #schedule th,#schedule td{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;overflow:hidden!important;}
   #schedule .coach-head{font-size:clamp(7px, calc(9.8px * var(--schedule-scale, .58)), 10px)!important;}
+}
+
+
+/* v45 手機預約卡片不撐開表格：固定格線、文字跟縮放縮小、內容超出裁切 */
+@media(max-width:760px){
+  #schedule{
+    table-layout:fixed!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+  }
+  #schedule th,#schedule td{
+    box-sizing:border-box!important;
+    height:25px!important;
+    min-height:25px!important;
+    max-height:25px!important;
+    overflow:hidden!important;
+    vertical-align:middle!important;
+    line-height:1.05!important;
+  }
+  #schedule .day-title{
+    height:42px!important;
+    min-height:42px!important;
+    max-height:42px!important;
+  }
+  #schedule .coach-head{
+    height:34px!important;
+    min-height:34px!important;
+    max-height:34px!important;
+  }
+  #schedule td.merged{
+    position:relative!important;
+    padding:0!important;
+    overflow:hidden!important;
+    vertical-align:top!important;
+  }
+  #schedule td.merged .entry{
+    position:absolute!important;
+    inset:2px!important;
+    width:auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:calc(100% - 4px)!important;
+    margin:0!important;
+    padding:2px 1px!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:1px!important;
+    box-sizing:border-box!important;
+    line-height:1.02!important;
+  }
+  #schedule td.merged .entry-name{
+    display:-webkit-box!important;
+    -webkit-box-orient:vertical!important;
+    -webkit-line-clamp:2!important;
+    overflow:hidden!important;
+    word-break:break-all!important;
+    overflow-wrap:anywhere!important;
+    max-width:100%!important;
+    line-height:1.02!important;
+    font-size:clamp(6px, calc(10px * var(--schedule-scale, .68)), 9.5px)!important;
+    font-weight:800!important;
+  }
+  #schedule td.merged .entry-meta{
+    display:-webkit-box!important;
+    -webkit-box-orient:vertical!important;
+    -webkit-line-clamp:2!important;
+    overflow:hidden!important;
+    max-width:100%!important;
+    line-height:1.02!important;
+    font-size:clamp(5.5px, calc(8px * var(--schedule-scale, .68)), 7.5px)!important;
+    margin-top:0!important;
+  }
+  #schedule td.merged .entry *{
+    max-width:100%!important;
+  }
+  #schedule .slot{
+    overflow:hidden!important;
+  }
 }
 
 </style>
