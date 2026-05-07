@@ -3,11 +3,403 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
-<title>煦陽內部預約登記系統 v54 手機App完整版</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<title>煦陽內部預約登記系統 v57 手機統計課表分流版</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+/* v57 behavior overrides */
+(function(){
+  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
+  if(oldApply){
+    applyRoleUI = function(){
+      oldApply();
+      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
+      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
+      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
+        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+        renderMobileApp();
+      }
+      if(typeof isAdmin==='function' && isAdmin()){
+        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
+      }
+    }
+  }
+
+  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
+  if(typeof isMobileApp === 'function'){
+    const oldIsMobileApp = isMobileApp;
+    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
+  }
+
+  // Header 僅顯示教練名稱與系統名稱，不顯示年月
+  renderMobileHeader = function(){
+    const user=el('mobileUserName');
+    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
+    const title=el('mobileMonthTitle');
+    if(title){
+      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
+      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
+    }
+  };
+
+  // 首頁移除本月快速統計與今日快速統計摘要
+  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
+  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
+
+  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
+  function syncStatsDefaults(){
+    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
+    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
+    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
+    const sel=el('mobileStatsCoach');
+    if(sel){
+      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
+    }
+  }
+  window.syncMobileStatsValues = function(){
+    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
+    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
+    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
+  };
+  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
+  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
+
+  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
+  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
+  renderMobileApp = function(){
+    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
+    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+mobileTab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
+    renderMobileHeader();
+    renderMobileMonthOverview();
+    renderMobileTodayAgenda();
+    renderMobileStats();
+    syncMobileReportDefaults();
+    syncStatsDefaults();
+    if(mobileTab==='booking'){
+      if(el('filterCoach')) el('filterCoach').value='';
+      if(el('filterType')) el('filterType').value='';
+      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
+    }
+  };
+
+  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
+  setMobileTab = function(tab){
+    mobileTab=tab;
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+tab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    renderMobileApp();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // 手機課表預設比例：讓一整日更容易看見
+  if(typeof defaultScheduleZoom==='function'){
+    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
+  }
+})();
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js">
+
+/* v57 behavior overrides */
+(function(){
+  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
+  if(oldApply){
+    applyRoleUI = function(){
+      oldApply();
+      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
+      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
+      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
+        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+        renderMobileApp();
+      }
+      if(typeof isAdmin==='function' && isAdmin()){
+        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
+      }
+    }
+  }
+
+  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
+  if(typeof isMobileApp === 'function'){
+    const oldIsMobileApp = isMobileApp;
+    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
+  }
+
+  // Header 僅顯示教練名稱與系統名稱，不顯示年月
+  renderMobileHeader = function(){
+    const user=el('mobileUserName');
+    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
+    const title=el('mobileMonthTitle');
+    if(title){
+      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
+      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
+    }
+  };
+
+  // 首頁移除本月快速統計與今日快速統計摘要
+  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
+  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
+
+  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
+  function syncStatsDefaults(){
+    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
+    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
+    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
+    const sel=el('mobileStatsCoach');
+    if(sel){
+      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
+    }
+  }
+  window.syncMobileStatsValues = function(){
+    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
+    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
+    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
+  };
+  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
+  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
+
+  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
+  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
+  renderMobileApp = function(){
+    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
+    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+mobileTab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
+    renderMobileHeader();
+    renderMobileMonthOverview();
+    renderMobileTodayAgenda();
+    renderMobileStats();
+    syncMobileReportDefaults();
+    syncStatsDefaults();
+    if(mobileTab==='booking'){
+      if(el('filterCoach')) el('filterCoach').value='';
+      if(el('filterType')) el('filterType').value='';
+      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
+    }
+  };
+
+  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
+  setMobileTab = function(tab){
+    mobileTab=tab;
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+tab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    renderMobileApp();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // 手機課表預設比例：讓一整日更容易看見
+  if(typeof defaultScheduleZoom==='function'){
+    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
+  }
+})();
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js">
+
+/* v57 behavior overrides */
+(function(){
+  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
+  if(oldApply){
+    applyRoleUI = function(){
+      oldApply();
+      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
+      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
+      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
+        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+        renderMobileApp();
+      }
+      if(typeof isAdmin==='function' && isAdmin()){
+        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
+      }
+    }
+  }
+
+  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
+  if(typeof isMobileApp === 'function'){
+    const oldIsMobileApp = isMobileApp;
+    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
+  }
+
+  // Header 僅顯示教練名稱與系統名稱，不顯示年月
+  renderMobileHeader = function(){
+    const user=el('mobileUserName');
+    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
+    const title=el('mobileMonthTitle');
+    if(title){
+      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
+      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
+    }
+  };
+
+  // 首頁移除本月快速統計與今日快速統計摘要
+  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
+  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
+
+  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
+  function syncStatsDefaults(){
+    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
+    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
+    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
+    const sel=el('mobileStatsCoach');
+    if(sel){
+      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
+    }
+  }
+  window.syncMobileStatsValues = function(){
+    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
+    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
+    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
+  };
+  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
+  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
+
+  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
+  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
+  renderMobileApp = function(){
+    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
+    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+mobileTab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
+    renderMobileHeader();
+    renderMobileMonthOverview();
+    renderMobileTodayAgenda();
+    renderMobileStats();
+    syncMobileReportDefaults();
+    syncStatsDefaults();
+    if(mobileTab==='booking'){
+      if(el('filterCoach')) el('filterCoach').value='';
+      if(el('filterType')) el('filterType').value='';
+      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
+    }
+  };
+
+  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
+  setMobileTab = function(tab){
+    mobileTab=tab;
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+tab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    renderMobileApp();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // 手機課表預設比例：讓一整日更容易看見
+  if(typeof defaultScheduleZoom==='function'){
+    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
+  }
+})();
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js">
+
+/* v57 behavior overrides */
+(function(){
+  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
+  if(oldApply){
+    applyRoleUI = function(){
+      oldApply();
+      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
+      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
+      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
+        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+        renderMobileApp();
+      }
+      if(typeof isAdmin==='function' && isAdmin()){
+        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
+      }
+    }
+  }
+
+  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
+  if(typeof isMobileApp === 'function'){
+    const oldIsMobileApp = isMobileApp;
+    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
+  }
+
+  // Header 僅顯示教練名稱與系統名稱，不顯示年月
+  renderMobileHeader = function(){
+    const user=el('mobileUserName');
+    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
+    const title=el('mobileMonthTitle');
+    if(title){
+      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
+      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
+    }
+  };
+
+  // 首頁移除本月快速統計與今日快速統計摘要
+  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
+  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
+
+  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
+  function syncStatsDefaults(){
+    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
+    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
+    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
+    const sel=el('mobileStatsCoach');
+    if(sel){
+      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
+    }
+  }
+  window.syncMobileStatsValues = function(){
+    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
+    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
+    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
+  };
+  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
+  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
+
+  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
+  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
+  renderMobileApp = function(){
+    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
+    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+mobileTab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
+    renderMobileHeader();
+    renderMobileMonthOverview();
+    renderMobileTodayAgenda();
+    renderMobileStats();
+    syncMobileReportDefaults();
+    syncStatsDefaults();
+    if(mobileTab==='booking'){
+      if(el('filterCoach')) el('filterCoach').value='';
+      if(el('filterType')) el('filterType').value='';
+      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
+    }
+  };
+
+  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
+  setMobileTab = function(tab){
+    mobileTab=tab;
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+tab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    renderMobileApp();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // 手機課表預設比例：讓一整日更容易看見
+  if(typeof defaultScheduleZoom==='function'){
+    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
+  }
+})();
+
+</script>
 <style>
 :root{
   --bg:#f8f6f1; --paper:#fffefb; --paper2:#fbf8f1; --ink:#3d3933; --muted:#82786b; --line:#e7ded0;
@@ -1083,6 +1475,81 @@ body.is-logged-out{
   .mobile-today-agenda-section{margin-bottom:12px!important;}
 }
 
+
+
+/* v57 手機版：教練 App 化、管理員維持桌機版、統計與課表重構 */
+@media(max-width:760px){
+  body.role-admin.is-logged-in{padding-bottom:0!important;}
+  body.role-admin.is-logged-in #mobileAppHome,
+  body.role-admin.is-logged-in #mobileBottomNav{display:none!important;}
+  body.role-admin.is-logged-in #appHeader{display:flex!important;position:sticky!important;top:0!important;z-index:2000!important;}
+  body.role-admin.is-logged-in #appHeader>div:first-child{display:block!important;}
+  body.role-admin.is-logged-in #appWrap{display:grid!important;grid-template-columns:1fr 340px!important;padding:18px!important;gap:16px!important;}
+  body.role-admin.is-logged-in #desktopScheduleCard{display:block!important;order:initial!important;}
+  body.role-admin.is-logged-in .side{display:flex!important;order:initial!important;}
+  body.role-admin.is-logged-in .schedule-wrap{max-height:calc(100vh - 178px)!important;overflow:auto!important;}
+
+  body.role-coach.is-logged-in #appHeader{display:none!important;}
+  body.role-coach.is-logged-in #appWrap{display:flex!important;flex-direction:column!important;padding:10px 10px 0!important;gap:12px!important;}
+  body.role-coach.is-logged-in #mobileAppHome{display:block!important;order:1!important;}
+  body.role-coach.is-logged-in #mobileBottomNav{display:flex!important;}
+
+  .mobile-app-header-v57{display:block!important;padding:10px 4px 12px!important;border-bottom:0!important;}
+  .mobile-header-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;}
+  .mobile-header-row-top{margin-bottom:6px!important;}
+  .mobile-user-name{font-size:17px!important;font-weight:900!important;color:#3d3933!important;line-height:1.25!important;}
+  .mobile-switch-btn{min-height:34px!important;padding:7px 12px!important;font-size:12px!important;border-radius:999px!important;background:#fffefb!important;border:1px solid #eadfce!important;color:#7a6042!important;box-shadow:0 3px 10px rgba(80,60,30,.045)!important;white-space:nowrap!important;}
+  .mobile-system-name{font-size:13px!important;color:#8a7c6d!important;letter-spacing:.04em!important;line-height:1.45!important;}
+  .mobile-header-mini-actions{display:flex!important;gap:7px!important;flex-shrink:0!important;}
+  .mobile-header-mini-actions button{min-height:34px!important;padding:7px 10px!important;border-radius:999px!important;background:#fffaf1!important;border:1px solid #eadfce!important;color:#7a6042!important;font-size:12px!important;box-shadow:0 3px 10px rgba(80,60,30,.035)!important;white-space:nowrap!important;}
+  .mobile-month-title-hidden{display:none!important;}
+
+  /* 首頁只保留月曆總覽與今日行程入口，移除本月快速統計 */
+  body.mobile-tab-month #mobileTodaySummary{display:none!important;}
+  #mobileMonthPage .mobile-soft-section:has(#mobileQuickStats){display:none!important;}
+  #mobileQuickStats{display:none!important;}
+
+  /* 教練手機：預約頁改回桌機式完整課表 */
+  body.role-coach.mobile-tab-booking #mobileAppHome{display:none!important;}
+  body.role-coach.mobile-tab-booking #desktopScheduleCard{display:block!important;order:1!important;}
+  body.role-coach.mobile-tab-booking .side{display:none!important;}
+  body.role-coach.mobile-tab-booking #appHeader{display:none!important;}
+  body.role-coach.mobile-tab-booking #desktopScheduleCard .controls{position:sticky!important;top:0!important;z-index:1500!important;background:#fffdf8!important;padding:9px!important;gap:8px!important;}
+  body.role-coach.mobile-tab-booking #desktopScheduleCard .controls select,
+  body.role-coach.mobile-tab-booking #desktopScheduleCard .controls button{min-height:38px!important;font-size:13px!important;padding:8px 11px!important;}
+  body.role-coach.mobile-tab-booking #desktopScheduleCard .controls .hint{display:none!important;}
+  body.role-coach.mobile-tab-booking .schedule-wrap{height:calc(100dvh - 150px)!important;max-height:none!important;overflow:auto!important;border-radius:18px!important;background:#fffefb!important;}
+  body.role-coach.mobile-tab-booking #schedule th,
+  body.role-coach.mobile-tab-booking #schedule td{width:92px!important;min-width:92px!important;max-width:92px!important;height:48px!important;min-height:48px!important;max-height:48px!important;font-size:12px!important;}
+  body.role-coach.mobile-tab-booking #schedule .time{width:58px!important;min-width:58px!important;max-width:58px!important;font-size:12px!important;}
+  body.role-coach.mobile-tab-booking #schedule .day-title{height:52px!important;min-height:52px!important;max-height:52px!important;font-size:13px!important;}
+  body.role-coach.mobile-tab-booking #schedule .coach-head{height:42px!important;min-height:42px!important;max-height:42px!important;font-size:12px!important;top:52px!important;}
+  body.role-coach.mobile-tab-booking #schedule .start-entry{padding:4px 5px!important;text-align:left!important;}
+  body.role-coach.mobile-tab-booking #schedule .entry-name{font-size:11px!important;line-height:1.15!important;text-align:left!important;}
+  body.role-coach.mobile-tab-booking #schedule .entry-meta{font-size:9px!important;line-height:1.15!important;text-align:left!important;}
+
+  /* 隱藏手機單日卡片式內容與日期卡片列 */
+  #mobileBookingPage .mobile-day-switcher,
+  #mobileBookingPage #mobileDateStrip,
+  #mobileBookingPage .mobile-single-table-section,
+  #mobileBookingPage #mobileAgendaList{display:none!important;}
+
+  /* 統計頁：直向長頁卡片、日期區間加大，不使用內部卷軸 */
+  body.mobile-tab-stats #mobileAppHome{display:block!important;}
+  body.mobile-tab-stats #mobileMonthPage,
+  body.mobile-tab-stats #mobileBookingPage,
+  body.mobile-tab-stats #mobileReportBlock{display:none!important;}
+  body.mobile-tab-stats #mobileStatsBlock{display:block!important;}
+  #mobileStatsBlock{padding:16px!important;border-radius:26px!important;height:auto!important;max-height:none!important;overflow:visible!important;}
+  #mobileStatsBlock .mobile-stat-cards{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin-bottom:14px!important;}
+  .mobile-stats-report-card{margin-top:16px!important;padding:14px!important;background:#fffaf1!important;border:1px solid #eadfce!important;border-radius:22px!important;box-shadow:0 6px 18px rgba(80,60,30,.04)!important;}
+  .mobile-stats-report-card h3{font-size:16px!important;margin:0 0 12px!important;}
+  .mobile-date-field{display:block!important;margin:0 0 12px!important;font-size:13px!important;color:#8a7c6d!important;font-weight:800!important;}
+  .mobile-date-field input,.mobile-date-field select{width:100%!important;min-height:48px!important;margin-top:6px!important;border:0!important;background:#fffefb!important;border-radius:18px!important;padding:10px 13px!important;box-shadow:inset 0 0 0 1px #eadfce!important;font-size:16px!important;color:#3d3933!important;}
+  .mobile-stats-actions{display:flex!important;flex-direction:column!important;gap:9px!important;margin-top:10px!important;}
+  .mobile-stats-actions button{width:100%!important;min-height:48px!important;font-size:15px!important;}
+}
+
 </style>
 </head>
 <body class="is-logged-out">
@@ -1106,17 +1573,19 @@ body.is-logged-out{
 <div id="appWrap" class="wrap" style="display:none">
   
   <section id="mobileAppHome" class="mobile-app-shell no-print">
-    <div class="mobile-app-header">
-      <div>
+    <div class="mobile-app-header mobile-app-header-v57">
+      <div class="mobile-header-row mobile-header-row-top">
         <div class="mobile-user-name" id="mobileUserName">Akiko</div>
-        <button type="button" class="mobile-month-btn" onclick="setMobileTab('month')"><span id="mobileMonthTitle">2026年5月</span> ▾</button>
+        <button type="button" class="mobile-switch-btn" onclick="switchIdentity()">切換身分</button>
+      </div>
+      <div class="mobile-header-row mobile-header-row-bottom">
         <div class="mobile-system-name">煦陽內部預約系統</div>
+        <div class="mobile-header-mini-actions">
+          <button type="button" onclick="openStudentManager()">學員管理</button>
+          <button type="button" onclick="openNoteEditor()">新增記事</button>
+        </div>
       </div>
-      <div class="mobile-header-actions mobile-header-actions-v55">
-        <button type="button" title="切換身分" onclick="switchIdentity()">切換身分</button>
-        <button type="button" title="學員管理" onclick="openStudentManager()">學員管理</button>
-        <button type="button" title="新增記事" onclick="openNoteEditor()">新增記事</button>
-      </div>
+      <span id="mobileMonthTitle" class="mobile-month-title-hidden" aria-hidden="true">2026年5月</span>
     </div>
 
     <section id="mobileMonthPage" class="mobile-page mobile-page-month">
@@ -1166,6 +1635,14 @@ body.is-logged-out{
       <h3>統計</h3>
       <div id="mobileStatsCards" class="mobile-stat-cards"></div>
       <div class="mobile-chart-wrap"><canvas id="mobileChart" height="170"></canvas></div>
+      <div class="mobile-stats-report-card">
+        <h3>區間報表查詢</h3>
+        <label class="mobile-date-field">開始日期<input id="mobileStatsStart" type="date"></label>
+        <label class="mobile-date-field">結束日期<input id="mobileStatsEnd" type="date"></label>
+        <div id="mobileStatsCoachWrap" class="mobile-date-field"><label>教練<select id="mobileStatsCoach"></select></label></div>
+        <div class="mobile-action-row mobile-stats-actions"><button class="primary" onclick="syncMobileStatsAndOpen()">查詢報表</button><button onclick="syncMobileStatsAndExport()">輸出CSV</button></div>
+        <p class="hint">可用於本月課程統計、衛教統計、教練堂數統計、CSV 匯出與區間報表查詢。</p>
+      </div>
     </section>
 
     <section id="mobileReportBlock" class="mobile-page mobile-soft-section mobile-page-query">
@@ -2110,6 +2587,104 @@ render=function(){
 
 init();
 setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
+
+
+/* v57 behavior overrides */
+(function(){
+  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
+  if(oldApply){
+    applyRoleUI = function(){
+      oldApply();
+      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
+      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
+      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
+        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+        renderMobileApp();
+      }
+      if(typeof isAdmin==='function' && isAdmin()){
+        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
+      }
+    }
+  }
+
+  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
+  if(typeof isMobileApp === 'function'){
+    const oldIsMobileApp = isMobileApp;
+    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
+  }
+
+  // Header 僅顯示教練名稱與系統名稱，不顯示年月
+  renderMobileHeader = function(){
+    const user=el('mobileUserName');
+    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
+    const title=el('mobileMonthTitle');
+    if(title){
+      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
+      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
+    }
+  };
+
+  // 首頁移除本月快速統計與今日快速統計摘要
+  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
+  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
+
+  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
+  function syncStatsDefaults(){
+    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
+    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
+    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
+    const sel=el('mobileStatsCoach');
+    if(sel){
+      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
+    }
+  }
+  window.syncMobileStatsValues = function(){
+    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
+    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
+    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
+  };
+  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
+  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
+
+  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
+  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
+  renderMobileApp = function(){
+    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
+    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+mobileTab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
+    renderMobileHeader();
+    renderMobileMonthOverview();
+    renderMobileTodayAgenda();
+    renderMobileStats();
+    syncMobileReportDefaults();
+    syncStatsDefaults();
+    if(mobileTab==='booking'){
+      if(el('filterCoach')) el('filterCoach').value='';
+      if(el('filterType')) el('filterType').value='';
+      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
+    }
+  };
+
+  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
+  setMobileTab = function(tab){
+    mobileTab=tab;
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.add('mobile-tab-'+tab);
+    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    renderMobileApp();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // 手機課表預設比例：讓一整日更容易看見
+  if(typeof defaultScheduleZoom==='function'){
+    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
+  }
+})();
+
 </script>
 </body>
 </html>
