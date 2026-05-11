@@ -4,453 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
 <title>煦陽內部預約登記系統 v93 薪資單一教練查詢限制版</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js">
-
-/* v57 behavior overrides */
-(function(){
-  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
-  if(oldApply){
-    applyRoleUI = function(){
-      oldApply();
-      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
-      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
-      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
-        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-        renderMobileApp();
-      }
-      if(typeof isAdmin==='function' && isAdmin()){
-        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
-      }
-    }
-  }
-
-  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
-  if(typeof isMobileApp === 'function'){
-    const oldIsMobileApp = isMobileApp;
-    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
-  }
-
-  // Header 僅顯示教練名稱與系統名稱，不顯示年月
-  renderMobileHeader = function(){
-    const user=el('mobileUserName');
-    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
-    const title=el('mobileMonthTitle');
-    if(title){
-      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
-      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
-    }
-  };
-
-  // 首頁移除本月快速統計與今日快速統計摘要
-  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
-  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
-
-  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
-  function syncStatsDefaults(){
-    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
-    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
-    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
-    const sel=el('mobileStatsCoach');
-    if(sel){
-      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
-    }
-  }
-  window.syncMobileStatsValues = function(){
-    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
-    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
-    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
-  };
-  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
-  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
-
-  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
-  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
-  renderMobileApp = function(){
-    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
-    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+mobileTab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
-    renderMobileHeader();
-    renderMobileMonthOverview();
-    renderMobileTodayAgenda();
-    renderMobileStats();
-    syncMobileReportDefaults();
-    syncStatsDefaults();
-    if(mobileTab==='booking'){
-      if(el('filterCoach')) el('filterCoach').value='';
-      if(el('filterType')) el('filterType').value='';
-      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
-    }
-  };
-
-  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
-  setMobileTab = function(tab){
-    mobileTab=tab;
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+tab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-    renderMobileApp();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  // 手機課表預設比例：讓一整日更容易看見
-  if(typeof defaultScheduleZoom==='function'){
-    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
-  }
-})();
-
-
-/* v99 薪資作業明細修正 */
-(function(){
-
-window.salaryNotes = window.salaryNotes || {};
-
-window.loadSalaryNotes = function(){
-  try{
-    salaryNotes = JSON.parse(localStorage.getItem('salaryNotes') || '{}');
-  }catch(e){
-    salaryNotes = {};
-  }
-};
-
-window.saveSalaryNote = function(key, value){
-  salaryNotes[key] = value;
-  localStorage.setItem('salaryNotes', JSON.stringify(salaryNotes));
-
-  if(window.db && db.collection){
-    try{
-      db.collection('salaryNotes').doc(key).set({
-        note:value,
-        updatedAt:new Date().toISOString()
-      });
-    }catch(err){}
-  }
-
-  if(window.toast){
-    toast('備註已儲存');
-  }else{
-    alert('備註已儲存');
-  }
-};
-
-window.renderEditableSalaryNote = function(key, value=''){
-  const saved = salaryNotes[key] || value || '';
-  return `
-    <div>
-      <textarea class="salary-note-input" id="salary_note_${key}">${saved}</textarea>
-      <button class="salary-save-btn"
-        onclick="saveSalaryNote('${key}', document.getElementById('salary_note_${key}').value)">
-        儲存備註
-      </button>
-    </div>
-  `;
-};
-
-window.loadSalaryNotes();
-
-})();
-
-</script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js">
-
-/* v57 behavior overrides */
-(function(){
-  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
-  if(oldApply){
-    applyRoleUI = function(){
-      oldApply();
-      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
-      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
-      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
-        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-        renderMobileApp();
-      }
-      if(typeof isAdmin==='function' && isAdmin()){
-        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
-      }
-    }
-  }
-
-  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
-  if(typeof isMobileApp === 'function'){
-    const oldIsMobileApp = isMobileApp;
-    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
-  }
-
-  // Header 僅顯示教練名稱與系統名稱，不顯示年月
-  renderMobileHeader = function(){
-    const user=el('mobileUserName');
-    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
-    const title=el('mobileMonthTitle');
-    if(title){
-      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
-      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
-    }
-  };
-
-  // 首頁移除本月快速統計與今日快速統計摘要
-  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
-  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
-
-  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
-  function syncStatsDefaults(){
-    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
-    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
-    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
-    const sel=el('mobileStatsCoach');
-    if(sel){
-      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
-    }
-  }
-  window.syncMobileStatsValues = function(){
-    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
-    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
-    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
-  };
-  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
-  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
-
-  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
-  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
-  renderMobileApp = function(){
-    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
-    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+mobileTab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
-    renderMobileHeader();
-    renderMobileMonthOverview();
-    renderMobileTodayAgenda();
-    renderMobileStats();
-    syncMobileReportDefaults();
-    syncStatsDefaults();
-    if(mobileTab==='booking'){
-      if(el('filterCoach')) el('filterCoach').value='';
-      if(el('filterType')) el('filterType').value='';
-      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
-    }
-  };
-
-  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
-  setMobileTab = function(tab){
-    mobileTab=tab;
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+tab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-    renderMobileApp();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  // 手機課表預設比例：讓一整日更容易看見
-  if(typeof defaultScheduleZoom==='function'){
-    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
-  }
-})();
-
-</script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js">
-
-/* v57 behavior overrides */
-(function(){
-  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
-  if(oldApply){
-    applyRoleUI = function(){
-      oldApply();
-      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
-      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
-      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
-        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-        renderMobileApp();
-      }
-      if(typeof isAdmin==='function' && isAdmin()){
-        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
-      }
-    }
-  }
-
-  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
-  if(typeof isMobileApp === 'function'){
-    const oldIsMobileApp = isMobileApp;
-    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
-  }
-
-  // Header 僅顯示教練名稱與系統名稱，不顯示年月
-  renderMobileHeader = function(){
-    const user=el('mobileUserName');
-    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
-    const title=el('mobileMonthTitle');
-    if(title){
-      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
-      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
-    }
-  };
-
-  // 首頁移除本月快速統計與今日快速統計摘要
-  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
-  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
-
-  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
-  function syncStatsDefaults(){
-    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
-    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
-    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
-    const sel=el('mobileStatsCoach');
-    if(sel){
-      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
-    }
-  }
-  window.syncMobileStatsValues = function(){
-    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
-    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
-    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
-  };
-  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
-  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
-
-  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
-  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
-  renderMobileApp = function(){
-    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
-    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+mobileTab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
-    renderMobileHeader();
-    renderMobileMonthOverview();
-    renderMobileTodayAgenda();
-    renderMobileStats();
-    syncMobileReportDefaults();
-    syncStatsDefaults();
-    if(mobileTab==='booking'){
-      if(el('filterCoach')) el('filterCoach').value='';
-      if(el('filterType')) el('filterType').value='';
-      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
-    }
-  };
-
-  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
-  setMobileTab = function(tab){
-    mobileTab=tab;
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+tab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-    renderMobileApp();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  // 手機課表預設比例：讓一整日更容易看見
-  if(typeof defaultScheduleZoom==='function'){
-    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
-  }
-})();
-
-</script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js">
-
-/* v57 behavior overrides */
-(function(){
-  const oldApply = typeof applyRoleUI === 'function' ? applyRoleUI : null;
-  if(oldApply){
-    applyRoleUI = function(){
-      oldApply();
-      document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
-      document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
-      if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
-        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-        renderMobileApp();
-      }
-      if(typeof isAdmin==='function' && isAdmin()){
-        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-        if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
-      }
-    }
-  }
-
-  // 管理員手機版不使用 App UI；只有教練身分才使用手機 App UI
-  if(typeof isMobileApp === 'function'){
-    const oldIsMobileApp = isMobileApp;
-    isMobileApp = function(){ return oldIsMobileApp() && (typeof isCoach==='function' && isCoach()); };
-  }
-
-  // Header 僅顯示教練名稱與系統名稱，不顯示年月
-  renderMobileHeader = function(){
-    const user=el('mobileUserName');
-    if(user) user.textContent=(typeof isAdmin==='function'&&isAdmin())?'Admin 管理員':(currentCoach||'Coach');
-    const title=el('mobileMonthTitle');
-    if(title){
-      const base=new Date((mobileSelectedDate||el('weekPicker')?.value||fmt(new Date()))+'T00:00:00');
-      title.textContent=`${base.getFullYear()}年${base.getMonth()+1}月`;
-    }
-  };
-
-  // 首頁移除本月快速統計與今日快速統計摘要
-  renderMobileTodaySummary = function(){ const box=el('mobileTodaySummary'); if(box) box.innerHTML=''; };
-  renderMobileQuickStats = function(){ const box=el('mobileQuickStats'); if(box) box.innerHTML=''; };
-
-  // 統計頁使用日期區間查詢；預設同步桌機報表欄位
-  function syncStatsDefaults(){
-    if(el('mobileStatsStart')) el('mobileStatsStart').value = el('reportStart')?.value || '';
-    if(el('mobileStatsEnd')) el('mobileStatsEnd').value = el('reportEnd')?.value || '';
-    const wrap=el('mobileStatsCoachWrap'); if(wrap) wrap.style.display=(typeof isAdmin==='function'&&isAdmin())?'block':'none';
-    const sel=el('mobileStatsCoach');
-    if(sel){
-      sel.innerHTML='<option value="">全部教練</option>'+(coaches||[]).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
-      if(el('reportCoach')) sel.value=el('reportCoach').value||'';
-    }
-  }
-  window.syncMobileStatsValues = function(){
-    if(el('mobileStatsStart')&&el('reportStart')) el('reportStart').value=el('mobileStatsStart').value;
-    if(el('mobileStatsEnd')&&el('reportEnd')) el('reportEnd').value=el('mobileStatsEnd').value;
-    if(el('mobileStatsCoach')&&el('reportCoach')&&(typeof isAdmin==='function'&&isAdmin())) el('reportCoach').value=el('mobileStatsCoach').value;
-  };
-  window.syncMobileStatsAndOpen = function(){ syncMobileStatsValues(); openReportResult(); };
-  window.syncMobileStatsAndExport = function(){ syncMobileStatsValues(); exportCSV(); };
-
-  // renderMobileApp：教練 App 介面；預約分頁直接顯示桌機課表；統計分頁顯示區間查詢
-  const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
-  renderMobileApp = function(){
-    if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
-    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+mobileTab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
-    renderMobileHeader();
-    renderMobileMonthOverview();
-    renderMobileTodayAgenda();
-    renderMobileStats();
-    syncMobileReportDefaults();
-    syncStatsDefaults();
-    if(mobileTab==='booking'){
-      if(el('filterCoach')) el('filterCoach').value='';
-      if(el('filterType')) el('filterType').value='';
-      if(typeof render==='function') setTimeout(()=>{ try{ render(); resetScheduleZoom(); }catch(e){} },0);
-    }
-  };
-
-  const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
-  setMobileTab = function(tab){
-    mobileTab=tab;
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
-    document.body.classList.add('mobile-tab-'+tab);
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-    renderMobileApp();
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
-
-  // 手機課表預設比例：讓一整日更容易看見
-  if(typeof defaultScheduleZoom==='function'){
-    defaultScheduleZoom = function(){ return window.innerWidth<=760 ? 0.56 : 1; };
-  }
-})();
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <style>
 :root{
   --bg:#f8f6f1; --paper:#fffefb; --paper2:#fbf8f1; --ink:#3d3933; --muted:#82786b; --line:#e7ded0;
@@ -1854,6 +1411,86 @@ body.is-logged-out{
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -3333,6 +2970,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script id="v59-desktop-header-date-script">
 (function(){
@@ -3701,6 +3418,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -4459,6 +4256,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 
 
@@ -4525,6 +4402,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -4740,6 +4697,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script id="studentNewOldBadgeScript">
 (function(){
@@ -4940,6 +4977,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -5149,6 +5266,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -5389,6 +5586,86 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -5671,6 +5948,86 @@ body.salary-modal-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -5983,6 +6340,86 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script>
 /* v78 薪資明細：加給、扣除、其他費用、教練管理與核發紀錄 */
@@ -6191,6 +6628,86 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -6414,6 +6931,86 @@ body.salary-manager-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -6671,6 +7268,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 
 <dialog id="salaryRecordDialog" class="salary-record-dialog">
@@ -6889,6 +7566,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script>
 /* v82 薪資明細分區摘要版 */
@@ -7073,6 +7830,86 @@ body.salary-record-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -7270,6 +8107,86 @@ body.salary-record-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -7493,6 +8410,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script>
 /* v85：薪資明細使用完整寬度，上方標題＋總薪資，下方三大分區 */
@@ -7683,6 +8680,86 @@ body.salary-record-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -7998,6 +9075,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script>
 (function(){
@@ -8289,6 +9446,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script>
 (function(){
@@ -8481,6 +9718,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 
 
@@ -8532,6 +9849,86 @@ body.salary-record-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -8740,6 +10137,86 @@ body.salary-record-open{overflow:hidden!important;}
   .salary-save-btn{
     min-height:36px;
   }
+}
+
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
 }
 
 </style>
@@ -8987,6 +10464,86 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 <script>
 /* v93：教練薪資作業限制為單一教練查詢；全部教練時不統計、不顯示明細、不匯出 */
@@ -9176,6 +10733,86 @@ body.salary-record-open{overflow:hidden!important;}
   .sv101-table th, .sv101-table td { padding: 10px 8px; font-size: 12px; }
   .edu-yn-g { gap: 6px; }
 }
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 
 <script>
@@ -9332,6 +10969,86 @@ body.salary-record-open{overflow:hidden!important;}
   background: #ffe0e0;
   border-color: #c0392b;
 }
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 
 
@@ -9676,6 +11393,86 @@ body.salary-record-open{overflow:hidden!important;}
     display:none!important;
   }
 }
+
+/* v120 fullscreen mobile booking fixed */
+@media(max-width:760px){
+
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none !important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0 !important;
+gap:0 !important;
+}
+
+body.mobile-tab-booking .wrap > section.card{
+width:100vw !important;
+border-radius:0 !important;
+border-left:0 !important;
+border-right:0 !important;
+box-shadow:none !important;
+min-height:calc(100dvh - 88px) !important;
+margin:0 !important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky !important;
+top:0 !important;
+z-index:30 !important;
+background:#fbf7ee !important;
+padding:10px !important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 160px) !important;
+max-height:none !important;
+overflow:auto !important;
+border-radius:0 !important;
+padding-bottom:110px !important;
+-webkit-overflow-scrolling:touch !important;
+touch-action:pan-x pan-y pinch-zoom !important;
+}
+
+body.mobile-tab-booking #schedule{
+width:max-content !important;
+min-width:100% !important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px !important;
+height:42px !important;
+font-size:11px !important;
+}
+
+body.mobile-tab-booking #schedule .time{
+min-width:58px !important;
+}
+
+body.mobile-tab-booking #schedule .entry{
+font-size:10px !important;
+border-radius:8px !important;
+}
+
+#mobileBottomNav{
+position:fixed !important;
+left:0 !important;
+right:0 !important;
+bottom:0 !important;
+z-index:999 !important;
+padding-bottom:env(safe-area-inset-bottom,0px) !important;
+}
+
+.zoom-tools{
+display:none !important;
+}
+}
+
 </style>
 
 <script id="v111-mobile-nav-console-fix">
@@ -9796,204 +11593,5 @@ body.salary-record-open{overflow:hidden!important;}
 })();
 </script>
 
-
-
-<!-- v114 手機預約表：移除縮放按鈕，改用原生 touch 操作；保留底部導航列 -->
-<style id="v114-native-touch-schedule">
-@media(max-width:760px){
-  /* 手機版不顯示任何 ＋／－／重設 縮放控制 */
-  .mobile-table-zoom-tools,
-  body.role-coach.mobile-tab-booking .zoom-tools,
-  body.role-coach.mobile-tab-booking .month-zoom-tools{
-    display:none!important;
-  }
-
-  /* 預約表維持原本日系簡約風格，改用原生手勢：單指拖曳、雙指縮放 */
-  body.role-coach.mobile-tab-booking .schedule-wrap,
-  body.role-coach.mobile-tab-booking .mobile-single-day-scroll{
-    overflow:auto!important;
-    -webkit-overflow-scrolling:touch!important;
-    touch-action:pan-x pan-y pinch-zoom!important;
-    overscroll-behavior:contain!important;
-  }
-
-  body.role-coach.mobile-tab-booking .mobile-single-day-table{
-    transform:none!important;
-    width:max-content!important;
-    min-width:100%!important;
-  }
-
-  body.role-coach.mobile-tab-booking #mobileSingleDayTable{
-    transform:none!important;
-    width:max-content!important;
-    min-width:100%!important;
-  }
-
-  body.role-coach.mobile-tab-booking .mobile-section-head small::after{
-    content:'｜雙指縮放・手指拖曳';
-  }
-
-  /* 保留底部固定導航列與中間新增浮動按鈕 */
-  body.role-coach.is-logged-in #mobileBottomNav.mobile-bottom-nav{
-    display:flex!important;
-    position:fixed!important;
-    left:0!important;
-    right:0!important;
-    bottom:0!important;
-    z-index:9999!important;
-    padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
-  }
-}
-</style>
-<script id="v114-native-touch-schedule-js">
-(function(){
-  function isMobile(){
-    return window.matchMedia && window.matchMedia('(max-width:760px)').matches;
-  }
-
-  function removeMobileZoomControls(){
-    if(!isMobile()) return;
-    document.querySelectorAll('.mobile-table-zoom-tools').forEach(function(node){ node.remove(); });
-    if(document.body && document.body.classList.contains('mobile-tab-booking')){
-      document.querySelectorAll('.zoom-tools').forEach(function(node){ node.remove(); });
-    }
-    var table=document.getElementById('mobileSingleDayTable');
-    if(table){
-      table.style.transform='none';
-      table.style.width='max-content';
-      table.style.minWidth='100%';
-    }
-    var wrap=document.querySelector('.mobile-single-day-scroll');
-    if(wrap){
-      wrap.style.overflow='auto';
-      wrap.style.webkitOverflowScrolling='touch';
-      wrap.style.touchAction='pan-x pan-y pinch-zoom';
-    }
-    var scheduleWrap=document.querySelector('.schedule-wrap');
-    if(scheduleWrap){
-      scheduleWrap.style.overflow='auto';
-      scheduleWrap.style.webkitOverflowScrolling='touch';
-      scheduleWrap.style.touchAction='pan-x pan-y pinch-zoom';
-    }
-  }
-
-  /* 停用舊版自製 touch 縮放，避免與瀏覽器原生雙指縮放互相衝突 */
-  window.bindPinchZoom=function(){};
-  window.applyMobileDayTableZoom=function(){ removeMobileZoomControls(); };
-  window.zoomMobileDayTable=function(){ removeMobileZoomControls(); };
-  window.resetMobileDayTableZoom=function(){ removeMobileZoomControls(); };
-
-  var oldRenderMobileSingleDayTable=window.renderMobileSingleDayTable;
-  if(typeof oldRenderMobileSingleDayTable==='function'){
-    window.renderMobileSingleDayTable=function(){
-      oldRenderMobileSingleDayTable.apply(this,arguments);
-      removeMobileZoomControls();
-    };
-  }
-
-  var oldSetMobileTab=window.setMobileTab;
-  if(typeof oldSetMobileTab==='function'){
-    window.setMobileTab=function(tab){
-      var result=oldSetMobileTab.apply(this,arguments);
-      removeMobileZoomControls();
-      return result;
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded',removeMobileZoomControls);
-  window.addEventListener('resize',removeMobileZoomControls);
-  setInterval(removeMobileZoomControls,1200);
-})();
-</script>
-
 </body>
 </html>
-
-/* v114 fullscreen mobile booking */
-@media(max-width:760px){
-  body.mobile-tab-booking .wrap{
-    padding:0!important;
-    gap:0!important;
-  }
-  body.mobile-tab-booking .wrap>section.card{
-    border-radius:0!important;
-    border-left:0!important;
-    border-right:0!important;
-    box-shadow:none!important;
-    min-height:calc(100dvh - 88px)!important;
-  }
-  body.mobile-tab-booking .controls{
-    position:sticky!important;
-    top:0!important;
-    z-index:30!important;
-    background:#fbf7ee!important;
-    padding:10px 12px!important;
-    border-bottom:1px solid #eadfce!important;
-  }
-  body.mobile-tab-booking .zoom-tools,
-  body.mobile-tab-booking .month-zoom-tools{
-    display:none!important;
-  }
-  body.mobile-tab-booking .schedule-wrap{
-    height:calc(100dvh - 170px)!important;
-    max-height:none!important;
-    min-height:auto!important;
-    overflow:auto!important;
-    border-radius:0!important;
-    padding-bottom:110px!important;
-    -webkit-overflow-scrolling:touch!important;
-    touch-action:pan-x pan-y pinch-zoom!important;
-    background:#fffdf8!important;
-  }
-  body.mobile-tab-booking #schedule{
-    width:max-content!important;
-    min-width:100%!important;
-  }
-  body.mobile-tab-booking #schedule th,
-  body.mobile-tab-booking #schedule td{
-    min-width:74px!important;
-    width:74px!important;
-    height:42px!important;
-    font-size:11px!important;
-  }
-  body.mobile-tab-booking #schedule .time{
-    min-width:58px!important;
-    width:58px!important;
-    font-size:11px!important;
-    position:sticky!important;
-    left:0!important;
-    z-index:20!important;
-    background:#faf4eb!important;
-  }
-  body.mobile-tab-booking #schedule .day-title{
-    height:58px!important;
-    font-size:12px!important;
-  }
-  body.mobile-tab-booking #schedule .coach-head{
-    top:58px!important;
-    height:42px!important;
-    font-size:11px!important;
-  }
-  body.mobile-tab-booking #schedule .entry{
-    font-size:10px!important;
-    border-radius:10px!important;
-    padding:3px!important;
-  }
-  #mobileBottomNav{
-    position:fixed!important;
-    left:0!important;
-    right:0!important;
-    bottom:0!important;
-    z-index:999!important;
-    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;
-    background:rgba(255,252,247,.96)!important;
-    backdrop-filter:blur(14px)!important;
-    border-top:1px solid #eadfce!important;
-  }
-  #mobileBottomNav .center-add,
-  #mobileBottomNav .mobile-add-btn,
-  #mobileBottomNav .fab{
-    transform:translateY(-18px)!important;
-    border-radius:999px!important;
-  }
-}
