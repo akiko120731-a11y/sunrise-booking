@@ -9796,5 +9796,204 @@ body.salary-record-open{overflow:hidden!important;}
 })();
 </script>
 
+
+
+<!-- v114 手機預約表：移除縮放按鈕，改用原生 touch 操作；保留底部導航列 -->
+<style id="v114-native-touch-schedule">
+@media(max-width:760px){
+  /* 手機版不顯示任何 ＋／－／重設 縮放控制 */
+  .mobile-table-zoom-tools,
+  body.role-coach.mobile-tab-booking .zoom-tools,
+  body.role-coach.mobile-tab-booking .month-zoom-tools{
+    display:none!important;
+  }
+
+  /* 預約表維持原本日系簡約風格，改用原生手勢：單指拖曳、雙指縮放 */
+  body.role-coach.mobile-tab-booking .schedule-wrap,
+  body.role-coach.mobile-tab-booking .mobile-single-day-scroll{
+    overflow:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y pinch-zoom!important;
+    overscroll-behavior:contain!important;
+  }
+
+  body.role-coach.mobile-tab-booking .mobile-single-day-table{
+    transform:none!important;
+    width:max-content!important;
+    min-width:100%!important;
+  }
+
+  body.role-coach.mobile-tab-booking #mobileSingleDayTable{
+    transform:none!important;
+    width:max-content!important;
+    min-width:100%!important;
+  }
+
+  body.role-coach.mobile-tab-booking .mobile-section-head small::after{
+    content:'｜雙指縮放・手指拖曳';
+  }
+
+  /* 保留底部固定導航列與中間新增浮動按鈕 */
+  body.role-coach.is-logged-in #mobileBottomNav.mobile-bottom-nav{
+    display:flex!important;
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:9999!important;
+    padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+  }
+}
+</style>
+<script id="v114-native-touch-schedule-js">
+(function(){
+  function isMobile(){
+    return window.matchMedia && window.matchMedia('(max-width:760px)').matches;
+  }
+
+  function removeMobileZoomControls(){
+    if(!isMobile()) return;
+    document.querySelectorAll('.mobile-table-zoom-tools').forEach(function(node){ node.remove(); });
+    if(document.body && document.body.classList.contains('mobile-tab-booking')){
+      document.querySelectorAll('.zoom-tools').forEach(function(node){ node.remove(); });
+    }
+    var table=document.getElementById('mobileSingleDayTable');
+    if(table){
+      table.style.transform='none';
+      table.style.width='max-content';
+      table.style.minWidth='100%';
+    }
+    var wrap=document.querySelector('.mobile-single-day-scroll');
+    if(wrap){
+      wrap.style.overflow='auto';
+      wrap.style.webkitOverflowScrolling='touch';
+      wrap.style.touchAction='pan-x pan-y pinch-zoom';
+    }
+    var scheduleWrap=document.querySelector('.schedule-wrap');
+    if(scheduleWrap){
+      scheduleWrap.style.overflow='auto';
+      scheduleWrap.style.webkitOverflowScrolling='touch';
+      scheduleWrap.style.touchAction='pan-x pan-y pinch-zoom';
+    }
+  }
+
+  /* 停用舊版自製 touch 縮放，避免與瀏覽器原生雙指縮放互相衝突 */
+  window.bindPinchZoom=function(){};
+  window.applyMobileDayTableZoom=function(){ removeMobileZoomControls(); };
+  window.zoomMobileDayTable=function(){ removeMobileZoomControls(); };
+  window.resetMobileDayTableZoom=function(){ removeMobileZoomControls(); };
+
+  var oldRenderMobileSingleDayTable=window.renderMobileSingleDayTable;
+  if(typeof oldRenderMobileSingleDayTable==='function'){
+    window.renderMobileSingleDayTable=function(){
+      oldRenderMobileSingleDayTable.apply(this,arguments);
+      removeMobileZoomControls();
+    };
+  }
+
+  var oldSetMobileTab=window.setMobileTab;
+  if(typeof oldSetMobileTab==='function'){
+    window.setMobileTab=function(tab){
+      var result=oldSetMobileTab.apply(this,arguments);
+      removeMobileZoomControls();
+      return result;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded',removeMobileZoomControls);
+  window.addEventListener('resize',removeMobileZoomControls);
+  setInterval(removeMobileZoomControls,1200);
+})();
+</script>
+
 </body>
 </html>
+
+/* v114 fullscreen mobile booking */
+@media(max-width:760px){
+  body.mobile-tab-booking .wrap{
+    padding:0!important;
+    gap:0!important;
+  }
+  body.mobile-tab-booking .wrap>section.card{
+    border-radius:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    box-shadow:none!important;
+    min-height:calc(100dvh - 88px)!important;
+  }
+  body.mobile-tab-booking .controls{
+    position:sticky!important;
+    top:0!important;
+    z-index:30!important;
+    background:#fbf7ee!important;
+    padding:10px 12px!important;
+    border-bottom:1px solid #eadfce!important;
+  }
+  body.mobile-tab-booking .zoom-tools,
+  body.mobile-tab-booking .month-zoom-tools{
+    display:none!important;
+  }
+  body.mobile-tab-booking .schedule-wrap{
+    height:calc(100dvh - 170px)!important;
+    max-height:none!important;
+    min-height:auto!important;
+    overflow:auto!important;
+    border-radius:0!important;
+    padding-bottom:110px!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y pinch-zoom!important;
+    background:#fffdf8!important;
+  }
+  body.mobile-tab-booking #schedule{
+    width:max-content!important;
+    min-width:100%!important;
+  }
+  body.mobile-tab-booking #schedule th,
+  body.mobile-tab-booking #schedule td{
+    min-width:74px!important;
+    width:74px!important;
+    height:42px!important;
+    font-size:11px!important;
+  }
+  body.mobile-tab-booking #schedule .time{
+    min-width:58px!important;
+    width:58px!important;
+    font-size:11px!important;
+    position:sticky!important;
+    left:0!important;
+    z-index:20!important;
+    background:#faf4eb!important;
+  }
+  body.mobile-tab-booking #schedule .day-title{
+    height:58px!important;
+    font-size:12px!important;
+  }
+  body.mobile-tab-booking #schedule .coach-head{
+    top:58px!important;
+    height:42px!important;
+    font-size:11px!important;
+  }
+  body.mobile-tab-booking #schedule .entry{
+    font-size:10px!important;
+    border-radius:10px!important;
+    padding:3px!important;
+  }
+  #mobileBottomNav{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:999!important;
+    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;
+    background:rgba(255,252,247,.96)!important;
+    backdrop-filter:blur(14px)!important;
+    border-top:1px solid #eadfce!important;
+  }
+  #mobileBottomNav .center-add,
+  #mobileBottomNav .mobile-add-btn,
+  #mobileBottomNav .fab{
+    transform:translateY(-18px)!important;
+    border-radius:999px!important;
+  }
+}
