@@ -1415,6 +1415,508 @@ body.is-logged-out{
 
 
 
+/* v121 clean mobile booking */
+@media(max-width:760px){
+body.mobile-tab-booking .side,
+body.mobile-tab-booking .today-card,
+body.mobile-tab-booking .today-summary,
+body.mobile-tab-booking .today-agenda,
+body.mobile-tab-booking .quick-stats{
+display:none!important;
+}
+
+body.mobile-tab-booking .wrap{
+padding:0!important;
+gap:0!important;
+}
+
+body.mobile-tab-booking .wrap>section.card{
+width:100vw!important;
+margin:0!important;
+border-radius:0!important;
+box-shadow:none!important;
+min-height:calc(100dvh - 88px)!important;
+}
+
+body.mobile-tab-booking .controls{
+position:sticky!important;
+top:0!important;
+z-index:30!important;
+background:#fbf7ee!important;
+padding:10px!important;
+}
+
+body.mobile-tab-booking .schedule-wrap{
+height:calc(100dvh - 150px)!important;
+overflow:auto!important;
+padding-bottom:110px!important;
+-webkit-overflow-scrolling:touch!important;
+touch-action:pan-x pan-y pinch-zoom!important;
+}
+
+body.mobile-tab-booking #schedule th,
+body.mobile-tab-booking #schedule td{
+min-width:78px!important;
+height:42px!important;
+}
+
+#mobileBottomNav{
+position:fixed!important;
+left:0!important;
+right:0!important;
+bottom:0!important;
+z-index:999!important;
+padding-bottom:env(safe-area-inset-bottom,0px)!important;
+}
+
+.zoom-tools,
+.month-zoom-tools{
+display:none!important;
+}
+}
+
+
+/* v122 compact mobile date header */
+@media(max-width:760px){
+
+.week-nav,
+.week-header,
+.date-range,
+.schedule-header{
+display:flex!important;
+align-items:center!important;
+gap:8px!important;
+flex-wrap:nowrap!important;
+white-space:nowrap!important;
+overflow-x:auto!important;
+-webkit-overflow-scrolling:touch!important;
+}
+
+.week-title,
+.date-range-text{
+font-size:15px!important;
+line-height:1.2!important;
+white-space:nowrap!important;
+}
+
+.week-nav button,
+.week-header button{
+padding:8px 12px!important;
+font-size:14px!important;
+flex:0 0 auto!important;
+}
+
+.controls{
+padding:8px 10px!important;
+}
+
+.controls .row{
+flex-wrap:nowrap!important;
+overflow-x:auto!important;
+}
+
+}
+
+
+/* v123 mobile drawer layout only - desktop unchanged */
+.mobile-drawer-toggle,.mobile-drawer-backdrop,.mobile-drawer-panel{display:none;}
+@media(max-width:760px){
+body.is-logged-in{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important;background:#f8f6f1!important;}
+body.is-logged-in #appHeader{position:sticky!important;top:0!important;z-index:120!important;min-height:58px!important;padding:8px 12px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-bottom:1px solid #eadfce!important;background:rgba(248,246,241,.96)!important;backdrop-filter:blur(14px)!important;}
+body.is-logged-in #appHeader>div:first-child{display:block!important;text-align:center!important;max-width:calc(100vw - 116px)!important;}
+body.is-logged-in #appHeader h1{font-size:14px!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;letter-spacing:.02em!important;}
+body.is-logged-in #appHeader .sub,body.is-logged-in #appHeader .toolbar{display:none!important;}
+.mobile-drawer-toggle{display:flex!important;position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;width:42px!important;height:42px!important;border-radius:999px!important;align-items:center!important;justify-content:center!important;background:#fffefb!important;border:1px solid #eadfce!important;color:#6f5b44!important;box-shadow:0 4px 14px rgba(80,60,30,.08)!important;z-index:125!important;}
+.mobile-drawer-toggle span{display:block!important;width:18px!important;height:2px!important;background:#6f5b44!important;border-radius:999px!important;position:relative!important;}
+.mobile-drawer-toggle span:before,.mobile-drawer-toggle span:after{content:''!important;position:absolute!important;left:0!important;width:18px!important;height:2px!important;background:#6f5b44!important;border-radius:999px!important;}
+.mobile-drawer-toggle span:before{top:-6px!important}.mobile-drawer-toggle span:after{top:6px!important}
+.mobile-drawer-backdrop{display:none;position:fixed!important;inset:0!important;z-index:200!important;background:rgba(55,45,35,.28)!important;backdrop-filter:blur(2px)!important;}
+.mobile-drawer-panel{display:block!important;position:fixed!important;z-index:210!important;top:0!important;bottom:0!important;left:0!important;width:min(82vw,320px)!important;padding:calc(env(safe-area-inset-top,0px) + 18px) 16px calc(env(safe-area-inset-bottom,0px) + 18px)!important;background:#fffefb!important;border-right:1px solid #eadfce!important;box-shadow:18px 0 40px rgba(80,60,30,.14)!important;transform:translateX(-105%)!important;transition:transform .24s ease!important;overflow:auto!important;-webkit-overflow-scrolling:touch!important;}
+body.mobile-drawer-open .mobile-drawer-backdrop{display:block!important;}
+body.mobile-drawer-open .mobile-drawer-panel{transform:translateX(0)!important;}
+.mobile-drawer-profile{padding:12px 6px 18px!important;border-bottom:1px dashed #eadfce!important;margin-bottom:14px!important;}
+.mobile-drawer-profile b{display:block!important;font-size:22px!important;color:#2f2c28!important;line-height:1.2!important;}
+.mobile-drawer-profile small{display:block!important;margin-top:6px!important;color:#8a7c6d!important;font-size:13px!important;}
+.mobile-drawer-menu{display:flex!important;flex-direction:column!important;gap:8px!important;}
+.mobile-drawer-menu button{width:100%!important;border:0!important;box-shadow:none!important;background:transparent!important;border-radius:18px!important;min-height:46px!important;padding:10px 12px!important;display:flex!important;align-items:center!important;gap:10px!important;justify-content:flex-start!important;color:#4a443d!important;font-size:15px!important;text-align:left!important;}
+.mobile-drawer-menu button.active,.mobile-drawer-menu button:hover{background:#fff4df!important;color:#8f704c!important;}
+.mobile-drawer-menu .admin-only-drawer{display:none!important;} body.role-admin .mobile-drawer-menu .admin-only-drawer{display:flex!important;}
+.mobile-drawer-section{margin:12px 4px 4px!important;color:#a2917d!important;font-size:11px!important;font-weight:800!important;letter-spacing:.08em!important;}
+body.mobile-tab-booking #mobileAppHome,body.mobile-tab-booking #mobileTodayAgenda,body.mobile-tab-booking #mobileTodaySummary,body.mobile-tab-booking .today-card,body.mobile-tab-booking .today-summary,body.mobile-tab-booking .quick-stats,body.mobile-tab-booking .side{display:none!important;}
+body.mobile-tab-booking #appWrap{padding:0!important;gap:0!important;}
+body.mobile-tab-booking #desktopScheduleCard,body.mobile-tab-schedule #desktopScheduleCard{display:block!important;width:100vw!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;box-shadow:none!important;min-height:calc(100dvh - 146px)!important;}
+body.mobile-tab-booking #desktopScheduleCard h2,body.mobile-tab-schedule #desktopScheduleCard h2{display:none!important;}
+body.mobile-tab-booking .controls,body.mobile-tab-schedule .controls{position:sticky!important;top:58px!important;z-index:100!important;padding:8px 10px!important;gap:8px!important;flex-wrap:nowrap!important;overflow-x:auto!important;background:#fbf7ee!important;border-bottom:1px solid #eadfce!important;scrollbar-width:none!important;}
+body.mobile-tab-booking .controls::-webkit-scrollbar,body.mobile-tab-schedule .controls::-webkit-scrollbar{display:none!important;}
+body.mobile-tab-booking .controls select,body.mobile-tab-schedule .controls select,body.mobile-tab-booking .controls button,body.mobile-tab-schedule .controls button{flex:0 0 auto!important;min-height:38px!important;font-size:14px!important;padding:8px 12px!important;white-space:nowrap!important;}
+body.mobile-tab-booking .controls .hint,body.mobile-tab-schedule .controls .hint{flex:0 0 auto!important;white-space:nowrap!important;font-size:14px!important;color:#3d3933!important;}
+body.mobile-tab-booking .zoom-tools,body.mobile-tab-booking .month-zoom-tools,body.mobile-tab-schedule .zoom-tools,body.mobile-tab-schedule .month-zoom-tools{display:none!important;}
+body.mobile-tab-booking .schedule-wrap,body.mobile-tab-schedule .schedule-wrap{height:calc(100dvh - 150px)!important;max-height:none!important;min-height:0!important;border-radius:0!important;overflow:auto!important;padding-bottom:116px!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-x pan-y pinch-zoom!important;background:#fffdf8!important;}
+body.mobile-tab-booking #schedule,body.mobile-tab-schedule #schedule{width:max-content!important;min-width:100%!important;table-layout:fixed!important;}
+body.mobile-tab-booking #schedule th,body.mobile-tab-booking #schedule td,body.mobile-tab-schedule #schedule th,body.mobile-tab-schedule #schedule td{min-width:78px!important;height:38px!important;font-size:11px!important;}
+body.mobile-tab-booking #schedule .time,body.mobile-tab-schedule #schedule .time{min-width:56px!important;width:56px!important;}
+#mobileBottomNav,.mobile-bottom-nav{display:flex!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:180!important;background:rgba(255,254,251,.96)!important;backdrop-filter:blur(14px)!important;border-top:1px solid #eadfce!important;padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px))!important;justify-content:space-around!important;box-shadow:0 -8px 24px rgba(80,60,30,.08)!important;}
+#mobileBottomNav button,.mobile-bottom-nav button{border:0!important;background:transparent!important;box-shadow:none!important;}
+#mobileBottomNav .mobile-add,.mobile-bottom-nav .mobile-add{width:64px!important;height:64px!important;margin-top:-24px!important;border-radius:999px!important;background:#b99b72!important;color:#fff!important;box-shadow:0 8px 18px rgba(80,60,30,.18)!important;}
+body.is-logged-out .mobile-drawer-toggle,body.is-logged-out .mobile-drawer-panel,body.is-logged-out .mobile-drawer-backdrop{display:none!important;}
+}
+
+</style>
+</head>
+<body class="is-logged-out">
+<div id="identityScreen" class="identity-screen">
+  <div class="identity-card">
+    <h1 class="identity-title">煦陽內部預約登記系統</h1>
+    <div class="identity-sub">請先選擇使用身份，系統會依權限顯示可操作功能。</div>
+    <div class="identity-grid">
+      <button id="adminLoginBtn" type="button" class="identity-option" onclick="openAdminGame()"><b>超級管理員 Admin</b><span>需輸入管理員密碼。可查看與編輯全部課表、管理教練/假日/Firebase設定、匯出報表。</span></button>
+      <div class="identity-option">
+        <b>教練身份</b><span>可查看場地使用狀況，只能新增、修改、拖曳自己的課程。</span>
+        <div class="identity-coach"><label>選擇教練身份</label><select id="loginCoach"><option>Shawn</option><option>Akiko</option><option>Jasper</option><option>Ollie</option><option>華偉</option></select><button id="coachLoginBtn" type="button" class="primary mini" style="margin-top:10px" onclick="enterAsCoach()">進入教練頁面</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<header id="appHeader" style="display:none">
+  <div><h1>煦陽內部預約登記系統</h1><div class="sub">自動雲端同步版・本館/辦公室・教練課表・休假排事・衛教統計</div></div>
+  <div class="toolbar"><span class="status" id="roleBadge"></span><button class="mini" onclick="switchIdentity()">切換身份</button><button class="mini" onclick="prevWeek()">← 上週</button><input id="weekPicker" type="date" onchange="render()"><button class="mini" onclick="nextWeek()">下週 →</button><button class="primary mini" onclick="openEditor()">＋新增預約</button><button class="mini" onclick="openNoteEditor()">＋新增記事</button><button class="mini coach-only pink-btn" onclick="openMonthOverview()">本月預約總覽</button><button class="mini student-btn" onclick="openStudentManager()">學員管理</button><button class="mini admin-only" onclick="openReportWork()">報表作業</button><button class="mini admin-only salary-soft-btn" onclick="openSalaryWork()">教練薪資作業</button><button class="mini danger admin-only" onclick="clearAll()">清空</button></div>
+</header>
+
+<!-- v123 mobile drawer menu -->
+<button class="mobile-drawer-toggle" id="mobileDrawerToggle" type="button" aria-label="開啟選單"><span></span></button>
+<div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
+<aside class="mobile-drawer-panel" id="mobileDrawerPanel" aria-label="手機版選單">
+  <div class="mobile-drawer-profile">
+    <b id="mobileDrawerName">煦陽</b>
+    <small id="mobileDrawerRole">請先登入身份</small>
+  </div>
+  <nav class="mobile-drawer-menu">
+    <div class="mobile-drawer-section">主要功能</div>
+    <button type="button" data-mobile-tab="month">📅 本月首頁</button>
+    <button type="button" data-mobile-tab="booking">📋 預約課表</button>
+    <button type="button" data-mobile-action="add">＋ 新增預約</button>
+    <button type="button" data-mobile-tab="stats">📊 統計</button>
+    <button type="button" data-mobile-tab="query">🔎 查詢</button>
+    <div class="mobile-drawer-section admin-only-drawer">管理功能</div>
+    <button type="button" class="admin-only-drawer" data-mobile-action="students">👥 學員管理</button>
+    <button type="button" class="admin-only-drawer" data-mobile-action="coaches">🧑‍🏫 教練管理</button>
+    <button type="button" class="admin-only-drawer" data-mobile-action="salary">💰 薪資作業</button>
+    <button type="button" class="admin-only-drawer" data-mobile-action="settings">⚙️ 系統設定</button>
+    <div class="mobile-drawer-section">帳號</div>
+    <button type="button" data-mobile-action="switch">🔁 切換身份</button>
+    <button type="button" data-mobile-action="logout">🚪 登出</button>
+  </nav>
+</aside>
+
+<div id="appWrap" class="wrap" style="display:none">
+  
+  <section id="mobileAppHome" class="mobile-app-shell no-print">
+    <div class="mobile-app-header mobile-app-header-v57">
+      <div class="mobile-header-row mobile-header-row-top">
+        <div class="mobile-user-name" id="mobileUserName">Akiko</div>
+        <button type="button" class="mobile-switch-btn" onclick="switchIdentity()">切換身分</button>
+      </div>
+      <div class="mobile-header-row mobile-header-row-bottom">
+        <div class="mobile-system-name">煦陽內部預約系統</div>
+        <div class="mobile-header-mini-actions">
+          <button type="button" onclick="openStudentManager()">學員管理</button>
+          <button type="button" onclick="openNoteEditor()">新增記事</button>
+        </div>
+      </div>
+      <span id="mobileMonthTitle" class="mobile-month-title-hidden" aria-hidden="true">5月</span>
+    </div>
+
+    <section id="mobileAgendaPage" class="mobile-page mobile-page-agenda">
+      <div id="mobileTodayFull"></div>
+    </section>
+
+    <section id="mobileMonthPage" class="mobile-page mobile-page-month">
+      <div class="mobile-summary-card mobile-today-card" id="mobileTodaySummary"></div>
+      <div class="mobile-soft-section">
+        <div class="mobile-month-title-row">
+          <button type="button" onclick="changeMobileMonth(-1)">←</button>
+          <h3 id="mobileMonthOverviewTitle">5月預約總覽</h3>
+          <button type="button" onclick="changeMobileMonth(1)">→</button>
+        </div>
+        <div class="mobile-month-year-title" id="mobileMonthYearTitle">5月</div>
+        <div class="mobile-month-overview-scroll">
+          <div id="mobileMonthOverviewGrid" class="mobile-month-overview-grid"></div>
+        </div>
+      </div>
+      <div class="mobile-soft-section">
+        <h3>本月快速統計</h3>
+        <div id="mobileQuickStats" class="mobile-stat-cards"></div>
+      </div>
+    </section>
+
+    <section id="mobileBookingPage" class="mobile-page mobile-page-booking">
+      <div class="mobile-day-switcher">
+        <button type="button" onclick="shiftMobileDate(-1)">←</button>
+        <button type="button" class="mobile-current-day" onclick="setMobileSelectedDate(fmt(new Date()))" id="mobileCurrentDayBtn">今天</button>
+        <button type="button" onclick="shiftMobileDate(1)">→</button>
+      </div>
+      <div id="mobileDateStrip" class="mobile-date-strip"></div>
+      <div class="mobile-soft-section mobile-single-table-section">
+        <div class="mobile-section-head"><h3>單日預約表</h3><small>左右橫向滾動瀏覽</small></div>
+        <div class="mobile-table-zoom-tools">
+          <button type="button" onclick="zoomMobileDayTable(-0.08)">－</button>
+          <span id="mobileTableZoomText">100%</span>
+          <button type="button" onclick="zoomMobileDayTable(0.08)">＋</button>
+          <button type="button" onclick="resetMobileDayTableZoom()">重設</button>
+        </div>
+        <div class="mobile-single-day-scroll"><table id="mobileSingleDayTable" class="mobile-single-day-table"></table></div>
+      </div>
+      <div id="mobileAgendaList" class="mobile-agenda-list"></div>
+      <div class="mobile-soft-section mobile-today-agenda-section">
+        <div class="mobile-section-head"><h3>今日排程</h3><small>快速查看今日剩餘課程</small></div>
+        <div id="mobileTodayAgendaList" class="mobile-agenda-list"></div>
+      </div>
+    </section>
+
+    <section id="mobileStatsBlock" class="mobile-page mobile-soft-section mobile-page-stats">
+      <h3>統計</h3>
+      <div id="mobileStatsCards" class="mobile-stat-cards"></div>
+      <div class="mobile-chart-wrap"><canvas id="mobileChart" height="170"></canvas></div>
+      <div class="mobile-stats-report-card">
+        <h3>區間報表查詢</h3>
+        <label class="mobile-date-field">開始日期<input id="mobileStatsStart" type="date"></label>
+        <label class="mobile-date-field">結束日期<input id="mobileStatsEnd" type="date"></label>
+        <div id="mobileStatsCoachWrap" class="mobile-date-field"><label>教練<select id="mobileStatsCoach"></select></label></div>
+        <div class="mobile-action-row mobile-stats-actions"><button class="primary" onclick="syncMobileStatsAndOpen()">查詢報表</button><button onclick="syncMobileStatsAndExport()">輸出CSV</button></div>
+        <p class="hint">可用於本月課程統計、衛教統計、教練堂數統計、CSV 匯出與區間報表查詢。</p>
+      </div>
+    </section>
+
+    <section id="mobileReportBlock" class="mobile-page mobile-soft-section mobile-page-query">
+      <h3>查詢作業區</h3>
+      <div class="mobile-report-grid">
+        <label>開始日期<input id="mobileReportStart" type="date"></label>
+        <label>結束日期<input id="mobileReportEnd" type="date"></label>
+      </div>
+      <div id="mobileReportCoachWrap" class="mobile-report-grid one"><label>教練<select id="mobileReportCoach"></select></label></div>
+      <div class="mobile-action-row"><button class="primary" onclick="syncMobileReportAndOpen()">查詢報表</button><button onclick="syncMobileReportAndExport()">輸出CSV</button></div>
+      <p class="hint">此頁放置輸出資料、CSV、報表與查詢作業。手機版採長頁顯示，不使用內部卷軸。</p>
+    </section>
+  </section>
+
+  <section id="desktopScheduleCard" class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="zoom-tools no-print"><button class="mini" onclick="zoomSchedule(-0.08)">－</button><span id="zoomPercent" class="zoom-percent">100%</span><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
+  <aside class="side no-print">
+    <section class="card"><h2 id="dashboardTitle">我的本月統計分析</h2><div class="stats"><div class="stat-grid"><div class="stat"><span class="small" id="classStatLabel">學員名稱</span><b id="classCount">0</b></div><div class="stat"><span class="small">衛教堂數</span><b id="eduCount">0</b></div></div><canvas id="chart" height="210"></canvas><div id="chartFallback" class="hint"></div></div></section>
+    <section class="card"><h2 id="historyTitle">我的預約記事歷程</h2><div id="historyList" class="history-list"></div></section>
+
+    <section class="card" id="reportPanel"><h2>輸出資料（報表）</h2><div class="form">
+      <div class="row"><div><label>開始日期</label><input id="reportStart" type="date" onchange="renderReport(false)"></div><div><label>結束日期</label><input id="reportEnd" type="date" onchange="renderReport(false)"></div></div>
+      <div id="reportCoachWrap"><label>教練</label><select id="reportCoach" onchange="renderReport(false)"><option value="">全部教練</option></select></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="mini primary" onclick="openReportResult()">查詢報表</button><button class="mini" onclick="exportCSV()">輸出明細CSV</button><button class="mini" onclick="exportSummaryCSV()">輸出堂數統計CSV</button></div>
+      <p class="hint" id="reportHint">管理員可查詢全部或指定教練；教練僅能查詢與輸出自己的報表。</p>
+    </div></section>
+    <section class="card admin-only"><h2>教練身份名單</h2><div class="form"><textarea id="coachText" rows="4">Shawn, Akiko, Jasper, Ollie, 華偉</textarea><button class="mini primary" style="margin-top:8px" onclick="saveCoaches()">更新教練身份</button><p class="hint">由超級管理員新增或修改，用逗號分隔；儲存後會同步到登入頁面的教練選單。</p></div></section>
+    <section class="card admin-only"><h2>國定假日標註</h2><div class="form"><textarea id="holidayText" rows="5"></textarea><button class="mini primary" style="margin-top:8px" onclick="saveHolidays()">更新假日標註</button><p class="hint">格式：YYYY-MM-DD 假日名稱，每行一筆。可自行新增公司休館日。</p></div></section>
+    <section class="card admin-only"><h2>雲端同步 / 備份</h2><div class="form"><p class="hint">系統開啟後會自動連線 Firebase 並同步資料，不需要手動啟用。所有教練使用同一個網址即可共用。</p><input id="firebaseConfigText" type="hidden"><input id="workspaceId" type="hidden" value="sunrise-main"><p class="hint" id="cloudStatus">目前：準備連線雲端同步…</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="mini" onclick="backupJSON()">備份JSON</button></div><input id="importFile" type="file" accept=".json" onchange="importJSON(event)" style="margin-top:8px"><p class="hint">若臨時離線，仍會先儲存在本機；恢復網路後會自動同步。</p></div></section>
+  </aside>
+</div>
+
+<dialog id="reportDialog" class="report-dialog"><div class="dialog-body">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px"><h2 style="margin:0">報表查詢結果</h2><button class="mini" onclick="safeCloseDialog('reportDialog')">關閉</button></div>
+  <div id="reportResultBox" class="report-box hint"></div>
+  <div class="dialog-actions"><button class="mini" onclick="window.print()">列印</button><div><button class="mini" onclick="exportCSV()">輸出明細CSV</button><button class="mini primary" onclick="exportSummaryCSV()">輸出堂數統計CSV</button></div></div>
+</div></dialog>
+
+<dialog id="reportWorkDialog" class="report-dialog"><div class="dialog-body">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px"><h2 style="margin:0">報表作業</h2><button class="mini" onclick="closeReportWork()">關閉</button></div>
+  <div id="reportWorkMount"></div>
+</div></dialog>
+
+
+<dialog id="monthOverviewDialog" class="calendar-dialog">
+  <div class="month-tools">
+    <button class="mini month-nav-left" onclick="changeOverviewMonth(-1)">← 上個月</button>
+    <div class="month-title" id="monthOverviewTitle">本月預約總覽</div>
+    <button class="mini month-nav-right" onclick="changeOverviewMonth(1)">下個月 →</button>
+    <button class="dialog-x" title="關閉" onclick="safeCloseDialog('monthOverviewDialog')">×</button>
+  </div>
+  <div class="month-zoom-tools"><button class="mini" onclick="zoomMonthOverview(-0.05)">－</button><span id="monthZoomPercent" class="zoom-percent">100%</span><button class="mini" onclick="zoomMonthOverview(0.05)">＋</button><button class="mini" onclick="resetMonthOverviewZoom()">重設</button></div>
+  <div class="calendar-scroll"><div id="monthOverviewCalendar" class="month-calendar"></div></div>
+</dialog>
+<dialog id="dayDetailDialog">
+  <div class="day-detail-head">
+    <h2 id="dayDetailTitle">當日完整明細</h2>
+    <button class="dialog-x" title="關閉" onclick="safeCloseDialog('dayDetailDialog')">×</button>
+  </div>
+  <div id="dayDetailList" class="month-detail-list"></div>
+</dialog>
+<dialog id="repeatDeleteDialog"><div class="dialog-body">
+  <h2 style="margin:0 0 8px">刪除重複性課程</h2>
+  <p class="hint" id="repeatDeleteText">請選擇刪除方式。</p>
+  <div class="dialog-actions" style="justify-content:flex-end;gap:8px">
+    <button onclick="cancelRepeatDelete()">取消</button>
+    <button class="primary" onclick="confirmRepeatDelete('single')">只刪除該日預約</button>
+    <button class="danger" onclick="confirmRepeatDelete('following')">刪除此日期之後的預約</button>
+  </div>
+</div></dialog>
+
+<dialog id="adminGame"><div class="dialog-body admin-game-body">
+  <h2 class="game-title">夜市九宮格・管理員挑戰</h2>
+  <p class="game-sub">把乒乓球丟進正確號碼杯，完成密碼後就能進入管理員頁面。</p>
+  <div class="game-board" id="gameBoard">
+    <button type="button" class="cup" onclick="tapCup('1', event)"><span>1</span></button>
+    <button type="button" class="cup" onclick="tapCup('2', event)"><span>2</span></button>
+    <button type="button" class="cup" onclick="tapCup('3', event)"><span>3</span></button>
+    <button type="button" class="cup" onclick="tapCup('4', event)"><span>4</span></button>
+    <button type="button" class="cup" onclick="tapCup('5', event)"><span>5</span></button>
+    <button type="button" class="cup" onclick="tapCup('6', event)"><span>6</span></button>
+    <button type="button" class="cup" onclick="tapCup('7', event)"><span>7</span></button>
+    <button type="button" class="cup" onclick="tapCup('8', event)"><span>8</span></button>
+    <button type="button" class="cup" onclick="tapCup('9', event)"><span>9</span></button>
+  </div>
+  <div class="zero-row"><button type="button" class="cup zero-cup" onclick="tapCup('0', event)"><span>0</span><small>隱藏杯</small></button></div>
+  <input id="adminPin" class="admin-pin" type="password" inputmode="numeric" maxlength="4" placeholder="也可直接輸入密碼" onkeydown="if(event.key==='Enter')checkAdminPin()">
+  <div id="adminGameMsg" class="game-msg">目標：丟中 4 顆球 🎯</div>
+  <div class="dialog-actions"><button onclick="closeAdminGame()">取消</button><div><button onclick="clearAdminPin()">重投</button><button class="primary" onclick="checkAdminPin()">確認進場</button></div></div>
+</div></dialog>
+
+<dialog id="editor" class="soft-work-dialog"><div class="dialog-body">
+  <div class="soft-dialog-head"><h2>預約登記</h2><button class="soft-dialog-close" title="關閉" onclick="safeCloseDialog('editor')">×</button></div>
+  <input type="hidden" id="editId">
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">時</span>預約時間</h3>
+    <div class="booking-grid three">
+      <div class="booking-field"><label>日期<span class="booking-required">＊</span></label><input id="date" type="date"></div>
+      <div class="booking-field"><label>開始時間<span class="booking-required">＊</span></label><select id="time"></select></div>
+      <div class="booking-field"><label>結束時間<span class="booking-required">＊</span></label><select id="endTime"></select></div>
+    </div>
+  </section>
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">課</span>預約內容</h3>
+    <div class="booking-grid">
+      <div class="booking-field"><label>教練<span class="booking-required">＊</span></label><select id="coach"></select></div>
+      <div class="booking-field"><label>場地</label><select id="venue"><option value="auto">自動安排</option><option value="A">本館</option><option value="B">辦公室</option><option value="none">無</option></select></div>
+    </div>
+    <div class="booking-grid" style="margin-top:10px">
+      <div class="booking-field"><label>類型<span class="booking-required">＊</span></label><select id="type"><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select></div>
+      <div class="booking-field"><label>學員／事項名稱<span class="booking-required">＊</span></label><input id="name" placeholder="例：王小花、休假、衛教講座"></div>
+    </div>
+    <div class="booking-grid one" style="margin-top:10px"><div class="booking-field"><label>備註</label><input id="note" placeholder="可填付款、特殊狀況、器材需求"></div></div>
+    <div class="booking-note" id="venueHint"></div>
+  </section>
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">固</span>固定課程</h3>
+    <div class="booking-grid">
+      <div class="booking-field"><label>重複類型</label><select id="repeatType" onchange="toggleRepeatFields()"><option value="none">不重複</option><option value="weekly">每週固定</option></select></div>
+      <div class="booking-field" id="repeatEndWrap"><label>重複結束日期</label><input id="repeatEnd" type="date"></div>
+    </div>
+    <div id="weeklyFields" style="margin-top:10px">
+      <div class="booking-field"><label>指定星期</label><div id="weekdayBox" class="booking-weekday-box"></div></div>
+      <div class="booking-note">選每週固定後，再指定星期與結束日期。</div>
+    </div>
+  </section>
+  <div class="booking-actions"><div class="booking-actions-inner"><button class="danger" onclick="deleteEntry()">刪除</button><div><button class="booking-subtle-btn" onclick="safeCloseDialog('editor')">取消</button><button class="primary" onclick="saveEntry()">儲存</button></div></div></div>
+</div></dialog>
+<dialog id="noteEditor" class="soft-work-dialog"><div class="dialog-body">
+  <div class="soft-dialog-head"><h2>教練日期記事</h2><button class="soft-dialog-close" title="關閉" onclick="safeCloseDialog('noteEditor')">×</button></div>
+  <input type="hidden" id="noteId">
+  <section class="booking-section">
+    <h3 class="booking-section-title"><span class="leaf">記</span>提醒內容</h3>
+    <div class="booking-grid">
+      <div class="booking-field"><label>日期<span class="booking-required">＊</span></label><input id="noteDate" type="date"></div>
+      <div class="booking-field"><label>教練<span class="booking-required">＊</span></label><select id="noteCoach"></select></div>
+    </div>
+    <div class="booking-grid one" style="margin-top:10px"><div class="booking-field"><label>提醒內容<span class="booking-required">＊</span></label><input id="noteText" placeholder="例：小美生日、阿明繳費提醒"></div></div>
+    <div class="booking-note">記事會顯示在對應日期下方，方便提醒生日、繳費或特殊事項。</div>
+  </section>
+  <div class="booking-actions"><div class="booking-actions-inner"><button class="danger" onclick="deleteNote()">刪除</button><div><button class="booking-subtle-btn" onclick="safeCloseDialog('noteEditor')">取消</button><button class="primary" onclick="saveCoachNote()">儲存記事</button></div></div></div>
+</div></dialog>
+
+<dialog id="studentDialog" class="student-dialog"><div class="dialog-body">
+  <div class="student-head"><h2 style="margin:0">學員管理</h2><button class="dialog-x static-x" title="關閉" onclick="safeCloseDialog('studentDialog')">×</button></div>
+  <div class="student-tools"><input id="studentSearch" placeholder="搜尋姓名、電話、教練..." oninput="renderStudents()"><span id="studentTotal" class="student-total-chip">學員總人數：0</span><button class="mini primary" onclick="newStudentForm()">＋新增學員</button></div>
+  <div class="student-layout">
+    <div id="studentList" class="student-list"></div>
+    <div class="student-form">
+      <input type="hidden" id="studentId">
+
+      <section class="student-section">
+        <h3 class="student-section-title"><span class="leaf">基</span>學員基本資料</h3>
+        <div class="soft-grid three">
+          <div class="soft-field"><label>姓名<span class="required-dot">＊</span></label><input id="stName" required placeholder="例：王小花"></div>
+          <div class="soft-field"><label>性別<span class="required-dot">＊</span></label><select id="stGender"><option value="">請選擇</option><option>女</option><option>男</option><option>其他/不透露</option></select></div>
+          <div class="soft-field"><label>連絡電話<span class="required-dot">＊</span></label><input id="stPhone" inputmode="tel" placeholder="例：09xx-xxx-xxx"></div>
+        </div>
+        <div class="soft-grid three" style="margin-top:10px">
+          <div class="soft-field"><label>身分證字號</label><input id="stIdNo" placeholder="可選填"></div>
+          <div class="soft-field"><label>所屬教練</label><select id="stCoach"></select></div>
+          <div class="soft-field"><label>共課家人姓名</label><input id="stFamily" placeholder="若有共課家人可填寫"></div>
+        </div>
+        <div class="soft-grid student-birthday-row" style="margin-top:10px">
+          <div class="soft-field"><label>出生年月日</label><input id="stBirthday" type="date" onchange="updateStudentAge()"><div class="soft-note">西元年＝民國年＋1911；年齡會依生日自動計算。</div></div>
+          <div class="soft-field"><label>年齡</label><input id="stAge" disabled placeholder="依生日自動計算"></div>
+        </div>
+        <div class="soft-grid one" style="margin-top:10px"><div class="soft-field"><label>地址</label><input id="stAddress" placeholder="可選填通訊地址"></div></div>
+      </section>
+
+      <section class="student-section">
+        <h3 class="student-section-title"><span class="leaf">急</span>緊急聯絡</h3>
+        <div class="soft-grid three">
+          <div class="soft-field"><label>緊急聯絡人</label><input id="stEmergencyName" placeholder="例：王媽媽"></div>
+          <div class="soft-field"><label>關係</label><input id="stEmergencyRelation" placeholder="例：母女、配偶"></div>
+          <div class="soft-field"><label>緊急聯絡人電話</label><input id="stEmergencyPhone" inputmode="tel" placeholder="例：09xx-xxx-xxx"></div>
+        </div>
+      </section>
+
+      <section class="student-section">
+        <h3 class="student-section-title"><span class="leaf">健</span>健康資料</h3>
+        <div class="health-soft-list">
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stDiabetes"><label for="stDiabetes">糖尿病</label></div>
+            <div class="health-inputs"><input id="stHbA1c" placeholder="糖化血色素"><input id="stFastingGlucose" placeholder="飯前血糖"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stHypertension"><label for="stHypertension">高血壓</label></div>
+            <div class="health-inputs"><input id="stSBP" placeholder="收縮壓"><input id="stDBP" placeholder="舒張壓"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stHeartDisease"><label for="stHeartDisease">心臟相關疾病</label></div>
+            <div class="health-inputs single"><input id="stHeartNote" placeholder="簡述疾病類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stScoliosis"><label for="stScoliosis">脊椎側彎</label></div>
+            <div class="health-inputs single"><input id="stScoliosisNote" placeholder="簡述側彎類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stJointIssue"><label for="stJointIssue">肌肉、關節問題</label></div>
+            <div class="health-inputs single"><input id="stJointNote" placeholder="簡述疾病類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stBoneLoss"><label for="stBoneLoss">骨質流失／疏鬆</label></div>
+            <div class="health-inputs single"><input id="stBoneNote" placeholder="骨密度數值／量測部位"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stSurgery"><label for="stSurgery">三年內動過任何手術</label></div>
+            <div class="health-inputs single"><input id="stSurgeryNote" placeholder="簡述手術類型"></div>
+          </div>
+          <div class="health-row">
+            <div class="health-row-main"><input type="checkbox" id="stMedication"><label for="stMedication">長期服用藥物</label></div>
+            <div class="health-inputs single"><input id="stMedicationNote" placeholder="簡述藥物用途"></div>
+          </div>
+          <div class="soft-field"><label>其他健康狀況（若有請說明）</label><textarea id="stOtherHealth" rows="3" placeholder="例如：近期不適、特殊注意事項、醫師提醒等"></textarea></div>
+        </div>
+      </section>
+
+      <div class="student-actions"><div class="student-actions-inner"><button class="danger" onclick="deleteStudent()">刪除</button><div><button class="student-back-btn" onclick="setStudentMode('list');renderStudents()">返回列表</button><button onclick="newStudentForm()">清空</button><button class="primary" onclick="saveStudent()">儲存學員</button></div></div></div>
+    </div>
+  </div>
+</div></dialog>
+
+
+<nav id="mobileBottomNav" class="mobile-bottom-nav no-print">
+  <button type="button" data-tab="agenda" class="active" onclick="setMobileTab('agenda')"><span>🗓️</span><b>今日</b></button>
+  <button type="button" data-tab="booking" onclick="setMobileTab('booking')"><span>📋</span><b>預約</b></button>
+  <button type="button" class="mobile-add" onclick="openEditor()"><span>＋</span><b>新增</b></button>
+  <button type="button" data-tab="stats" onclick="setMobileTab('stats')"><span>◔</span><b>統計</b></button>
+  <button type="button" data-tab="query" onclick="setMobileTab('query')"><span>🔎</span><b>查詢</b></button>
+</nav>
+
+<div id="toast" class="toast">已儲存</div>
 <script>
 const KEY='sunrise_reservation_v2', NOTE_KEY='sunrise_coach_notes_v2', LOG_KEY='sunrise_activity_logs_v1', HOLIDAY_KEY='sunrise_holidays_v2', COACH_KEY='sunrise_coaches_v2', STUDENT_KEY='sunrise_students_v1', VERSION_KEY='sunrise_data_version_v2', FB_CONFIG_KEY='sunrise_firebase_config_v1', WORKSPACE_KEY='sunrise_workspace_id_v1', ROLE_KEY='sunrise_role_v1', ROLE_COACH_KEY='sunrise_role_coach_v1';
 const AUTO_FIREBASE_CONFIG={apiKey:'AIzaSyBMrqHb-yYkFlwJ9eSKcZ2q-k8xavGecK4',authDomain:'sunrise-booking.firebaseapp.com',projectId:'sunrise-booking',storageBucket:'sunrise-booking.firebasestorage.app',messagingSenderId:'400891552645',appId:'1:400891552645:web:7414b107fc23b3c4915aec',measurementId:'G-3S04GQ5YWV'};
@@ -1894,7 +2396,7 @@ function shiftMobileDate(delta){if(!mobileSelectedDate)mobileSelectedDate=el('we
 function changeMobileMonth(delta){const base=mobileMonthBase?new Date(mobileMonthBase+'-01T00:00:00'):new Date(el('weekPicker')?.value||new Date());base.setMonth(base.getMonth()+delta);mobileMonthBase=`${base.getFullYear()}-${String(base.getMonth()+1).padStart(2,'0')}`;renderMobileApp();}
 function zoomMobileMonth(delta){mobileMonthZoom=Math.max(.72,Math.min(1.35,+(mobileMonthZoom+delta).toFixed(2)));renderMobileMonthOverview();}
 function resetMobileMonthZoom(){mobileMonthZoom=1;renderMobileMonthOverview();}
-function setMobileTab(tab){mobileTab=tab;document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');document.body.classList.add('mobile-tab-'+tab);document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));renderMobileApp();window.scrollTo({top:0,behavior:'smooth'});}
+function setMobileTab(tab){mobileTab=tab;document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query','mobile-tab-agenda');document.body.classList.add('mobile-tab-'+tab);document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));renderMobileApp();window.scrollTo({top:0,behavior:'smooth'});}
 
 let mobileDayTableZoom=Number(localStorage.getItem('sunrise_mobile_day_table_zoom')||'0.86');
 function zoomMobileDayTable(delta){mobileDayTableZoom=Math.max(.58,Math.min(1.35,mobileDayTableZoom+delta));localStorage.setItem('sunrise_mobile_day_table_zoom',String(mobileDayTableZoom));applyMobileDayTableZoom();}
@@ -1915,7 +2417,7 @@ function syncMobileReportDefaults(){if(el('mobileReportStart')&&el('reportStart'
 function syncMobileReportValues(){if(el('mobileReportStart')&&el('reportStart'))el('reportStart').value=el('mobileReportStart').value;if(el('mobileReportEnd')&&el('reportEnd'))el('reportEnd').value=el('mobileReportEnd').value;if(el('mobileReportCoach')&&el('reportCoach')&&isAdmin())el('reportCoach').value=el('mobileReportCoach').value;}
 function syncMobileReportAndOpen(){syncMobileReportValues();openReportResult()}
 function syncMobileReportAndExport(){syncMobileReportValues();exportCSV()}
-function renderMobileApp(){if(!isMobileApp()||!currentRole)return;if(!['month','booking','stats','query'].includes(mobileTab))mobileTab='month';document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');document.body.classList.add('mobile-tab-'+mobileTab);document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));renderMobileHeader();renderMobileTodaySummary();renderMobileQuickStats();renderMobileMonthOverview();renderMobileDateStrip();renderMobileAgenda();renderMobileSingleDayTable();renderMobileTodayAgenda();renderMobileStats();syncMobileReportDefaults();}
+function renderMobileApp(){if(!isMobileApp()||!currentRole)return;if(!['month','booking','stats','query','agenda'].includes(mobileTab))mobileTab='agenda';document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query','mobile-tab-agenda');document.body.classList.add('mobile-tab-'+mobileTab);document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));renderMobileHeader();renderMobileTodaySummary();renderMobileQuickStats();renderMobileMonthOverview();renderMobileDateStrip();renderMobileAgenda();renderMobileSingleDayTable();renderMobileTodayAgenda();renderMobileStats();syncMobileReportDefaults();}
 window.addEventListener('resize',()=>{if(isMobileApp())renderMobileApp()});
 
 function backupJSON(){downloadBlob(JSON.stringify({entries,coachNotes,students,activityLogs,coaches,holidays},null,2),'煦陽預約系統備份.json','application/json')}
@@ -2138,11 +2640,11 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
       document.body.classList.toggle('role-admin', typeof isAdmin==='function' && isAdmin());
       document.body.classList.toggle('role-coach', typeof isCoach==='function' && isCoach());
       if(typeof isCoach==='function' && isCoach() && typeof isMobileApp==='function' && isMobileApp()){
-        if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
+        if(!['month','booking','stats','query','agenda'].includes(mobileTab)) mobileTab='agenda';
         renderMobileApp();
       }
       if(typeof isAdmin==='function' && isAdmin()){
-        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+        document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query','mobile-tab-agenda');
         if(el('mobileBottomNav')) el('mobileBottomNav').style.display='none';
       }
     }
@@ -2192,8 +2694,8 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   const oldRenderMobileApp = typeof renderMobileApp==='function' ? renderMobileApp : null;
   renderMobileApp = function(){
     if(!(typeof isMobileApp==='function' && isMobileApp()) || !currentRole) return;
-    if(!['month','booking','stats','query'].includes(mobileTab)) mobileTab='month';
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    if(!['month','booking','stats','query','agenda'].includes(mobileTab)) mobileTab='agenda';
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query','mobile-tab-agenda');
     document.body.classList.add('mobile-tab-'+mobileTab);
     document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===mobileTab));
     renderMobileHeader();
@@ -2212,7 +2714,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   const oldSetMobileTab = typeof setMobileTab==='function' ? setMobileTab : null;
   setMobileTab = function(tab){
     mobileTab=tab;
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query');
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query','mobile-tab-agenda');
     document.body.classList.add('mobile-tab-'+tab);
     document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
     renderMobileApp();
@@ -2567,53 +3069,6 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
-
-
-/* v123 mobile buttons and drag fix */
-@media(max-width:760px){
-  .mobile-app-shell,
-  .mobile-app-header,
-  .mobile-header-mini-actions,
-  .mobile-header-mini-actions button,
-  .mobile-switch-btn,
-  #mobileBottomNav,
-  #mobileBottomNav button{
-    pointer-events:auto!important;
-  }
-
-  .mobile-app-header{
-    position:relative!important;
-    z-index:50!important;
-  }
-
-  dialog,
-  .student-dialog,
-  #studentDialog,
-  #noteEditor,
-  #editor{
-    z-index:2000!important;
-  }
-
-  body.mobile-tab-booking .mobile-today-agenda-section,
-  body.mobile-tab-booking #mobileTodayAgendaList,
-  body.mobile-tab-booking #mobileAgendaList{
-    display:none!important;
-  }
-
-  .mobile-mini-entry,
-  .entry{
-    touch-action:none!important;
-    -webkit-user-select:none!important;
-    user-select:none!important;
-  }
-
-  .m-col.mobile-drag-over,
-  td.drag-over{
-    outline:3px solid rgba(185,155,114,.85)!important;
-    outline-offset:-3px!important;
-    background:#fff4d8!important;
-  }
-}
 
 </style>
 <script id="v59-desktop-header-date-script">
@@ -8984,6 +9439,45 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* v200 今日行程首頁 + 自己欄位高亮強化 */
+#schedule .self-head{background:#fff0ca!important;color:#6f4e12!important;font-weight:900!important;border-left:4px solid #c9922a!important;border-right:4px solid #c9922a!important;}
+#schedule .self-col{background:#fffce8!important;border-left:3px solid rgba(201,146,42,.3)!important;border-right:3px solid rgba(201,146,42,.3)!important;}
+#schedule .self-col .start-entry,#schedule .self-col .entry{border:1.5px solid rgba(185,155,114,.5)!important;box-shadow:0 2px 6px rgba(140,100,30,.1)!important;}
+@media(max-width:760px){
+body.mobile-tab-agenda #mobileAppHome{display:block!important;}
+body.mobile-tab-agenda #mobileAgendaPage{display:block!important;}
+body.mobile-tab-agenda #mobileMonthPage,body.mobile-tab-agenda #mobileBookingPage,body.mobile-tab-agenda #mobileStatsBlock,body.mobile-tab-agenda #mobileReportBlock{display:none!important;}
+body.mobile-tab-agenda #desktopScheduleCard,body.mobile-tab-agenda .side{display:none!important;}
+body.mobile-tab-agenda #appHeader{display:none!important;}
+body.mobile-tab-month #mobileAgendaPage{display:none!important;}
+.mobile-today-header-card{background:#fff;border:1px solid #eadfce;border-radius:22px;padding:14px 15px;margin-bottom:12px;box-shadow:0 8px 22px rgba(80,60,30,.055);}
+.mobile-today-date-big{font-size:20px;font-weight:900;color:#3d3933;line-height:1.2;}
+.mobile-today-holiday{font-size:12px;color:#bd695d;font-weight:800;background:#fff1ee;border-radius:999px;padding:3px 9px;}
+.mobile-today-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.mobile-today-stat{background:#fffaf1;border:1px solid #eadfce;border-radius:14px;padding:9px 11px;}
+.mobile-today-stat span{display:block;font-size:11px;color:#8a7c6d;}
+.mobile-today-stat b{font-size:20px;font-weight:900;color:#3d3933;line-height:1.2;}
+.mobile-today-agenda-wrap{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.mobile-today-empty{background:#fffefb;border:1px dashed #eadfce;border-radius:20px;padding:22px;text-align:center;color:#8a7c6d;font-size:14px;}
+.mobile-today-agenda-card{background:#fffefb;border:1px solid #eadfce;border-radius:20px;padding:11px 13px;box-shadow:0 5px 16px rgba(80,60,30,.05);display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:start;position:relative;overflow:hidden;}
+.mobile-today-agenda-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:#b99b72;}
+.mobile-today-agenda-card.card-past::before{background:#c8c2b8;}
+.mobile-today-agenda-card.card-now::before{background:#e8823a;}
+.mobile-today-agenda-card.card-now{border-color:#e8d5b8!important;background:#fffde8!important;}
+.mta-time{font-size:13px;font-weight:900;color:#8f704c;line-height:1.35;padding-left:4px;}
+.mta-time.time-past{color:#a0968a;}.mta-time.time-now{color:#c05f1a;}
+.mta-name{font-size:15px;font-weight:900;color:#3d3933;margin-bottom:3px;word-break:break-word;}
+.mta-meta{font-size:12px;color:#6f665b;line-height:1.55;}
+.mta-note{font-size:11px;color:#8a7c6d;background:#fff7e8;border-radius:10px;padding:4px 7px;margin-top:5px;line-height:1.4;}
+.mta-now-badge{display:inline-block;font-size:10px;background:#e8823a;color:#fff;border-radius:999px;padding:2px 7px;margin-left:5px;vertical-align:middle;font-weight:800;}
+.mobile-month-mini-link{background:#fff;border:1px solid #eadfce;border-radius:18px;padding:12px 15px;margin-top:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 14px rgba(80,60,30,.05);cursor:pointer;}
+.mobile-month-mini-link span{font-size:13px;color:#6f5b44;font-weight:700;}
+.mobile-month-mini-link .arrow{font-size:16px;color:#b99b72;}
+.mobile-today-section-title{font-size:15px;font-weight:900;color:#3d3933;padding:6px 2px 10px;display:flex;align-items:baseline;gap:8px;border-bottom:1px dashed #eadfce;margin-bottom:12px;}
+.mobile-today-section-title small{font-size:12px;color:#bd695d;font-weight:800;}
+}/* end media v200 */
+
 </style>
 
 <script id="v111-mobile-nav-console-fix">
@@ -9104,199 +9598,201 @@ body.salary-record-open{overflow:hidden!important;}
 })();
 </script>
 
+<script id="v200-agenda-tab">
+/* v200 今日行程 tab + renderMobileTodayFull */
+(function(){
+
+function renderMobileTodayFull(){
+  const box = document.getElementById('mobileTodayFull');
+  if(!box) return;
+  const today = fmt(new Date());
+  const d = new Date(today + 'T00:00:00');
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const dayNames = ['日','一','二','三','四','五','六'];
+  const dayLabel = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${dayNames[d.getDay()]}）`;
+  const holiday = (typeof holidays !== 'undefined' && holidays[today]) ? holidays[today] : '';
+
+  // 今日所有行程（不過濾休假）
+  const allToday = (typeof mobileVisibleEntries === 'function' ? mobileVisibleEntries() : [])
+    .filter(e => e.date === today)
+    .slice().sort((a,b) => a.time.localeCompare(b.time));
+
+  // 本月統計
+  const base = new Date(today);
+  const y = base.getFullYear(), m = base.getMonth();
+  const monthList = (typeof mobileVisibleEntries === 'function' ? mobileVisibleEntries() : [])
+    .filter(e => { const dd = new Date(e.date); return dd.getFullYear()===y && dd.getMonth()===m; });
+  const courseN = monthList.filter(e => typeof countAsCourse==='function' && countAsCourse(e)).length;
+  const eduN = monthList.filter(e => e.type==='edu').length;
+
+  const headerHtml = `
+    <div class="mobile-soft-section mobile-today-header-card">
+      <div class="today-date-row">
+        <div class="mobile-today-date-big">${esc(dayLabel)}</div>
+        ${holiday ? `<div class="mobile-today-holiday">${esc(holiday)}</div>` : ''}
+      </div>
+      <div class="mobile-today-section-title" style="border:none;padding:0;margin:0">今日 ${allToday.length} 筆預約</div>
+      <div class="mobile-today-stats-row">
+        <div class="mobile-today-stat"><span>本月課程</span><b>${courseN}</b></div>
+        <div class="mobile-today-stat"><span>本月衛教</span><b>${eduN}</b></div>
+      </div>
+    </div>`;
+
+  let cardsHtml = '';
+  if(allToday.length === 0){
+    cardsHtml = '<div class="mobile-today-empty">今天沒有預約。<br>點下方「＋」新增課程。</div>';
+  } else {
+    cardsHtml = '<div class="mobile-today-agenda-wrap">';
+    allToday.forEach(e => {
+      const startMin = (typeof mins === 'function') ? mins(e.time) : 0;
+      const endMin = startMin + Number(e.duration || 60);
+      let timeState = '';
+      if(endMin <= nowMin) timeState = 'past';
+      else if(startMin <= nowMin) timeState = 'now';
+      const cardClass = timeState === 'now' ? 'card-now' : (timeState === 'past' ? 'card-past' : '');
+      const nowBadge = timeState === 'now' ? '<span class="mta-now-badge">進行中</span>' : '';
+      const endTimeStr = (typeof addMins === 'function') ? addMins(e.time, e.duration||60) : '';
+      const canEdit = (typeof canEditEntry === 'function') ? canEditEntry(e) : false;
+      const clickAct = canEdit ? `edit('${e.id}')` : 'void(0)';
+      const venueStr = (typeof venueName === 'function') ? venueName(e.venue) : (e.venue||'');
+      const typeStr = (typeof typeLabel === 'function') ? typeLabel(e.type) : (e.type||'');
+      cardsHtml += `<div class="mobile-today-agenda-card ${cardClass}" onclick="${clickAct}" style="${canEdit?'cursor:pointer':''}">
+        <div class="mta-time ${timeState==='past'?'time-past':(timeState==='now'?'time-now':'')}">
+          ${esc(e.time)}<br>${esc(endTimeStr)}
+        </div>
+        <div>
+          <div class="mta-name">${esc(e.name||'未命名')}${nowBadge}</div>
+          <div class="mta-meta">${esc(typeStr)}｜${esc(e.coach)}｜${esc(venueStr)}</div>
+          ${e.note ? `<div class="mta-note">${esc(e.note)}</div>` : ''}
+        </div>
+      </div>`;
+    });
+    cardsHtml += '</div>';
+  }
+
+  const monthLink = `<div class="mobile-month-mini-link" onclick="if(typeof setMobileTab==='function')setMobileTab('month')">
+    <span>📆 本月預約總覽</span><span class="arrow">›</span>
+  </div>`;
+
+  box.innerHTML = `<div style="padding:10px 10px 80px">
+    ${headerHtml}
+    <div class="mobile-today-section-title" style="margin-top:4px">
+      今日行程
+      ${holiday ? `<small>${esc(holiday)}</small>` : ''}
+    </div>
+    ${cardsHtml}
+    ${monthLink}
+  </div>`;
+}
+
+// 讓 agenda tab 的 tab 管理加入 renderMobileTodayFull
+const _origSetMobileTab = window.setMobileTab;
+window.setMobileTab = function(tab){
+  // 同步 active button (因為原 nav 只有 month/booking/stats/query)
+  // 我們新增了 agenda tab，要確保正確 active
+  if(typeof _origSetMobileTab === 'function') _origSetMobileTab(tab);
+  // 覆蓋 body class
+  document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-stats','mobile-tab-query','mobile-tab-agenda');
+  document.body.classList.add('mobile-tab-' + tab);
+  // 更新 active 按鈕
+  document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  if(tab === 'agenda') renderMobileTodayFull();
+  window.scrollTo({top:0, behavior:'smooth'});
+};
+
+// 讓 renderMobileApp 也觸發今日頁
+const _origRenderMobileApp = window.renderMobileApp;
+window.renderMobileApp = function(){
+  if(typeof _origRenderMobileApp === 'function') _origRenderMobileApp();
+  if(window.mobileTab === 'agenda' || !window.mobileTab) renderMobileTodayFull();
+};
+
+// 登入後預設 tab 改為 agenda
+const _origApplyRoleUI = window.applyRoleUI;
+window.applyRoleUI = function(){
+  if(typeof _origApplyRoleUI === 'function') _origApplyRoleUI();
+  const logged = !!window.currentRole;
+  if(logged && typeof window.isMobileApp === 'function' && window.isMobileApp()){
+    if(!window.mobileTab || window.mobileTab === 'month'){
+      window.mobileTab = 'agenda';
+      document.body.classList.remove('mobile-tab-month');
+      document.body.classList.add('mobile-tab-agenda');
+      document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === 'agenda'));
+      renderMobileTodayFull();
+    }
+  }
+};
+
+// DOMContentLoaded 時若已登入也補渲染
+document.addEventListener('DOMContentLoaded', function(){
+  if(window.currentRole && typeof window.isMobileApp === 'function' && window.isMobileApp()){
+    window.mobileTab = 'agenda';
+    document.body.classList.add('mobile-tab-agenda');
+    renderMobileTodayFull();
+  }
+});
+
+})();
+</script>
+
 
 <script>
-/* v123 mobile buttons and touch-drag fix */
+/* v123 mobile drawer behavior - mobile only */
 (function(){
-  function byId(id){ return document.getElementById(id); }
-  function canUse(){
-    return typeof window.entries !== 'undefined' &&
-           typeof window.fmt === 'function' &&
-           typeof window.addMins === 'function';
-  }
-
-  // Make mobile header buttons resilient when WebView/touch layers block normal onclick.
-  document.addEventListener('touchend', function(ev){
-    const btn = ev.target && ev.target.closest ? ev.target.closest('button') : null;
-    if(!btn) return;
-    if(!btn.closest('.mobile-app-header') && !btn.closest('#mobileBottomNav')) return;
-    if(btn.__sunriseTouchClicking) return;
-    btn.__sunriseTouchClicking = true;
-    setTimeout(function(){ btn.__sunriseTouchClicking = false; }, 350);
-    // onclick already fires in most browsers; this fallback covers LINE/iOS WebView cases.
-    if(typeof btn.onclick === 'function'){
-      ev.preventDefault();
-      try{ btn.onclick.call(btn, ev); }catch(err){ console.warn(err); }
+  function byId(id){return document.getElementById(id);}
+  function callFirst(names){
+    for(var i=0;i<names.length;i++){
+      var fn=window[names[i]];
+      if(typeof fn==='function'){try{fn();return true;}catch(e){}}
     }
-  }, {passive:false});
-
-  // Replace mobile single-day table renderer with drag/drop aware version.
-  if(typeof window.renderMobileSingleDayTable === 'function'){
-    window.renderMobileSingleDayTable = function(){
-      const table = byId('mobileSingleDayTable');
-      if(!table || !canUse()) return;
-
-      if(!window.mobileSelectedDate){
-        window.mobileSelectedDate = byId('weekPicker')?.value || fmt(new Date());
-      }
-
-      const visible = [window.SELF_TRAINING || 'FREE', ...(window.coaches || [])];
-
-      function escSafe(v){
-        return typeof window.esc === 'function' ? esc(v) : String(v ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-      }
-      function venueSafe(v){
-        return typeof window.venueName === 'function' ? venueName(v) : (v || '');
-      }
-      function mobileList(){
-        if(typeof window.mobileVisibleEntries === 'function') return mobileVisibleEntries();
-        return (window.entries || []).filter(e => e.date === window.mobileSelectedDate);
-      }
-      function startMin(e){
-        if(typeof window.actualStartMin === 'function') return actualStartMin(e);
-        const [h,m] = String(e.time || '00:00').split(':').map(Number);
-        return h*60 + m;
-      }
-      function endMin(e){
-        if(typeof window.actualEndMin === 'function') return actualEndMin(e);
-        return startMin(e) + Number(e.duration || 60);
-      }
-      function minsSafe(t){
-        if(typeof window.mins === 'function') return mins(t);
-        const [h,m] = String(t || '00:00').split(':').map(Number);
-        return h*60 + m;
-      }
-      function canOpenCoach(c){
-        if(typeof window.isAdmin === 'function' && isAdmin()) return true;
-        if(typeof window.isCoach === 'function' && isCoach()){
-          return c === (window.SELF_TRAINING || 'FREE') || c === window.currentCoach;
-        }
-        return false;
-      }
-      function canEditSafe(e){
-        return typeof window.canEditEntry === 'function' ? canEditEntry(e) : true;
-      }
-
-      let html = '<tr><th class="m-time">時間</th>' + visible.map(c => `<th class="m-col">${escSafe(c)}</th>`).join('') + '</tr>';
-
-      (window.times || []).forEach(t => {
-        html += `<tr><td class="m-time">${escSafe(t)}</td>`;
-        visible.forEach(c => {
-          const mt = minsSafe(t);
-          const covering = mobileList().filter(e => e.date === window.mobileSelectedDate && e.coach === c && mt >= startMin(e) && mt < endMin(e));
-          const starting = mobileList().filter(e => e.date === window.mobileSelectedDate && e.coach === c && e.time === t);
-          const open = canOpenCoach(c) ? `onclick="openEditor('${window.mobileSelectedDate}','${t}','${escSafe(c)}')"` : '';
-          html += `<td class="m-col ${covering.length ? 'm-covered' : ''} ${starting.length ? 'm-start' : ''}"
-                    data-drop-date="${window.mobileSelectedDate}"
-                    data-drop-time="${t}"
-                    data-drop-coach="${escSafe(c)}"
-                    ondragover="allowDrop(event)"
-                    ondragleave="dragLeave(event)"
-                    ondrop="dropEntry(event,'${window.mobileSelectedDate}','${t}','${escSafe(c)}')"
-                    ${open}>` +
-            starting.map(e => {
-              const editAction = canEditSafe(e) ? `edit('${e.id}')` : 'void(0)';
-              return `<div class="mobile-mini-entry"
-                        draggable="true"
-                        data-entry-id="${escSafe(e.id)}"
-                        ondragstart="dragStart(event,'${escSafe(e.id)}')"
-                        onclick="event.stopPropagation();${editAction}">
-                        <b>${escSafe(e.name || '')}</b>
-                        <small>${escSafe(e.time)}-${escSafe(addMins(e.time, e.duration || 60))}｜${escSafe(venueSafe(e.venue))}</small>
-                      </div>`;
-            }).join('') + '</td>';
-        });
-        html += '</tr>';
-      });
-
-      table.innerHTML = html;
-      if(typeof window.applyMobileDayTableZoom === 'function') applyMobileDayTableZoom();
-    };
+    return false;
   }
-
-  // Touch drag support for iPhone / LINE WebView.
-  let touchDrag = null;
-  let longPressTimer = null;
-
-  function clearDrag(){
-    if(longPressTimer){ clearTimeout(longPressTimer); longPressTimer = null; }
-    document.querySelectorAll('.mobile-drag-over,.drag-over').forEach(el => el.classList.remove('mobile-drag-over','drag-over'));
-    touchDrag = null;
+  function closeDrawer(){document.body.classList.remove('mobile-drawer-open');}
+  function updateDrawerProfile(){
+    var nameEl=byId('mobileDrawerName'), roleEl=byId('mobileDrawerRole');
+    var role=window.currentRole||'', coach=window.currentCoach||'';
+    if(nameEl) nameEl.textContent = role==='admin' ? 'Admin 管理員' : (coach || '教練');
+    if(roleEl) roleEl.textContent = role==='admin' ? '管理員模式' : '教練模式';
   }
-
-  document.addEventListener('touchstart', function(ev){
-    const item = ev.target && ev.target.closest ? ev.target.closest('.mobile-mini-entry,.entry') : null;
-    if(!item) return;
-    const id = item.dataset.entryId || item.getAttribute('data-entry-id') || (item.getAttribute('ondragstart') || '').match(/'([^']+)'/)?.[1];
-    if(!id) return;
-
-    longPressTimer = setTimeout(function(){
-      touchDrag = { id, item };
-      item.classList.add('touch-dragging');
-      if(navigator.vibrate) try{ navigator.vibrate(8); }catch(e){}
-    }, 260);
-  }, {passive:true});
-
-  document.addEventListener('touchmove', function(ev){
-    if(!longPressTimer && !touchDrag) return;
-    if(!touchDrag){
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-      return;
+  function setTab(tab){
+    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-schedule','mobile-tab-stats','mobile-tab-query','mobile-tab-settings','mobile-tab-agenda');
+    document.body.classList.add('mobile-tab-'+tab);
+    if(typeof window.setMobileTab==='function'){try{window.setMobileTab(tab);}catch(e){}}
+    document.querySelectorAll('#mobileBottomNav button[data-tab],.mobile-bottom-nav button[data-tab],.mobile-drawer-menu button[data-mobile-tab]').forEach(function(btn){
+      var value=btn.dataset.tab||btn.dataset.mobileTab;
+      btn.classList.toggle('active',value===tab);
+    });
+    if(tab==='booking'||tab==='schedule'){
+      setTimeout(function(){try{if(typeof window.render==='function')window.render(); if(typeof window.resetScheduleZoom==='function')window.resetScheduleZoom();}catch(e){}},0);
     }
-    ev.preventDefault();
-    const t = ev.touches[0];
-    const target = document.elementFromPoint(t.clientX, t.clientY);
-    document.querySelectorAll('.mobile-drag-over,.drag-over').forEach(el => el.classList.remove('mobile-drag-over','drag-over'));
-    const cell = target && target.closest ? target.closest('[data-drop-date][data-drop-time][data-drop-coach], td[ondrop]') : null;
-    if(cell) cell.classList.add('mobile-drag-over','drag-over');
-  }, {passive:false});
-
-  document.addEventListener('touchend', function(ev){
-    if(longPressTimer){ clearTimeout(longPressTimer); longPressTimer = null; }
-    if(!touchDrag) return;
-
-    const changed = ev.changedTouches[0];
-    const target = document.elementFromPoint(changed.clientX, changed.clientY);
-    const cell = target && target.closest ? target.closest('[data-drop-date][data-drop-time][data-drop-coach]') : null;
-
-    if(cell && canUse()){
-      const e = (window.entries || []).find(x => String(x.id) === String(touchDrag.id));
-      if(e){
-        if(typeof window.canEditEntry === 'function' && !canEditEntry(e)){
-          alert('小提醒：只能修改自己的預約課程唷！');
-        }else{
-          let coach = cell.dataset.dropCoach;
-          if(typeof window.isCoach === 'function' && isCoach() && coach !== (window.SELF_TRAINING || 'FREE')){
-            coach = window.currentCoach;
-          }
-          e.date = cell.dataset.dropDate;
-          e.time = cell.dataset.dropTime;
-          e.coach = coach;
-          if((e.venue === 'auto' || !e.venue) && typeof window.suggestedVenue === 'function'){
-            e.venue = suggestedVenue(e.date, e.time, e.duration, e.id);
-          }
-          if(typeof window.logActivity === 'function' && typeof window.entrySummary === 'function'){
-            logActivity('手機拖曳調整時段', entrySummary(e), e.coach);
-          }
-          if(typeof window.persist === 'function') persist('已拖曳調整時段');
-          if(typeof window.render === 'function') render();
-          if(typeof window.renderMobileApp === 'function') renderMobileApp();
-        }
+  }
+  document.addEventListener('click',function(e){
+    if(e.target.closest('#mobileDrawerToggle')){updateDrawerProfile();document.body.classList.add('mobile-drawer-open');return;}
+    if(e.target.closest('#mobileDrawerBackdrop')){closeDrawer();return;}
+    var tabBtn=e.target.closest('.mobile-drawer-menu button[data-mobile-tab]');
+    if(tabBtn){setTab(tabBtn.dataset.mobileTab);closeDrawer();return;}
+    var actionBtn=e.target.closest('.mobile-drawer-menu button[data-mobile-action]');
+    if(actionBtn){
+      var action=actionBtn.dataset.mobileAction;
+      if(action==='add') callFirst(['openEditor','newBooking','addBooking','openAddDialog','openBookingEditor']);
+      if(action==='students') callFirst(['openStudentManager','openStudentDialog','showStudentManager']);
+      if(action==='coaches') callFirst(['openCoachManager','openCoachDialog','showCoachManager']);
+      if(action==='salary'){setTab('query');callFirst(['openSalaryWork','renderSalaryWork','openReportResult']);}
+      if(action==='settings') setTab('settings');
+      if(action==='switch'||action==='logout'){
+        callFirst(['logout','switchRole','resetIdentity','showIdentityScreen']);
+        try{document.body.classList.remove('is-logged-in');document.body.classList.add('is-logged-out');}catch(e){}
       }
+      closeDrawer();
     }
-
-    clearDrag();
-  }, {passive:false});
-
-  document.addEventListener('touchcancel', clearDrag, {passive:true});
-
-  // Re-render after load so the mobile table receives data attributes.
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(function(){
-      if(typeof window.renderMobileSingleDayTable === 'function') renderMobileSingleDayTable();
-    }, 300);
   });
+  var oldApply=window.applyRoleUI;
+  if(typeof oldApply==='function'){
+    window.applyRoleUI=function(){oldApply.apply(this,arguments);updateDrawerProfile();};
+  }
+  window.mobileDrawerSetTab=setTab;
+  window.addEventListener('resize',function(){if(window.innerWidth>760)closeDrawer();});
 })();
 </script>
 
