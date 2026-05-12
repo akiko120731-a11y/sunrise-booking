@@ -1023,7 +1023,8 @@ body.is-logged-out{
   body.mobile-tab-month .mobile-page-month,
   body.mobile-tab-booking .mobile-page-booking,
   body.mobile-tab-stats .mobile-page-stats,
-  body.mobile-tab-query .mobile-page-query{display:block!important;}
+  body.mobile-tab-query .mobile-page-query,
+  body.mobile-tab-agenda .mobile-page-agenda{display:block!important;}
   .mobile-summary-card,.mobile-soft-section{background:#fffefb!important;border:1px solid #eadfce!important;border-radius:26px!important;box-shadow:0 8px 22px rgba(80,60,30,.05)!important;padding:15px!important;margin:0 0 14px!important;height:auto!important;max-height:none!important;overflow:visible!important;}
   .mobile-summary-card h3,.mobile-soft-section h3{margin:0 0 10px!important;font-size:18px!important;color:#3d3933!important;letter-spacing:.02em;}
   .mobile-summary-card p{margin:0!important;color:#8a7c6d!important;font-size:14px!important;line-height:1.6!important;}
@@ -1517,50 +1518,6 @@ overflow-x:auto!important;
 
 }
 
-
-/* v123 mobile drawer layout only - desktop unchanged */
-.mobile-drawer-toggle,.mobile-drawer-backdrop,.mobile-drawer-panel{display:none;}
-@media(max-width:760px){
-body.is-logged-in{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important;background:#f8f6f1!important;}
-body.is-logged-in #appHeader{position:sticky!important;top:0!important;z-index:120!important;min-height:58px!important;padding:8px 12px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-bottom:1px solid #eadfce!important;background:rgba(248,246,241,.96)!important;backdrop-filter:blur(14px)!important;}
-body.is-logged-in #appHeader>div:first-child{display:block!important;text-align:center!important;max-width:calc(100vw - 116px)!important;}
-body.is-logged-in #appHeader h1{font-size:14px!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;letter-spacing:.02em!important;}
-body.is-logged-in #appHeader .sub,body.is-logged-in #appHeader .toolbar{display:none!important;}
-.mobile-drawer-toggle{display:flex!important;position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;width:42px!important;height:42px!important;border-radius:999px!important;align-items:center!important;justify-content:center!important;background:#fffefb!important;border:1px solid #eadfce!important;color:#6f5b44!important;box-shadow:0 4px 14px rgba(80,60,30,.08)!important;z-index:125!important;}
-.mobile-drawer-toggle span{display:block!important;width:18px!important;height:2px!important;background:#6f5b44!important;border-radius:999px!important;position:relative!important;}
-.mobile-drawer-toggle span:before,.mobile-drawer-toggle span:after{content:''!important;position:absolute!important;left:0!important;width:18px!important;height:2px!important;background:#6f5b44!important;border-radius:999px!important;}
-.mobile-drawer-toggle span:before{top:-6px!important}.mobile-drawer-toggle span:after{top:6px!important}
-.mobile-drawer-backdrop{display:none;position:fixed!important;inset:0!important;z-index:200!important;background:rgba(55,45,35,.28)!important;backdrop-filter:blur(2px)!important;}
-.mobile-drawer-panel{display:block!important;position:fixed!important;z-index:210!important;top:0!important;bottom:0!important;left:0!important;width:min(82vw,320px)!important;padding:calc(env(safe-area-inset-top,0px) + 18px) 16px calc(env(safe-area-inset-bottom,0px) + 18px)!important;background:#fffefb!important;border-right:1px solid #eadfce!important;box-shadow:18px 0 40px rgba(80,60,30,.14)!important;transform:translateX(-105%)!important;transition:transform .24s ease!important;overflow:auto!important;-webkit-overflow-scrolling:touch!important;}
-body.mobile-drawer-open .mobile-drawer-backdrop{display:block!important;}
-body.mobile-drawer-open .mobile-drawer-panel{transform:translateX(0)!important;}
-.mobile-drawer-profile{padding:12px 6px 18px!important;border-bottom:1px dashed #eadfce!important;margin-bottom:14px!important;}
-.mobile-drawer-profile b{display:block!important;font-size:22px!important;color:#2f2c28!important;line-height:1.2!important;}
-.mobile-drawer-profile small{display:block!important;margin-top:6px!important;color:#8a7c6d!important;font-size:13px!important;}
-.mobile-drawer-menu{display:flex!important;flex-direction:column!important;gap:8px!important;}
-.mobile-drawer-menu button{width:100%!important;border:0!important;box-shadow:none!important;background:transparent!important;border-radius:18px!important;min-height:46px!important;padding:10px 12px!important;display:flex!important;align-items:center!important;gap:10px!important;justify-content:flex-start!important;color:#4a443d!important;font-size:15px!important;text-align:left!important;}
-.mobile-drawer-menu button.active,.mobile-drawer-menu button:hover{background:#fff4df!important;color:#8f704c!important;}
-.mobile-drawer-menu .admin-only-drawer{display:none!important;} body.role-admin .mobile-drawer-menu .admin-only-drawer{display:flex!important;}
-.mobile-drawer-section{margin:12px 4px 4px!important;color:#a2917d!important;font-size:11px!important;font-weight:800!important;letter-spacing:.08em!important;}
-body.mobile-tab-booking #mobileAppHome,body.mobile-tab-booking #mobileTodayAgenda,body.mobile-tab-booking #mobileTodaySummary,body.mobile-tab-booking .today-card,body.mobile-tab-booking .today-summary,body.mobile-tab-booking .quick-stats,body.mobile-tab-booking .side{display:none!important;}
-body.mobile-tab-booking #appWrap{padding:0!important;gap:0!important;}
-body.mobile-tab-booking #desktopScheduleCard,body.mobile-tab-schedule #desktopScheduleCard{display:block!important;width:100vw!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;box-shadow:none!important;min-height:calc(100dvh - 146px)!important;}
-body.mobile-tab-booking #desktopScheduleCard h2,body.mobile-tab-schedule #desktopScheduleCard h2{display:none!important;}
-body.mobile-tab-booking .controls,body.mobile-tab-schedule .controls{position:sticky!important;top:58px!important;z-index:100!important;padding:8px 10px!important;gap:8px!important;flex-wrap:nowrap!important;overflow-x:auto!important;background:#fbf7ee!important;border-bottom:1px solid #eadfce!important;scrollbar-width:none!important;}
-body.mobile-tab-booking .controls::-webkit-scrollbar,body.mobile-tab-schedule .controls::-webkit-scrollbar{display:none!important;}
-body.mobile-tab-booking .controls select,body.mobile-tab-schedule .controls select,body.mobile-tab-booking .controls button,body.mobile-tab-schedule .controls button{flex:0 0 auto!important;min-height:38px!important;font-size:14px!important;padding:8px 12px!important;white-space:nowrap!important;}
-body.mobile-tab-booking .controls .hint,body.mobile-tab-schedule .controls .hint{flex:0 0 auto!important;white-space:nowrap!important;font-size:14px!important;color:#3d3933!important;}
-body.mobile-tab-booking .zoom-tools,body.mobile-tab-booking .month-zoom-tools,body.mobile-tab-schedule .zoom-tools,body.mobile-tab-schedule .month-zoom-tools{display:none!important;}
-body.mobile-tab-booking .schedule-wrap,body.mobile-tab-schedule .schedule-wrap{height:calc(100dvh - 150px)!important;max-height:none!important;min-height:0!important;border-radius:0!important;overflow:auto!important;padding-bottom:116px!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-x pan-y pinch-zoom!important;background:#fffdf8!important;}
-body.mobile-tab-booking #schedule,body.mobile-tab-schedule #schedule{width:max-content!important;min-width:100%!important;table-layout:fixed!important;}
-body.mobile-tab-booking #schedule th,body.mobile-tab-booking #schedule td,body.mobile-tab-schedule #schedule th,body.mobile-tab-schedule #schedule td{min-width:78px!important;height:38px!important;font-size:11px!important;}
-body.mobile-tab-booking #schedule .time,body.mobile-tab-schedule #schedule .time{min-width:56px!important;width:56px!important;}
-#mobileBottomNav,.mobile-bottom-nav{display:flex!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:180!important;background:rgba(255,254,251,.96)!important;backdrop-filter:blur(14px)!important;border-top:1px solid #eadfce!important;padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px))!important;justify-content:space-around!important;box-shadow:0 -8px 24px rgba(80,60,30,.08)!important;}
-#mobileBottomNav button,.mobile-bottom-nav button{border:0!important;background:transparent!important;box-shadow:none!important;}
-#mobileBottomNav .mobile-add,.mobile-bottom-nav .mobile-add{width:64px!important;height:64px!important;margin-top:-24px!important;border-radius:999px!important;background:#b99b72!important;color:#fff!important;box-shadow:0 8px 18px rgba(80,60,30,.18)!important;}
-body.is-logged-out .mobile-drawer-toggle,body.is-logged-out .mobile-drawer-panel,body.is-logged-out .mobile-drawer-backdrop{display:none!important;}
-}
-
 </style>
 </head>
 <body class="is-logged-out">
@@ -1581,50 +1538,19 @@ body.is-logged-out .mobile-drawer-toggle,body.is-logged-out .mobile-drawer-panel
   <div><h1>煦陽內部預約登記系統</h1><div class="sub">自動雲端同步版・本館/辦公室・教練課表・休假排事・衛教統計</div></div>
   <div class="toolbar"><span class="status" id="roleBadge"></span><button class="mini" onclick="switchIdentity()">切換身份</button><button class="mini" onclick="prevWeek()">← 上週</button><input id="weekPicker" type="date" onchange="render()"><button class="mini" onclick="nextWeek()">下週 →</button><button class="primary mini" onclick="openEditor()">＋新增預約</button><button class="mini" onclick="openNoteEditor()">＋新增記事</button><button class="mini coach-only pink-btn" onclick="openMonthOverview()">本月預約總覽</button><button class="mini student-btn" onclick="openStudentManager()">學員管理</button><button class="mini admin-only" onclick="openReportWork()">報表作業</button><button class="mini admin-only salary-soft-btn" onclick="openSalaryWork()">教練薪資作業</button><button class="mini danger admin-only" onclick="clearAll()">清空</button></div>
 </header>
-
-<!-- v123 mobile drawer menu -->
-<button class="mobile-drawer-toggle" id="mobileDrawerToggle" type="button" aria-label="開啟選單"><span></span></button>
-<div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
-<aside class="mobile-drawer-panel" id="mobileDrawerPanel" aria-label="手機版選單">
-  <div class="mobile-drawer-profile">
-    <b id="mobileDrawerName">煦陽</b>
-    <small id="mobileDrawerRole">請先登入身份</small>
-  </div>
-  <nav class="mobile-drawer-menu">
-    <div class="mobile-drawer-section">主要功能</div>
-    <button type="button" data-mobile-tab="month">📅 本月首頁</button>
-    <button type="button" data-mobile-tab="booking">📋 預約課表</button>
-    <button type="button" data-mobile-action="add">＋ 新增預約</button>
-    <button type="button" data-mobile-tab="stats">📊 統計</button>
-    <button type="button" data-mobile-tab="query">🔎 查詢</button>
-    <div class="mobile-drawer-section admin-only-drawer">管理功能</div>
-    <button type="button" class="admin-only-drawer" data-mobile-action="students">👥 學員管理</button>
-    <button type="button" class="admin-only-drawer" data-mobile-action="coaches">🧑‍🏫 教練管理</button>
-    <button type="button" class="admin-only-drawer" data-mobile-action="salary">💰 薪資作業</button>
-    <button type="button" class="admin-only-drawer" data-mobile-action="settings">⚙️ 系統設定</button>
-    <div class="mobile-drawer-section">帳號</div>
-    <button type="button" data-mobile-action="switch">🔁 切換身份</button>
-    <button type="button" data-mobile-action="logout">🚪 登出</button>
-  </nav>
-</aside>
-
 <div id="appWrap" class="wrap" style="display:none">
   
   <section id="mobileAppHome" class="mobile-app-shell no-print">
-    <div class="mobile-app-header mobile-app-header-v57">
-      <div class="mobile-header-row mobile-header-row-top">
-        <div class="mobile-user-name" id="mobileUserName">Akiko</div>
-        <button type="button" class="mobile-switch-btn" onclick="switchIdentity()">切換身分</button>
+    <!-- v300 Mobile Header: Hamburger + Title -->
+    <header class="mh-header" id="mobileHeader">
+      <button type="button" class="mh-hamburger" id="mhHamburger" onclick="openMobileDrawer()" aria-label="選單">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="mh-title">煦陽預約系統</div>
+      <div class="mh-right">
+        <button type="button" class="mh-icon-btn" onclick="openEditor()" aria-label="新增預約">＋</button>
       </div>
-      <div class="mobile-header-row mobile-header-row-bottom">
-        <div class="mobile-system-name">煦陽內部預約系統</div>
-        <div class="mobile-header-mini-actions">
-          <button type="button" onclick="openStudentManager()">學員管理</button>
-          <button type="button" onclick="openNoteEditor()">新增記事</button>
-        </div>
-      </div>
-      <span id="mobileMonthTitle" class="mobile-month-title-hidden" aria-hidden="true">5月</span>
-    </div>
+    </header>
 
     <section id="mobileAgendaPage" class="mobile-page mobile-page-agenda">
       <div id="mobileTodayFull"></div>
@@ -1650,26 +1576,19 @@ body.is-logged-out .mobile-drawer-toggle,body.is-logged-out .mobile-drawer-panel
     </section>
 
     <section id="mobileBookingPage" class="mobile-page mobile-page-booking">
-      <div class="mobile-day-switcher">
-        <button type="button" onclick="shiftMobileDate(-1)">←</button>
-        <button type="button" class="mobile-current-day" onclick="setMobileSelectedDate(fmt(new Date()))" id="mobileCurrentDayBtn">今天</button>
-        <button type="button" onclick="shiftMobileDate(1)">→</button>
-      </div>
-      <div id="mobileDateStrip" class="mobile-date-strip"></div>
-      <div class="mobile-soft-section mobile-single-table-section">
-        <div class="mobile-section-head"><h3>單日預約表</h3><small>左右橫向滾動瀏覽</small></div>
-        <div class="mobile-table-zoom-tools">
-          <button type="button" onclick="zoomMobileDayTable(-0.08)">－</button>
-          <span id="mobileTableZoomText">100%</span>
-          <button type="button" onclick="zoomMobileDayTable(0.08)">＋</button>
-          <button type="button" onclick="resetMobileDayTableZoom()">重設</button>
+      <div class="mobile-booking-fullscreen">
+        <div class="mobile-booking-controls">
+          <div class="mobile-week-nav-btns">
+            <button type="button" onclick="prevWeek()">←</button>
+          </div>
+          <div class="mobile-week-label" id="mobileWeekLabel">本週課表</div>
+          <div class="mobile-week-nav-btns">
+            <button type="button" onclick="nextWeek()">→</button>
+          </div>
         </div>
-        <div class="mobile-single-day-scroll"><table id="mobileSingleDayTable" class="mobile-single-day-table"></table></div>
-      </div>
-      <div id="mobileAgendaList" class="mobile-agenda-list"></div>
-      <div class="mobile-soft-section mobile-today-agenda-section">
-        <div class="mobile-section-head"><h3>今日排程</h3><small>快速查看今日剩餘課程</small></div>
-        <div id="mobileTodayAgendaList" class="mobile-agenda-list"></div>
+        <div class="mobile-booking-schedule-wrap" id="mobileBookingScheduleWrap">
+          <!-- #desktopScheduleCard 的 .schedule-wrap 在 booking tab 時被移入這裡 -->
+        </div>
       </div>
     </section>
 
@@ -9478,6 +9397,446 @@ body.mobile-tab-month #mobileAgendaPage{display:none!important;}
 .mobile-today-section-title small{font-size:12px;color:#bd695d;font-weight:800;}
 }/* end media v200 */
 
+
+/* v201 手機版整體格式修正 */
+@media(max-width:760px){
+
+/* === 教練登入後全版面正確顯示 === */
+body.role-coach.is-logged-in #appWrap{
+  padding:0!important;
+  gap:0!important;
+}
+
+/* === 每個 tab 的 appShell padding === */
+body.role-coach.is-logged-in #mobileAppHome{
+  padding:0 10px!important;
+  padding-bottom:0!important;
+}
+
+/* === Header 修正：教練手機版 header 完全隱藏 === */
+body.role-coach.is-logged-in #appHeader{
+  display:none!important;
+}
+
+/* === agenda 頁顯示修正 === */
+body.mobile-tab-agenda #mobileAppHome{
+  display:block!important;
+}
+body.mobile-tab-agenda #mobileAgendaPage{
+  display:block!important;
+}
+body.mobile-tab-agenda #mobileMonthPage,
+body.mobile-tab-agenda #mobileBookingPage,
+body.mobile-tab-agenda #mobileStatsBlock,
+body.mobile-tab-agenda #mobileReportBlock{
+  display:none!important;
+}
+body.mobile-tab-agenda #desktopScheduleCard,
+body.mobile-tab-agenda .side{
+  display:none!important;
+}
+
+/* === month 頁 === */
+body.mobile-tab-month #mobileAgendaPage{ display:none!important; }
+body.mobile-tab-month #mobileMonthPage{ display:block!important; }
+body.mobile-tab-month #mobileBookingPage,
+body.mobile-tab-month #mobileStatsBlock,
+body.mobile-tab-month #mobileReportBlock{ display:none!important; }
+body.mobile-tab-month #desktopScheduleCard,
+body.mobile-tab-month .side{ display:none!important; }
+
+/* === stats 頁 === */
+body.mobile-tab-stats #mobileAgendaPage{ display:none!important; }
+body.mobile-tab-stats #mobileStatsBlock{ display:block!important; }
+body.mobile-tab-stats #mobileMonthPage,
+body.mobile-tab-stats #mobileBookingPage,
+body.mobile-tab-stats #mobileReportBlock{ display:none!important; }
+body.mobile-tab-stats #desktopScheduleCard,
+body.mobile-tab-stats .side{ display:none!important; }
+
+/* === query 頁 === */
+body.mobile-tab-query #mobileAgendaPage{ display:none!important; }
+body.mobile-tab-query #mobileReportBlock{ display:block!important; }
+body.mobile-tab-query #mobileMonthPage,
+body.mobile-tab-query #mobileBookingPage,
+body.mobile-tab-query #mobileStatsBlock{ display:none!important; }
+body.mobile-tab-query #desktopScheduleCard,
+body.mobile-tab-query .side{ display:none!important; }
+
+/* === booking 頁：顯示桌機課表 === */
+body.role-coach.mobile-tab-booking #mobileAgendaPage{ display:none!important; }
+body.role-coach.mobile-tab-booking #mobileAppHome{ display:none!important; }
+body.role-coach.mobile-tab-booking #desktopScheduleCard{
+  display:block!important;
+  width:100vw!important;
+  margin:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+body.role-coach.mobile-tab-booking .side{ display:none!important; }
+
+/* === 底部導航確保可見 === */
+body.role-coach.is-logged-in #mobileBottomNav{
+  display:flex!important;
+  position:fixed!important;
+  left:0!important; right:0!important; bottom:0!important;
+  z-index:9999!important;
+  padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))!important;
+}
+
+/* === 今日行程頁的 app header === */
+body.mobile-tab-agenda .mobile-app-header-v57{
+  display:block!important;
+  padding:12px 10px 10px!important;
+  border-bottom:1px solid #eadfce!important;
+  background:#fffefb!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:100!important;
+}
+
+/* === 非 agenda tab 的 header 不 sticky === */
+body.mobile-tab-month .mobile-app-header-v57,
+body.mobile-tab-stats .mobile-app-header-v57,
+body.mobile-tab-query .mobile-app-header-v57{
+  position:static!important;
+  padding:12px 10px 10px!important;
+  border-bottom:1px solid #eadfce!important;
+}
+
+/* === 今日行程頁面全寬顯示 === */
+#mobileAgendaPage{
+  width:100%!important;
+  overflow:visible!important;
+}
+#mobileTodayFull{
+  overflow:visible!important;
+}
+#mobileTodayFull > div{
+  padding:10px 0 80px!important;
+}
+
+/* === 修正 .mobile-soft-section 在 agenda 內的樣式 === */
+#mobileTodayFull .mobile-today-header-card{
+  margin:0 0 12px!important;
+}
+#mobileTodayFull .mobile-today-agenda-wrap{
+  padding:0!important;
+}
+
+/* === 本月頁面 padding === */
+#mobileMonthPage{
+  padding:10px 0 0!important;
+}
+
+/* === 統計頁面 padding === */
+#mobileStatsBlock{
+  margin:10px 0 0!important;
+  padding:15px!important;
+}
+
+/* === 查詢頁面 padding === */
+#mobileReportBlock{
+  margin:10px 0 0!important;
+  padding:15px!important;
+}
+
+}/* end media v201 */
+
+
+/* ============================================================
+   v300 手機版完全重構 — Drawer Menu + App Layout
+   所有規則只在 max-width:760px 生效，桌機版完全不影響
+   ============================================================ */
+
+/* ── Drawer & Overlay (非媒體查詢，預設隱藏) --- */
+.mh-header{display:none;}
+.md-overlay{
+  display:none;position:fixed;inset:0;z-index:1400;
+  background:rgba(50,40,28,.38);backdrop-filter:blur(2px);
+  opacity:0;transition:opacity .28s;
+}
+.md-overlay.md-open{display:block;opacity:1;}
+.md-drawer{
+  position:fixed;left:0;top:0;height:100dvh;
+  width:min(78vw,320px);z-index:1500;
+  background:#fffefb;
+  box-shadow:6px 0 32px rgba(80,60,30,.14);
+  border-right:1px solid #eadfce;
+  display:flex;flex-direction:column;
+  padding:0;overflow-y:auto;overflow-x:hidden;
+  transform:translateX(-100%);
+  transition:transform .28s cubic-bezier(.25,.46,.45,.94);
+}
+.md-drawer.md-open{transform:translateX(0);}
+.md-user-block{
+  display:flex;align-items:center;gap:13px;
+  padding:calc(env(safe-area-inset-top,0px) + 22px) 18px 18px;
+  background:linear-gradient(135deg,#fffaf2,#f7f0e4);
+  border-bottom:1px solid #eadfce;
+  flex-shrink:0;
+}
+.md-user-avatar{
+  width:46px;height:46px;border-radius:999px;
+  background:var(--accent);color:#fff;
+  font-size:20px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 4px 12px rgba(185,155,114,.35);
+}
+.md-user-name{font-size:16px;font-weight:900;color:#3d3933;line-height:1.25;}
+.md-user-role{font-size:12px;color:#8a7c6d;margin-top:2px;}
+.md-section-label{
+  font-size:11px;font-weight:800;color:#a09080;
+  letter-spacing:.08em;padding:16px 18px 6px;
+  text-transform:uppercase;flex-shrink:0;
+}
+.md-item{
+  display:flex;align-items:center;gap:13px;
+  width:100%;border:0!important;background:transparent!important;
+  box-shadow:none!important;border-radius:0!important;
+  padding:13px 18px!important;font-size:15px;color:#3d3933;
+  text-align:left;cursor:pointer;transition:background .15s;
+  flex-shrink:0;
+}
+.md-item:hover,.md-item:active{background:#fff4df!important;}
+.md-item.md-active{background:#fff4df!important;color:#8f704c!important;font-weight:800!important;}
+.md-icon{font-size:20px;width:26px;text-align:center;flex-shrink:0;}
+.md-add-item{color:#8f704c!important;font-weight:800!important;}
+.md-switch{color:#7a6042;}
+.md-admin-section{/* 由 .admin-only 控制顯示 */}
+
+@media(max-width:760px){
+
+/* ── 覆蓋所有舊的 header/toolbar 手機規則 ── */
+body.role-coach.is-logged-in #appHeader,
+body.is-logged-in #appHeader.desktop-header{
+  display:none!important;
+}
+
+/* ── 全局 body ── */
+body.role-coach.is-logged-in,
+body.role-admin.is-logged-in{
+  padding-bottom:0!important;
+  background:#f3f0ea!important;
+}
+
+/* ── appWrap：教練 full-height flex column ── */
+body.role-coach.is-logged-in #appWrap{
+  display:flex!important;flex-direction:column!important;
+  padding:0!important;gap:0!important;
+  height:100dvh!important;overflow:hidden!important;
+}
+body.role-coach.is-logged-in #mobileAppHome{
+  display:flex!important;flex-direction:column!important;
+  height:100dvh!important;overflow:hidden!important;
+  order:1!important;
+}
+body.role-coach.is-logged-in #desktopScheduleCard{display:none!important;}
+body.role-coach.is-logged-in .side{display:none!important;}
+
+/* ── 管理員維持桌機版 ── */
+body.role-admin.is-logged-in{padding-bottom:0!important;}
+body.role-admin.is-logged-in #appHeader{display:flex!important;position:sticky!important;top:0!important;z-index:2000!important;}
+body.role-admin.is-logged-in #appHeader>div:first-child{display:block!important;}
+body.role-admin.is-logged-in #appWrap{display:grid!important;grid-template-columns:1fr 340px!important;padding:18px!important;gap:16px!important;height:auto!important;overflow:visible!important;}
+body.role-admin.is-logged-in #desktopScheduleCard{display:block!important;order:initial!important;}
+body.role-admin.is-logged-in .side{display:flex!important;order:initial!important;}
+body.role-admin.is-logged-in #mobileAppHome{display:none!important;}
+body.role-admin.is-logged-in #mobileBottomNav{display:none!important;}
+body.role-admin.is-logged-in .schedule-wrap{max-height:calc(100vh - 178px)!important;overflow:auto!important;}
+
+/* ── 手機 Header ── */
+.mh-header{
+  display:flex!important;align-items:center;justify-content:space-between;
+  height:58px;flex-shrink:0;
+  padding:0 12px;
+  background:rgba(255,254,251,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid #eadfce;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 10px rgba(80,60,30,.05);
+}
+.mh-hamburger{
+  width:44px;height:44px;border:0!important;background:transparent!important;
+  box-shadow:none!important;border-radius:14px!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center;justify-content:center;gap:5px;padding:10px!important;
+}
+.mh-hamburger span{
+  display:block;width:22px;height:2px;
+  background:#3d3933;border-radius:999px;transition:.2s;
+}
+.mh-title{
+  font-size:16px;font-weight:900;color:#3d3933;
+  letter-spacing:.04em;flex:1;text-align:center;
+}
+.mh-right{display:flex;gap:8px;align-items:center;}
+.mh-icon-btn{
+  width:44px;height:44px;border-radius:999px!important;
+  border:1px solid #eadfce!important;background:#fffaf0!important;
+  font-size:20px;font-weight:900;color:#8f704c!important;
+  display:flex!important;align-items:center;justify-content:center;
+  padding:0!important;box-shadow:0 3px 10px rgba(80,60,30,.06)!important;
+}
+
+/* ── 頁面內容區（可捲動） ── */
+.mobile-page-scroll{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:14px 12px calc(90px + env(safe-area-inset-bottom,0px));
+}
+
+/* ── mobile-page 顯示控制 ── */
+.mobile-page{display:none!important;height:auto!important;overflow:visible!important;}
+body.mobile-tab-agenda  .mobile-page-agenda{display:block!important;}
+body.mobile-tab-month   .mobile-page-month{display:block!important;}
+body.mobile-tab-stats   .mobile-page-stats{display:block!important;}
+body.mobile-tab-query   .mobile-page-query{display:block!important;}
+
+/* ── booking tab：滿版課表 ── */
+body.mobile-tab-booking #mobileAppHome{display:flex!important;flex-direction:column!important;height:100dvh!important;}
+body.mobile-tab-booking #mobileBookingPage{display:flex!important;flex-direction:column!important;flex:1;overflow:hidden!important;}
+body.mobile-tab-booking #mobileAgendaPage,
+body.mobile-tab-booking #mobileMonthPage,
+body.mobile-tab-booking #mobileStatsBlock,
+body.mobile-tab-booking #mobileReportBlock{display:none!important;}
+
+/* booking 頁滿版課表 */
+#mobileBookingPage .mobile-booking-fullscreen{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;
+}
+#mobileBookingPage .mobile-booking-controls{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:#fffdf8;border-bottom:1px solid #eadfce;
+  flex-shrink:0;gap:8px;
+}
+#mobileBookingPage .mobile-week-nav-btns{display:flex;gap:6px;align-items:center;}
+#mobileBookingPage .mobile-week-nav-btns button{
+  min-height:38px!important;padding:7px 13px!important;font-size:14px!important;
+  border-radius:999px!important;background:#fffefb!important;border:1px solid #eadfce!important;
+}
+#mobileBookingPage .mobile-week-label{
+  font-size:14px;font-weight:900;color:#3d3933;white-space:nowrap;
+  overflow-x:auto;flex:1;text-align:center;
+}
+.mobile-booking-schedule-wrap{
+  flex:1;overflow:auto!important;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y pinch-zoom;
+  padding-bottom:calc(80px + env(safe-area-inset-bottom,0px));
+  background:#faf6ee;
+}
+.mobile-booking-schedule-wrap #schedule{
+  font-size:12px;
+}
+.mobile-booking-schedule-wrap #schedule th,
+.mobile-booking-schedule-wrap #schedule td{
+  min-width:88px!important;height:44px!important;
+}
+.mobile-booking-schedule-wrap #schedule .time{
+  min-width:56px!important;max-width:56px!important;font-size:11px!important;
+}
+.mobile-booking-schedule-wrap #schedule .day-title{
+  font-size:12px!important;height:46px!important;white-space:nowrap!important;
+}
+/* 簡化日期顯示 M/D（週） */
+.schedule-day-short{display:inline!important;}
+.schedule-day-long{display:none!important;}
+
+/* ── 底部導航列 ── */
+#mobileBottomNav{
+  display:flex!important;
+  position:fixed!important;left:0!important;right:0!important;bottom:0!important;
+  z-index:1000!important;
+  background:rgba(255,254,251,.97)!important;
+  backdrop-filter:blur(16px);
+  border-top:1px solid #eadfce;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px)) 8px!important;
+  justify-content:space-around;
+  box-shadow:0 -6px 20px rgba(80,60,30,.07);
+}
+#mobileBottomNav button{
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  border-radius:16px!important;min-width:52px;min-height:52px;
+  padding:4px 6px!important;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;color:#8a7c6d;
+}
+#mobileBottomNav button span{font-size:22px;line-height:1;}
+#mobileBottomNav button b{font-size:10px;line-height:1.1;font-weight:600;}
+#mobileBottomNav button.active{color:#8f704c;background:#fff4df!important;}
+#mobileBottomNav .mobile-add{
+  width:62px!important;height:62px!important;margin-top:-20px!important;
+  border-radius:999px!important;background:#b99b72!important;color:#fff!important;
+  box-shadow:0 8px 20px rgba(185,155,114,.42)!important;
+}
+#mobileBottomNav .mobile-add span{font-size:28px!important;}
+#mobileBottomNav .mobile-add b{color:#fff!important;font-size:10px!important;}
+
+/* ── 今日行程頁（agenda tab） ── */
+#mobileAgendaPage{
+  padding:0!important;
+  display:block;
+}
+#mobileTodayFull > div{
+  padding:12px 12px calc(90px + env(safe-area-inset-bottom,0px))!important;
+}
+
+/* ── 本月頁 ── */
+#mobileMonthPage{padding:12px 12px 0!important;}
+
+/* ── 統計頁 ── */
+#mobileStatsBlock{
+  margin:12px 12px 0!important;padding:16px!important;
+  border-radius:26px!important;
+}
+
+/* ── 查詢頁 ── */
+#mobileReportBlock{
+  margin:12px 12px 0!important;padding:16px!important;
+  border-radius:26px!important;
+}
+
+/* ── 共用 section 容器 ── */
+.mobile-soft-section{
+  background:#fffefb!important;border:1px solid #eadfce!important;
+  border-radius:24px!important;padding:15px!important;
+  margin:0 0 14px!important;
+  box-shadow:0 6px 18px rgba(80,60,30,.05)!important;
+}
+.mobile-soft-section h3{margin:0 0 12px!important;font-size:17px!important;}
+.mobile-stat-cards{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;}
+.mobile-stat-card{background:#fffaf1;border:1px solid #eadfce;border-radius:18px;padding:12px;}
+.mobile-stat-card span{display:block;color:#8a7c6d;font-size:12px;}
+.mobile-stat-card b{font-size:24px;line-height:1.2;}
+.mobile-report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mobile-report-grid.one{grid-template-columns:1fr;}
+.mobile-report-grid label{font-size:12px;color:#8a7c6d;font-weight:800;}
+.mobile-report-grid input,.mobile-report-grid select{
+  width:100%;min-height:48px;border:0;background:#fffaf1;
+  border-radius:16px;padding:9px 11px;
+  box-shadow:inset 0 0 0 1px #eadfce;margin-top:5px;font-size:16px;
+}
+.mobile-action-row{display:flex;gap:8px;margin-top:12px;}
+.mobile-action-row button{flex:1;min-height:48px;font-size:15px!important;}
+.mobile-chart-wrap{height:210px!important;min-height:210px!important;overflow:visible!important;margin-top:12px;}
+.mobile-chart-wrap canvas{height:210px!important;max-height:none!important;}
+.mobile-stats-report-card{margin-top:16px!important;padding:14px!important;background:#fffaf1!important;border:1px solid #eadfce!important;border-radius:22px!important;}
+.mobile-date-field{display:block!important;margin:0 0 12px!important;font-size:13px!important;color:#8a7c6d!important;font-weight:800!important;}
+.mobile-date-field input,.mobile-date-field select{width:100%!important;min-height:48px!important;margin-top:6px!important;border:0!important;background:#fffefb!important;border-radius:18px!important;padding:10px 13px!important;box-shadow:inset 0 0 0 1px #eadfce!important;font-size:16px!important;}
+.mobile-stats-actions{display:flex!important;flex-direction:column!important;gap:9px!important;margin-top:10px!important;}
+.mobile-stats-actions button{width:100%!important;min-height:48px!important;font-size:15px!important;}
+
+/* ── Drawer active item 同步 ── */
+.md-item.md-active{background:#fff4df!important;color:#7a5c2e!important;font-weight:800!important;}
+
+/* ── 隱藏舊的 zoom 工具列 ── */
+.mobile-table-zoom-tools,.zoom-tools{display:none!important;}
+
+/* ── 登入前隱藏手機 header ── */
+body.is-logged-out .mh-header{display:none!important;}
+body.is-logged-out #mobileBottomNav{display:none!important;}
+
+}/* end media v300 */
+
 </style>
 
 <script id="v111-mobile-nav-console-fix">
@@ -9735,66 +10094,240 @@ document.addEventListener('DOMContentLoaded', function(){
 
 })();
 </script>
-
-
-<script>
-/* v123 mobile drawer behavior - mobile only */
+<script id="v300-mobile-drawer">
+/* v300 Drawer Menu + Mobile Layout JS */
 (function(){
-  function byId(id){return document.getElementById(id);}
-  function callFirst(names){
-    for(var i=0;i<names.length;i++){
-      var fn=window[names[i]];
-      if(typeof fn==='function'){try{fn();return true;}catch(e){}}
-    }
-    return false;
+
+function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+
+/* ── Drawer open/close ── */
+window.openMobileDrawer = function(){
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileDrawerOverlay');
+  if(!drawer||!overlay) return;
+  drawer.classList.add('md-open');
+  overlay.classList.add('md-open');
+  document.body.style.overflow='hidden';
+  updateDrawerActiveItems();
+  updateDrawerUserInfo();
+};
+window.closeMobileDrawer = function(){
+  const drawer = document.getElementById('mobileDrawer');
+  const overlay = document.getElementById('mobileDrawerOverlay');
+  if(!drawer||!overlay) return;
+  drawer.classList.remove('md-open');
+  overlay.classList.remove('md-open');
+  document.body.style.overflow='';
+};
+
+/* ── Drawer: update user info ── */
+function updateDrawerUserInfo(){
+  const name = document.getElementById('mdUserName');
+  const role = document.getElementById('mdUserRole');
+  const avatar = document.getElementById('mdUserAvatar');
+  if(!name||!role||!avatar) return;
+  const isAdm = typeof isAdmin==='function' && isAdmin();
+  const coach = window.currentCoach||'';
+  if(isAdm){
+    name.textContent = 'Admin 管理員';
+    role.textContent = '煦陽預約系統';
+    avatar.textContent = 'A';
+  } else {
+    name.textContent = coach ? coach + ' 教練' : '教練';
+    role.textContent = '煦陽預約系統';
+    avatar.textContent = coach ? coach.charAt(0) : 'C';
   }
-  function closeDrawer(){document.body.classList.remove('mobile-drawer-open');}
-  function updateDrawerProfile(){
-    var nameEl=byId('mobileDrawerName'), roleEl=byId('mobileDrawerRole');
-    var role=window.currentRole||'', coach=window.currentCoach||'';
-    if(nameEl) nameEl.textContent = role==='admin' ? 'Admin 管理員' : (coach || '教練');
-    if(roleEl) roleEl.textContent = role==='admin' ? '管理員模式' : '教練模式';
-  }
-  function setTab(tab){
-    document.body.classList.remove('mobile-tab-month','mobile-tab-booking','mobile-tab-schedule','mobile-tab-stats','mobile-tab-query','mobile-tab-settings','mobile-tab-agenda');
-    document.body.classList.add('mobile-tab-'+tab);
-    if(typeof window.setMobileTab==='function'){try{window.setMobileTab(tab);}catch(e){}}
-    document.querySelectorAll('#mobileBottomNav button[data-tab],.mobile-bottom-nav button[data-tab],.mobile-drawer-menu button[data-mobile-tab]').forEach(function(btn){
-      var value=btn.dataset.tab||btn.dataset.mobileTab;
-      btn.classList.toggle('active',value===tab);
-    });
-    if(tab==='booking'||tab==='schedule'){
-      setTimeout(function(){try{if(typeof window.render==='function')window.render(); if(typeof window.resetScheduleZoom==='function')window.resetScheduleZoom();}catch(e){}},0);
-    }
-  }
-  document.addEventListener('click',function(e){
-    if(e.target.closest('#mobileDrawerToggle')){updateDrawerProfile();document.body.classList.add('mobile-drawer-open');return;}
-    if(e.target.closest('#mobileDrawerBackdrop')){closeDrawer();return;}
-    var tabBtn=e.target.closest('.mobile-drawer-menu button[data-mobile-tab]');
-    if(tabBtn){setTab(tabBtn.dataset.mobileTab);closeDrawer();return;}
-    var actionBtn=e.target.closest('.mobile-drawer-menu button[data-mobile-action]');
-    if(actionBtn){
-      var action=actionBtn.dataset.mobileAction;
-      if(action==='add') callFirst(['openEditor','newBooking','addBooking','openAddDialog','openBookingEditor']);
-      if(action==='students') callFirst(['openStudentManager','openStudentDialog','showStudentManager']);
-      if(action==='coaches') callFirst(['openCoachManager','openCoachDialog','showCoachManager']);
-      if(action==='salary'){setTab('query');callFirst(['openSalaryWork','renderSalaryWork','openReportResult']);}
-      if(action==='settings') setTab('settings');
-      if(action==='switch'||action==='logout'){
-        callFirst(['logout','switchRole','resetIdentity','showIdentityScreen']);
-        try{document.body.classList.remove('is-logged-in');document.body.classList.add('is-logged-out');}catch(e){}
-      }
-      closeDrawer();
-    }
+  // 管理員功能顯示控制
+  document.querySelectorAll('.md-admin-section').forEach(el=>{
+    el.style.display = isAdm ? '' : 'none';
   });
-  var oldApply=window.applyRoleUI;
-  if(typeof oldApply==='function'){
-    window.applyRoleUI=function(){oldApply.apply(this,arguments);updateDrawerProfile();};
+}
+
+/* ── Drawer: sync active tab ── */
+function updateDrawerActiveItems(){
+  const tab = window.mobileTab || 'agenda';
+  document.querySelectorAll('.md-item[data-tab]').forEach(el=>{
+    el.classList.toggle('md-active', el.dataset.tab === tab);
+  });
+}
+
+/* ── Week label update ── */
+function updateMobileWeekLabel(){
+  const label = document.getElementById('mobileWeekLabel');
+  if(!label) return;
+  const wp = document.getElementById('weekPicker');
+  if(!wp||!wp.value) return;
+  try{
+    const start = (typeof monday==='function') ? monday(wp.value) : new Date(wp.value);
+    const end = new Date(start); end.setDate(start.getDate()+6);
+    const fmt2 = d => `${d.getMonth()+1}/${d.getDate()}`;
+    const dow = ['日','一','二','三','四','五','六'];
+    label.textContent = `${fmt2(start)}（${dow[start.getDay()]}）－${fmt2(end)}（${dow[end.getDay()]}）`;
+  }catch(e){ label.textContent='本週課表'; }
+}
+
+/* ── Booking tab: DOM 整合 ── */
+function setupBookingLayout(){
+  if(!isMobile()) return;
+  const wrap = document.getElementById('mobileBookingScheduleWrap');
+  const desktopCard = document.getElementById('desktopScheduleCard');
+  if(!wrap || !desktopCard) return;
+  // 把 desktopScheduleCard 內的 schedule-wrap 搬進 mobile booking scroll wrap
+  const scheduleWrap = desktopCard.querySelector('.schedule-wrap');
+  if(!scheduleWrap) return;
+  if(!wrap.contains(scheduleWrap)){
+    wrap.appendChild(scheduleWrap);
   }
-  window.mobileDrawerSetTab=setTab;
-  window.addEventListener('resize',function(){if(window.innerWidth>760)closeDrawer();});
+  // 隱藏 desktopScheduleCard 的 controls（已由 mobile-booking-controls 取代）
+  const controls = desktopCard.querySelector('.controls');
+  if(controls) controls.style.display='none';
+}
+
+function teardownBookingLayout(){
+  const wrap = document.getElementById('mobileBookingScheduleWrap');
+  const desktopCard = document.getElementById('desktopScheduleCard');
+  if(!wrap || !desktopCard) return;
+  const scheduleWrap = wrap.querySelector('.schedule-wrap');
+  if(scheduleWrap && !desktopCard.contains(scheduleWrap)){
+    desktopCard.appendChild(scheduleWrap);
+  }
+  const controls = desktopCard.querySelector('.controls');
+  if(controls) controls.style.display='';
+}
+
+/* ── Patch setMobileTab ── */
+const _prevSetMobileTab = window.setMobileTab;
+window.setMobileTab = function(tab){
+  if(typeof _prevSetMobileTab === 'function') _prevSetMobileTab(tab);
+  window.mobileTab = tab;
+  // body class
+  ['agenda','month','booking','stats','query'].forEach(t=>{
+    document.body.classList.toggle('mobile-tab-'+t, t===tab);
+  });
+  // bottom nav active
+  document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab===tab);
+  });
+  // Drawer sync
+  updateDrawerActiveItems();
+  // booking layout
+  if(isMobile()){
+    if(tab==='booking'){
+      setupBookingLayout();
+      updateMobileWeekLabel();
+      setTimeout(()=>{ if(typeof render==='function') render(); }, 50);
+    } else {
+      teardownBookingLayout();
+    }
+  }
+  window.scrollTo({top:0,behavior:'instant'});
+};
+
+/* ── Patch applyRoleUI ── */
+const _prevApplyRoleUI = window.applyRoleUI;
+window.applyRoleUI = function(){
+  if(typeof _prevApplyRoleUI === 'function') _prevApplyRoleUI();
+  if(isMobile()){
+    updateDrawerUserInfo();
+    updateDrawerActiveItems();
+    updateMobileWeekLabel();
+    // default to agenda tab
+    if(window.currentRole && (!window.mobileTab || window.mobileTab==='month')){
+      window.mobileTab = 'agenda';
+      document.body.classList.add('mobile-tab-agenda');
+      document.body.classList.remove('mobile-tab-month');
+    }
+  }
+};
+
+/* ── Patch render (keep week label updated) ── */
+const _prevRender = window.render;
+window.render = function(){
+  if(typeof _prevRender === 'function') _prevRender();
+  if(isMobile()) updateMobileWeekLabel();
+};
+
+/* ── Swipe to close drawer ── */
+(function(){
+  let startX=0, startY=0, dragging=false;
+  const drawer=document.getElementById('mobileDrawer');
+  if(!drawer) return;
+  drawer.addEventListener('touchstart',e=>{
+    startX=e.touches[0].clientX; startY=e.touches[0].clientY; dragging=true;
+  },{passive:true});
+  drawer.addEventListener('touchmove',e=>{
+    if(!dragging) return;
+    const dx=e.touches[0].clientX-startX;
+    const dy=Math.abs(e.touches[0].clientY-startY);
+    if(dx<-30 && dy<50){ closeMobileDrawer(); dragging=false; }
+  },{passive:true});
+  drawer.addEventListener('touchend',()=>{ dragging=false; },{passive:true});
+})();
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', function(){
+  updateMobileWeekLabel();
+  if(isMobile() && window.currentRole){
+    updateDrawerUserInfo();
+    updateDrawerActiveItems();
+  }
+});
+window.addEventListener('resize', function(){
+  if(!isMobile()) teardownBookingLayout();
+});
+
 })();
 </script>
+
+<!-- v300 Mobile Drawer Menu -->
+<div id="mobileDrawerOverlay" class="md-overlay" onclick="closeMobileDrawer()"></div>
+<nav id="mobileDrawer" class="md-drawer" aria-label="主選單">
+  <div class="md-user-block">
+    <div class="md-user-avatar" id="mdUserAvatar">A</div>
+    <div>
+      <div class="md-user-name" id="mdUserName">教練</div>
+      <div class="md-user-role" id="mdUserRole">煦陽預約系統</div>
+    </div>
+  </div>
+  <div class="md-section-label">主要功能</div>
+  <button type="button" class="md-item" data-tab="agenda" onclick="closeMobileDrawer();setMobileTab('agenda')">
+    <span class="md-icon">🗓️</span><span>今日行程</span>
+  </button>
+  <button type="button" class="md-item" data-tab="month" onclick="closeMobileDrawer();setMobileTab('month')">
+    <span class="md-icon">📆</span><span>本月總覽</span>
+  </button>
+  <button type="button" class="md-item" data-tab="booking" onclick="closeMobileDrawer();setMobileTab('booking')">
+    <span class="md-icon">📋</span><span>預約課表</span>
+  </button>
+  <button type="button" class="md-item md-add-item" onclick="closeMobileDrawer();openEditor()">
+    <span class="md-icon">✏️</span><span>新增預約</span>
+  </button>
+  <button type="button" class="md-item" data-tab="stats" onclick="closeMobileDrawer();setMobileTab('stats')">
+    <span class="md-icon">📊</span><span>統計</span>
+  </button>
+  <button type="button" class="md-item" data-tab="query" onclick="closeMobileDrawer();setMobileTab('query')">
+    <span class="md-icon">🔎</span><span>查詢報表</span>
+  </button>
+
+  <div class="md-section-label admin-only md-admin-section">管理功能</div>
+  <button type="button" class="md-item admin-only md-admin-section" onclick="closeMobileDrawer();openStudentManager()">
+    <span class="md-icon">👥</span><span>學員管理</span>
+  </button>
+  <button type="button" class="md-item admin-only md-admin-section" onclick="closeMobileDrawer();if(typeof openSalaryWork==='function')openSalaryWork();else openReportWork()">
+    <span class="md-icon">💴</span><span>薪資作業</span>
+  </button>
+  <button type="button" class="md-item admin-only md-admin-section" onclick="closeMobileDrawer();openReportWork()">
+    <span class="md-icon">📁</span><span>報表作業</span>
+  </button>
+
+  <div class="md-section-label">帳號</div>
+  <button type="button" class="md-item" onclick="closeMobileDrawer();openNoteEditor()">
+    <span class="md-icon">📝</span><span>新增記事</span>
+  </button>
+  <button type="button" class="md-item md-switch" onclick="closeMobileDrawer();switchIdentity()">
+    <span class="md-icon">🔄</span><span>切換身份</span>
+  </button>
+</nav>
 
 </body>
 </html>
