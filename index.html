@@ -10676,5 +10676,629 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+<style id="v304-mobile-query-and-save-fix-css">
+@media(max-width:760px){
+  /* 手機統計/查詢：刪除舊手機自建圓餅圖卡片，避免重疊 */
+  #mobileQueryAnalysisCard,
+  #mobileQueryChart,
+  #mobileQueryStatsCards,
+  #mobileQueryPieHint{
+    display:none!important;
+    visibility:hidden!important;
+    height:0!important;
+    min-height:0!important;
+    max-height:0!important;
+    overflow:hidden!important;
+    padding:0!important;
+    margin:0!important;
+    border:0!important;
+  }
+
+  /* 手機統計/查詢：直接套用桌機版「我的本月統計分析」卡片 */
+  #mobileReportBlock .mobile-desktop-chart-card,
+  #mobileReportBlock #dashboardTitle,
+  #mobileReportBlock #chart{
+    display:block!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card{
+    width:100%!important;
+    margin:0 0 14px!important;
+    padding:0!important;
+    border-radius:22px!important;
+    overflow:hidden!important;
+    background:#fffefb!important;
+    border:1px solid #eadfce!important;
+    box-shadow:0 6px 18px rgba(80,60,30,.045)!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card h2{
+    display:block!important;
+    font-size:16px!important;
+    margin:0!important;
+    padding:13px 15px!important;
+    border-bottom:1px solid #eadfce!important;
+    color:#6f5b44!important;
+    letter-spacing:.04em!important;
+    background:#fffaf1!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card .stats{
+    padding:13px 14px 16px!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card .stat-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+    margin-bottom:10px!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card .stat{
+    padding:10px!important;
+    border-radius:16px!important;
+    background:#fffaf1!important;
+    border:1px solid #eadfce!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card .stat b{
+    font-size:20px!important;
+  }
+  #mobileReportBlock .mobile-desktop-chart-card canvas#chart{
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    max-height:260px!important;
+    margin:4px auto 0!important;
+  }
+
+  /* 手機預約彈窗：確保內容完整可操作、儲存列不被遮住 */
+  #editor.soft-work-dialog{
+    width:96vw!important;
+    max-width:96vw!important;
+    max-height:88dvh!important;
+    overflow:auto!important;
+    z-index:9999!important;
+  }
+  #editor.soft-work-dialog .dialog-body{
+    max-height:88dvh!important;
+    overflow:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+  }
+  #editor .booking-actions{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:10000!important;
+  }
+  #editor button,
+  #editor select,
+  #editor input,
+  #editor textarea{
+    touch-action:manipulation!important;
+  }
+  #editor .booking-actions-inner button{
+    min-height:48px!important;
+    font-size:15px!important;
+  }
+  #repeatType,
+  #repeatEnd,
+  #weekdayBox input.weekday{
+    pointer-events:auto!important;
+  }
+  #weeklyFields,
+  #repeatEndWrap{
+    position:relative!important;
+    z-index:2!important;
+  }
+}
+</style>
+
+<script id="v304-mobile-query-and-save-fix-js">
+(function(){
+  function byId(id){return document.getElementById(id);}
+  function isMobile(){return window.matchMedia && window.matchMedia('(max-width:760px)').matches;}
+  function safe(fn){try{return typeof fn==='function'?fn():undefined;}catch(e){console.warn(e);}}
+  function closeDrawer(){
+    var dr=byId('mobileDrawer'), ov=byId('mobileDrawerOverlay');
+    if(dr) dr.classList.remove('md-open');
+    if(ov) ov.classList.remove('md-open');
+    document.body.style.overflow='';
+  }
+
+  var chartCardOriginal = null;
+  var chartCardNext = null;
+
+  function getDesktopChartCard(){
+    var canvas = byId('chart');
+    return canvas ? canvas.closest('section.card') : null;
+  }
+
+  function mountDesktopChartCardToMobile(){
+    var report = byId('mobileReportBlock');
+    var chartCard = getDesktopChartCard();
+    if(!report || !chartCard) return;
+
+    var old = byId('mobileQueryAnalysisCard');
+    if(old) old.remove();
+
+    if(!chartCardOriginal){
+      chartCardOriginal = chartCard.parentNode;
+      chartCardNext = chartCard.nextSibling;
+    }
+
+    chartCard.classList.add('mobile-desktop-chart-card');
+    var firstAfterTitle = report.querySelector('.mobile-report-grid, .mobile-action-row, .hint');
+    if(chartCard.parentNode !== report){
+      if(firstAfterTitle) report.insertBefore(chartCard, firstAfterTitle);
+      else report.appendChild(chartCard);
+    }else if(firstAfterTitle && chartCard.nextSibling !== firstAfterTitle){
+      report.insertBefore(chartCard, firstAfterTitle);
+    }
+
+    // 直接使用桌機版 #chart 的統計邏輯，不另外產生 mobileQueryChart
+    if(typeof updateStats === 'function') updateStats();
+  }
+
+  function returnDesktopChartCard(){
+    var chartCard = getDesktopChartCard();
+    if(chartCardOriginal && chartCard && chartCard.parentNode !== chartCardOriginal){
+      chartCard.classList.remove('mobile-desktop-chart-card');
+      if(chartCardNext && chartCardNext.parentNode === chartCardOriginal) chartCardOriginal.insertBefore(chartCard, chartCardNext);
+      else chartCardOriginal.appendChild(chartCard);
+    }
+  }
+
+  function forceMobilePageV304(tab){
+    if(tab === 'stats') tab = 'query';
+    window.mobileTab = tab;
+    ['month','booking','stats','query','agenda'].forEach(function(t){document.body.classList.remove('mobile-tab-'+t);});
+    document.body.classList.add('mobile-tab-'+tab);
+
+    var month = byId('mobileMonthPage');
+    var booking = byId('mobileBookingPage');
+    var stats = byId('mobileStatsBlock');
+    var report = byId('mobileReportBlock');
+
+    if(month) month.style.setProperty('display', tab==='month' ? 'block' : 'none', 'important');
+    if(booking) booking.style.setProperty('display', tab==='booking' ? 'flex' : 'none', 'important');
+    if(stats) stats.style.setProperty('display','none','important');
+    if(report) report.style.setProperty('display', tab==='query' ? 'block' : 'none', 'important');
+
+    document.querySelectorAll('.md-item[data-tab]').forEach(function(b){
+      b.classList.toggle('md-active', b.dataset.tab===tab || (b.dataset.tab==='query' && tab==='stats'));
+    });
+
+    var nav=byId('mobileBottomNav');
+    if(nav){
+      nav.style.setProperty('display','none','important');
+      nav.style.setProperty('visibility','hidden','important');
+    }
+  }
+
+  function enhanceRepeatControls(){
+    var box = byId('weekdayBox');
+    if(box && !box.querySelector('.weekday')){
+      var names=['日','一','二','三','四','五','六'];
+      box.innerHTML=names.map(function(n,i){
+        return '<label class="weekday-clean-label"><input type="checkbox" class="weekday" value="'+i+'"><span>週'+n+'</span></label>';
+      }).join('');
+    }
+
+    var repeat = byId('repeatType');
+    if(repeat && !repeat.dataset.v304Bound){
+      repeat.dataset.v304Bound='1';
+      ['change','input','click','touchend'].forEach(function(evt){
+        repeat.addEventListener(evt,function(){
+          setTimeout(function(){ if(typeof toggleRepeatFields==='function') toggleRepeatFields(); },0);
+        },{passive:true});
+      });
+    }
+
+    if(box && !box.dataset.v304Bound){
+      box.dataset.v304Bound='1';
+      box.addEventListener('click',function(e){
+        var label=e.target.closest && e.target.closest('label');
+        if(!label) return;
+        var cb=label.querySelector('input.weekday');
+        if(cb && e.target !== cb){
+          e.preventDefault();
+          cb.checked=!cb.checked;
+          cb.dispatchEvent(new Event('change',{bubbles:true}));
+        }
+      });
+    }
+
+    if(typeof toggleRepeatFields==='function') toggleRepeatFields();
+  }
+
+  function enhanceMobileScheduleCells(){
+    var schedule = byId('schedule');
+    if(!schedule || schedule.dataset.v304CellBound) return;
+    schedule.dataset.v304CellBound='1';
+    schedule.addEventListener('click',function(e){
+      if(!isMobile()) return;
+      if(e.target.closest && e.target.closest('.entry')) return;
+      var td = e.target.closest && e.target.closest('td.slot');
+      if(!td) return;
+      var raw = td.getAttribute('onclick') || '';
+      var m = raw.match(/openEditor\('([^']*)','([^']*)','([^']*)'\)/);
+      if(!m) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if(typeof openEditor === 'function') openEditor(m[1],m[2],m[3]);
+    },true);
+  }
+
+  function enhanceEditorOpen(){
+    var oldOpen = window.openEditor;
+    if(typeof oldOpen === 'function' && !oldOpen.__v304Wrapped){
+      window.openEditor = function(){
+        var r = oldOpen.apply(this,arguments);
+        setTimeout(function(){
+          enhanceRepeatControls();
+          var repeat=byId('repeatType');
+          if(repeat) repeat.style.pointerEvents='auto';
+          var saveBtn=document.querySelector('#editor .booking-actions-inner button.primary');
+          if(saveBtn){
+            saveBtn.type='button';
+            saveBtn.onclick=function(ev){
+              if(ev){ev.preventDefault();ev.stopPropagation();}
+              if(typeof window.saveEntry==='function') window.saveEntry();
+              return false;
+            };
+          }
+        },30);
+        return r;
+      };
+      window.openEditor.__v304Wrapped=true;
+    }
+  }
+
+  function enhanceSaveEntry(){
+    var oldSave = window.saveEntry;
+    if(typeof oldSave === 'function' && !oldSave.__v304Wrapped){
+      window.saveEntry = function(){
+        enhanceRepeatControls();
+        var r = oldSave.apply(this,arguments);
+        if(isMobile()){
+          setTimeout(function(){
+            var tab=window.mobileTab || 'booking';
+            if(tab==='booking'){
+              forceMobilePageV304('booking');
+              if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile();
+              enhanceMobileScheduleCells();
+            }
+            if(tab==='query') mountDesktopChartCardToMobile();
+          },80);
+        }
+        return r;
+      };
+      window.saveEntry.__v304Wrapped=true;
+    }
+  }
+
+  // 覆蓋舊版手機圓餅圖函式：不再建立 mobileQueryChart，改直接搬用桌機 #chart 卡片
+  window.renderMobileQueryPieV302 = window.renderMobileQueryPieV303 = window.renderMobileQueryPieV304 = function(){
+    if(!isMobile()) return;
+    mountDesktopChartCardToMobile();
+  };
+
+  var prevSetMobileTab = window.setMobileTab;
+  window.setMobileTab = function(tab){
+    if(tab==='stats') tab='query';
+    forceMobilePageV304(tab);
+
+    if(tab==='booking'){
+      returnDesktopChartCard();
+      if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile();
+      safe(window.updateMobileWeekLabelV302 || window.updateWeekLabel);
+      enhanceMobileScheduleCells();
+      setTimeout(function(){
+        if(typeof render==='function') render();
+        forceMobilePageV304('booking');
+        if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile();
+        enhanceMobileScheduleCells();
+        safe(window.updateMobileWeekLabelV302 || window.updateWeekLabel);
+      },40);
+    }else{
+      if(typeof window.detachScheduleFromMobile==='function') window.detachScheduleFromMobile();
+      if(tab==='query'){
+        setTimeout(function(){
+          forceMobilePageV304('query');
+          mountDesktopChartCardToMobile();
+        },40);
+      }else{
+        returnDesktopChartCard();
+      }
+    }
+
+    closeDrawer();
+    window.scrollTo({top:0,behavior:'auto'});
+  };
+
+  var oldRender = window.render;
+  if(typeof oldRender==='function' && !oldRender.__v304Wrapped){
+    window.render = function(){
+      var r = oldRender.apply(this,arguments);
+      if(isMobile()){
+        var tab=window.mobileTab || 'month';
+        if(tab==='stats') tab='query';
+        forceMobilePageV304(tab);
+        if(tab==='booking'){
+          if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile();
+          enhanceMobileScheduleCells();
+        }
+        if(tab==='query') mountDesktopChartCardToMobile();
+      }
+      return r;
+    };
+    window.render.__v304Wrapped=true;
+  }
+
+  function init(){
+    enhanceEditorOpen();
+    enhanceSaveEntry();
+    enhanceRepeatControls();
+    enhanceMobileScheduleCells();
+    if(isMobile()){
+      var tab=window.mobileTab || 'month';
+      if(tab==='stats') tab='query';
+      forceMobilePageV304(tab);
+      if(tab==='query') mountDesktopChartCardToMobile();
+      if(tab==='booking'){
+        if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile();
+        enhanceMobileScheduleCells();
+      }
+    }
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(init,120);});
+  else setTimeout(init,120);
+
+  window.addEventListener('resize',function(){
+    if(isMobile()){
+      var tab=window.mobileTab || 'month';
+      if(tab==='query') mountDesktopChartCardToMobile();
+    }else{
+      returnDesktopChartCard();
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
+<!-- ===== v305 mobile sticky schedule table + compact booking header ===== -->
+<style>
+@media (max-width:760px){
+  body.mobile-tab-booking .mh-header{
+    height:48px!important;
+    min-height:48px!important;
+    padding:6px 8px!important;
+    display:grid!important;
+    grid-template-columns:44px 1fr 44px!important;
+    align-items:center!important;
+    gap:6px!important;
+    position:sticky!important;
+    top:0!important;
+    z-index:9999!important;
+    background:rgba(248,246,241,.98)!important;
+    border-bottom:1px solid var(--line)!important;
+  }
+  body.mobile-tab-booking .mh-title{display:none!important;}
+  body.mobile-tab-booking .mh-hamburger,
+  body.mobile-tab-booking .mh-add-btn{
+    width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    padding:0!important;margin:0!important;position:relative!important;z-index:10001!important;
+  }
+  .v305-booking-nav{
+    grid-column:2/3!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+    min-width:0!important;width:100%!important;
+  }
+  .v305-booking-nav button{
+    width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+    padding:0!important;border-radius:999px!important;font-size:16px!important;font-weight:900!important;
+  }
+  .v305-booking-week-label{
+    flex:1 1 auto!important;min-width:0!important;text-align:center!important;
+    font-size:12px!important;font-weight:900!important;color:#6f5b44!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    background:#fffaf1!important;border:1px solid #eadfce!important;border-radius:999px!important;
+    padding:8px 8px!important;line-height:1!important;
+  }
+  body.mobile-tab-booking #mobileBookingPage .mbs-controls{display:none!important;}
+  body.mobile-tab-booking #mobileBookingPage{
+    padding:6px 0 0!important;
+    height:calc(100dvh - 48px)!important;
+    overflow:hidden!important;
+  }
+  body.mobile-tab-booking #mobileBookingWrap.mbs-wrap{
+    height:calc(100dvh - 54px)!important;
+    max-height:calc(100dvh - 54px)!important;
+    padding:0 6px 8px!important;
+    overflow:hidden!important;
+  }
+  body.mobile-tab-booking #mobileBookingWrap .schedule-wrap{
+    height:calc(100dvh - 62px)!important;
+    max-height:calc(100dvh - 62px)!important;
+    min-height:calc(100dvh - 62px)!important;
+    overflow:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-x pan-y!important;
+    border:1px solid #eadfce!important;
+    border-radius:16px!important;
+    background:#fffefb!important;
+  }
+  body.mobile-tab-booking #schedule{
+    table-layout:fixed!important;
+    width:max-content!important;
+    min-width:max-content!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    transform:none!important;
+  }
+  body.mobile-tab-booking #schedule th,
+  body.mobile-tab-booking #schedule td{
+    width:84px!important;
+    min-width:84px!important;
+    max-width:84px!important;
+    height:44px!important;
+    min-height:44px!important;
+    font-size:11px!important;
+    padding:2px!important;
+    vertical-align:middle!important;
+    overflow:hidden!important;
+    touch-action:manipulation!important;
+  }
+  body.mobile-tab-booking #schedule .time{
+    position:sticky!important;
+    left:0!important;
+    width:56px!important;
+    min-width:56px!important;
+    max-width:56px!important;
+    background:#faf4eb!important;
+    color:#6f5b44!important;
+    font-weight:900!important;
+    box-shadow:2px 0 0 rgba(185,155,114,.35)!important;
+    z-index:60!important;
+  }
+  body.mobile-tab-booking #schedule tr:first-child th{
+    position:sticky!important;
+    top:0!important;
+    height:28px!important;
+    min-height:28px!important;
+    font-size:10.5px!important;
+    line-height:1.05!important;
+    padding:2px 4px!important;
+    background:#fff3dc!important;
+    z-index:70!important;
+  }
+  body.mobile-tab-booking #schedule tr:first-child th.time{
+    left:0!important;
+    top:0!important;
+    z-index:90!important;
+    background:#faf4eb!important;
+  }
+  body.mobile-tab-booking #schedule tr:nth-child(2) th{
+    position:sticky!important;
+    top:28px!important;
+    height:40px!important;
+    min-height:40px!important;
+    font-size:11px!important;
+    line-height:1.1!important;
+    padding:3px 4px!important;
+    background:#fff7e8!important;
+    z-index:75!important;
+  }
+  body.mobile-tab-booking #schedule tr:nth-child(2) th.time{
+    left:0!important;
+    top:28px!important;
+    z-index:95!important;
+    background:#faf4eb!important;
+  }
+  body.mobile-tab-booking #schedule .day-title{
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  body.mobile-tab-booking #schedule .holiday-tag,
+  body.mobile-tab-booking #schedule .birthday-tag,
+  body.mobile-tab-booking #schedule .coach-note{
+    display:none!important;
+  }
+  body.mobile-tab-booking #schedule .entry{
+    min-height:38px!important;
+    max-height:40px!important;
+    padding:3px 2px!important;
+    font-size:10.5px!important;
+    line-height:1.15!important;
+    border-radius:8px!important;
+  }
+  body.mobile-tab-booking #schedule .entry-meta{font-size:9px!important;}
+  body.mobile-tab-booking #desktopScheduleCard,
+  body.mobile-tab-booking #mobileBookingWrap #desktopScheduleCard{
+    width:max-content!important;
+    min-width:max-content!important;
+    border:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+  }
+  body.mobile-tab-booking #desktopScheduleCard>.controls{display:none!important;}
+  body.mobile-tab-booking .toast{bottom:12px!important;z-index:10050!important;}
+}
+</style>
+<script>
+(function(){
+  function byId(id){return document.getElementById(id)}
+  function weekLabelText(){
+    var wp=byId('weekPicker');
+    var v=wp&&wp.value?wp.value:'';
+    var d=v?new Date(v+'T00:00:00'):new Date();
+    if(isNaN(d)) d=new Date();
+    var day=d.getDay();
+    var diff=(day===0?-6:1-day);
+    var mon=new Date(d); mon.setDate(d.getDate()+diff);
+    var sun=new Date(mon); sun.setDate(mon.getDate()+6);
+    return (mon.getMonth()+1)+'/'+mon.getDate()+' - '+(sun.getMonth()+1)+'/'+sun.getDate();
+  }
+  window.v305UpdateMobileBookingNav=function(){
+    var label=byId('v305BookingWeekLabel');
+    if(label) label.textContent=weekLabelText();
+    var old=byId('mobileWeekLabel');
+    if(old) old.textContent=weekLabelText();
+  };
+  window.v305InstallMobileBookingNav=function(){
+    var header=byId('mobileHeader');
+    if(!header) return;
+    if(!byId('v305BookingNav')){
+      var nav=document.createElement('div');
+      nav.id='v305BookingNav';
+      nav.className='v305-booking-nav';
+      nav.innerHTML='<button type="button" aria-label="上週" onclick="event.stopPropagation(); if(typeof prevWeek===\'function\') prevWeek(); setTimeout(v305UpdateMobileBookingNav,0);">‹</button><span id="v305BookingWeekLabel" class="v305-booking-week-label">本週課表</span><button type="button" aria-label="下週" onclick="event.stopPropagation(); if(typeof nextWeek===\'function\') nextWeek(); setTimeout(v305UpdateMobileBookingNav,0);">›</button>';
+      var add=header.querySelector('.mh-add-btn');
+      header.insertBefore(nav, add || null);
+    }
+    v305UpdateMobileBookingNav();
+  };
+  var oldSet=window.setMobileTab;
+  if(typeof oldSet==='function' && !oldSet.__v305Wrapped){
+    window.setMobileTab=function(tab){
+      oldSet(tab);
+      setTimeout(function(){
+        v305InstallMobileBookingNav();
+        v305UpdateMobileBookingNav();
+        if(tab==='booking' && typeof render==='function'){
+          try{ render(); }catch(e){}
+        }
+      },0);
+    };
+    window.setMobileTab.__v305Wrapped=true;
+  }
+  ['prevWeek','nextWeek'].forEach(function(name){
+    var old=window[name];
+    if(typeof old==='function' && !old.__v305Wrapped){
+      window[name]=function(){
+        var r=old.apply(this,arguments);
+        setTimeout(function(){
+          v305UpdateMobileBookingNav();
+          if((window.mobileTab||'')==='booking' && typeof render==='function'){
+            try{ render(); }catch(e){}
+          }
+        },0);
+        return r;
+      };
+      window[name].__v305Wrapped=true;
+    }
+  });
+  var oldRender=window.render;
+  if(typeof oldRender==='function' && !oldRender.__v305Wrapped){
+    window.render=function(){
+      var r=oldRender.apply(this,arguments);
+      setTimeout(function(){v305InstallMobileBookingNav();v305UpdateMobileBookingNav();},0);
+      return r;
+    };
+    window.render.__v305Wrapped=true;
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(v305InstallMobileBookingNav,0);});
+  setTimeout(v305InstallMobileBookingNav,0);
+})();
+</script>
