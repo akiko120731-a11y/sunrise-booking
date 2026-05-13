@@ -1934,7 +1934,7 @@ body.is-logged-out{
     </section>
 
     <section id="mobileReportBlock" class="mobile-page mobile-soft-section mobile-page-query">
-      <h3>查詢作業區</h3>
+      <h3>統計/查詢作業</h3>
       <div class="mobile-report-grid">
         <label>開始日期<input id="mobileReportStart" type="date"></label>
         <label>結束日期<input id="mobileReportEnd" type="date"></label>
@@ -9827,20 +9827,20 @@ body.role-coach.is-logged-in .side { display: none !important; }
 
   <div class="md-section">主要功能</div>
 
+  <button type="button" class="md-item md-item-add" onclick="closeMobileDrawer();openEditor()">
+    <span class="md-item-icon ico-add">＋</span>新增預約
+  </button>
+  <button type="button" class="md-item" onclick="closeMobileDrawer();openNoteEditor()">
+    <span class="md-item-icon ico-note">✎</span>新增記事
+  </button>
   <button type="button" class="md-item" data-tab="month" onclick="closeMobileDrawer();setMobileTab('month')">
     <span class="md-item-icon ico-month">◫</span>本月總覽
   </button>
   <button type="button" class="md-item" data-tab="booking" onclick="closeMobileDrawer();setMobileTab('booking')">
     <span class="md-item-icon ico-book">▦</span>預約課表
   </button>
-  <button type="button" class="md-item md-item-add" onclick="closeMobileDrawer();openEditor()">
-    <span class="md-item-icon ico-add">＋</span>新增預約
-  </button>
-  <button type="button" class="md-item" data-tab="stats" onclick="closeMobileDrawer();setMobileTab('stats')">
-    <span class="md-item-icon ico-stats">◑</span>統計
-  </button>
   <button type="button" class="md-item" data-tab="query" onclick="closeMobileDrawer();setMobileTab('query')">
-    <span class="md-item-icon ico-query">◈</span>查詢報表
+    <span class="md-item-icon ico-query">◈</span>統計/查詢作業
   </button>
 
   <div class="md-divider"></div>
@@ -9854,11 +9854,8 @@ body.role-coach.is-logged-in .side { display: none !important; }
   </button>
 
   <div class="md-divider"></div>
-  <div class="md-section">帳號</div>
+  <div class="md-section">帳戶功能區</div>
 
-  <button type="button" class="md-item" onclick="closeMobileDrawer();openNoteEditor()">
-    <span class="md-item-icon ico-note">✎</span>新增記事
-  </button>
   <button type="button" class="md-item" onclick="closeMobileDrawer();switchIdentity()">
     <span class="md-item-icon ico-switch">⇄</span>切換身份
   </button>
@@ -10027,306 +10024,167 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
-<!-- v301 Mobile Revision：左側漢堡 / 移除底部導覽 / 手機長按拖曳 / 統計頁作業區 / 休訓管理 -->
-<style id="v301-mobile-revision-css">
+
+
+<style id="v301-mobile-request-patch">
+/* v301 手機版指定調整：移除底部導覽、漢堡靠左、所有入口集中到漢堡 */
 @media (max-width:760px){
-  /* 1) 完全移除底部導覽列 */
-  #mobileBottomNav{display:none!important;visibility:hidden!important;pointer-events:none!important;height:0!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;}
-
-  /* 2) 手機 Header：漢堡固定靠左，標題靠左，不再像置中按鈕 */
-  .mh-header{justify-content:flex-start!important;gap:8px!important;padding:0 10px!important;}
-  .mh-hamburger{margin-right:2px!important;align-items:flex-start!important;width:42px!important;padding-left:6px!important;}
+  #mobileBottomNav{display:none!important;visibility:hidden!important;pointer-events:none!important;height:0!important;padding:0!important;border:0!important;overflow:hidden!important;}
+  body.role-coach.is-logged-in #mobileBottomNav{display:none!important;}
+  .mh-header{justify-content:flex-start!important;gap:4px!important;padding:0 10px 0 6px!important;}
+  .mh-hamburger{margin-right:4px!important;align-items:center!important;justify-content:center!important;}
   .mh-title{text-align:left!important;flex:1 1 auto!important;}
-  .mh-add-btn{margin-left:auto!important;}
-
-  /* 3) 所有手機頁面不再預留底部導覽列空間 */
+  .mh-add-btn{display:none!important;}
   .mobile-page-month,.mobile-page-stats,.mobile-page-query{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;}
-  .mbs-wrap{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))!important;}
-
-  /* 4) 統計頁下方顯示查詢作業區 */
-  #mobileReportBlock.v301-in-stats{display:block!important;margin-top:14px!important;}
-  body.mobile-tab-stats #mobileStatsBlock{display:block!important;overflow-y:auto!important;padding:14px 12px calc(18px + env(safe-area-inset-bottom,0px))!important;}
-  body.mobile-tab-stats #mobileReportBlock{display:block!important;}
-  body.mobile-tab-query #mobileReportBlock{display:block!important;}
-
-  /* 5) 手機課表互動提示與長按拖曳狀態 */
-  .mbs-controls::after{content:'點空白格新增｜點預約修改｜長按預約可拖曳';display:block;position:absolute;left:12px;right:12px;bottom:-18px;font-size:10px;color:#9a8a78;text-align:center;pointer-events:none;}
-  .mbs-controls{position:relative;margin-bottom:18px;}
-  #schedule .slot{touch-action:manipulation;}
-  #schedule .entry{touch-action:manipulation;-webkit-user-select:none;user-select:none;}
-  #schedule .entry.v301-touch-dragging{opacity:.38!important;outline:2px solid #b99b72!important;}
-  #v301DragGhost{position:fixed;z-index:3000;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;background:#fffaf0;border:1px solid #d8cab6;border-radius:14px;padding:8px 10px;box-shadow:0 10px 26px rgba(80,60,30,.18);font-size:12px;font-weight:800;color:#5f5142;max-width:150px;text-align:center;}
-  #schedule td.slot.v301-touch-over{outline:3px solid rgba(185,155,114,.9)!important;outline-offset:-3px;background:#fff4d8!important;}
-
-  /* 6) Drawer 排版：圖示改成字母型，帳戶區靠後 */
-  .md-item-icon{font-size:12px!important;font-weight:900!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;}
+  .mbs-wrap{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;}
+  .mobile-page-stats .mobile-stats-report-card{display:none!important;}
+  body.mobile-tab-stats .mobile-page-stats{display:none!important;}
+  .md-drawer{z-index:2200!important;}
+  .md-overlay{z-index:2190!important;}
+  .md-section{font-size:12px!important;color:#8a7c6d!important;font-weight:900!important;padding:10px 18px 5px!important;}
+  .md-item{min-height:48px!important;}
+  .mobile-touch-ghost{position:fixed;left:0;top:0;z-index:3000;pointer-events:none;background:#fffaf1;border:1px solid #d8cab6;border-radius:12px;padding:8px 10px;box-shadow:0 10px 26px rgba(80,60,30,.22);font-size:12px;font-weight:900;color:#3d3933;opacity:.94;transform:translate(-9999px,-9999px);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mobile-drag-target{outline:3px solid rgba(185,155,114,.9)!important;outline-offset:-3px;background:#fff4d8!important;}
+  .mbs-wrap .entry{touch-action:none;}
+  .mbs-wrap .slot{touch-action:manipulation;}
 }
 </style>
 
-<script id="v301-mobile-revision-js">
+<script id="v301-mobile-request-patch-js">
 (function(){
-  if(window.__v301MobileRevisionLoaded) return;
-  window.__v301MobileRevisionLoaded = true;
-
   function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
-  function byId(id){ return document.getElementById(id); }
-  function safeCall(fn){ try{ if(typeof fn === 'function') return fn(); }catch(e){ console.warn(e); } }
+  function $(id){ return document.getElementById(id); }
 
-  function setIcon(btn, txt, cls){
-    if(!btn) return;
-    var icon = btn.querySelector('.md-item-icon');
-    if(icon){ icon.textContent = txt; if(cls) icon.className = 'md-item-icon ' + cls; }
+  function removeBottomNav(){
+    var nav=$('mobileBottomNav');
+    if(nav){ nav.style.display='none'; nav.setAttribute('aria-hidden','true'); }
   }
-
-  function buildDrawerV301(){
-    var drawer = byId('mobileDrawer');
-    if(!drawer || drawer.dataset.v301Built === '1') return;
-    drawer.dataset.v301Built = '1';
-
-    var user = drawer.querySelector('.md-user-block');
-    drawer.innerHTML = '';
-    if(user) drawer.appendChild(user);
-
-    function section(text, className){
-      var d = document.createElement('div');
-      d.className = 'md-section' + (className ? ' ' + className : '');
-      d.textContent = text;
-      drawer.appendChild(d);
-      return d;
-    }
-    function divider(){ var d=document.createElement('div'); d.className='md-divider'; drawer.appendChild(d); }
-    function item(label, letter, onClick, tab, className){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'md-item' + (className ? ' ' + className : '');
-      if(tab) b.dataset.tab = tab;
-      b.innerHTML = '<span class="md-item-icon">'+letter+'</span><span>'+label+'</span>';
-      b.addEventListener('click', function(ev){ ev.preventDefault(); if(typeof window.closeMobileDrawer==='function') window.closeMobileDrawer(); onClick(); });
-      drawer.appendChild(b);
-      return b;
-    }
-
-    section('主要功能');
-    item('本月總覽','M',function(){ window.setMobileTab && window.setMobileTab('month'); },'month');
-    item('預約課表','B',function(){ window.setMobileTab && window.setMobileTab('booking'); },'booking');
-    item('新增預約','A',function(){ window.openEditor && window.openEditor(); },'', 'md-item-add');
-    item('統計／查詢作業','S',function(){ window.setMobileTab && window.setMobileTab('stats'); },'stats');
-    item('休訓管理','R',function(){ openRestManagerV301(); },'', 'v301-rest-item');
-    item('新增記事','N',function(){ window.openNoteEditor && window.openNoteEditor(); },'', 'v301-note-item');
-
-    divider();
-    section('管理功能','admin-only');
-    item('學員管理','L',function(){ window.openStudentManager && window.openStudentManager(); },'', 'admin-only');
-    item('薪資作業','P',function(){ if(typeof window.openSalaryWork==='function') window.openSalaryWork(); else if(typeof window.openReportWork==='function') window.openReportWork(); },'', 'admin-only');
-
-    divider();
-    section('帳戶功能區');
-    item('切換身份','U',function(){ window.switchIdentity && window.switchIdentity(); },'', 'v301-account-item');
-  }
-
-  window.openRestManagerV301 = function(){
-    var date = (byId('weekPicker') && byId('weekPicker').value) || (typeof fmt==='function' ? fmt(new Date()) : '');
-    var coach = (typeof isCoach==='function' && isCoach()) ? window.currentCoach : ((window.coaches && window.coaches[0]) || '');
-    if(typeof window.openEditor === 'function') window.openEditor(date || '', '09:00', coach);
-    setTimeout(function(){
-      var type = byId('type'), venue = byId('venue'), name = byId('name'), note = byId('note');
-      if(type){ type.value = 'rest'; type.dispatchEvent(new Event('change', {bubbles:true})); }
-      if(venue) venue.value = 'none';
-      if(name && !name.value) name.value = '休訓';
-      if(note && !note.value) note.value = '手機休訓管理新增';
-      if(typeof venueCheck === 'function') venueCheck();
-    },80);
+  var oldApply=window.applyRoleUI;
+  window.applyRoleUI=function(){
+    if(typeof oldApply==='function') oldApply.apply(this,arguments);
+    removeBottomNav();
   };
 
-  function moveReportIntoStats(){
-    var stats = byId('mobileStatsBlock');
-    var report = byId('mobileReportBlock');
-    if(stats && report && report.parentNode !== stats){
-      report.classList.add('v301-in-stats');
-      stats.appendChild(report);
-    }
-  }
-
-  function attachScheduleToMobileV301(){
-    var mbsWrap = byId('mobileBookingWrap');
-    var schedCard = byId('desktopScheduleCard');
-    if(!mbsWrap || !schedCard) return;
-    var sw = schedCard.querySelector('.schedule-wrap') || document.querySelector('.schedule-wrap');
-    if(sw && !mbsWrap.contains(sw)) mbsWrap.appendChild(sw);
-    var ctrl = schedCard.querySelector('.controls');
-    if(ctrl && isMobile()) ctrl.style.display = 'none';
-  }
-  function detachScheduleFromMobileV301(){
-    var mbsWrap = byId('mobileBookingWrap');
-    var schedCard = byId('desktopScheduleCard');
-    if(!mbsWrap || !schedCard) return;
-    var sw = mbsWrap.querySelector('.schedule-wrap');
-    if(sw && !schedCard.contains(sw)) schedCard.appendChild(sw);
-    var ctrl = schedCard.querySelector('.controls');
-    if(ctrl) ctrl.style.display = '';
-  }
-
-  function updateDrawerActiveV301(){
-    var tab = window.mobileTab || 'month';
-    document.querySelectorAll('#mobileDrawer .md-item[data-tab]').forEach(function(b){ b.classList.toggle('md-active', b.dataset.tab === tab); });
-  }
-
-  var oldSetTab = window.setMobileTab;
-  window.setMobileTab = function(tab){
-    if(tab === 'query') tab = 'stats';
-    window.mobileTab = tab;
-    ['month','booking','stats','query'].forEach(function(t){ document.body.classList.toggle('mobile-tab-'+t, t===tab); });
-    document.querySelectorAll('#mobileBottomNav button[data-tab]').forEach(function(b){ b.classList.toggle('active', b.dataset.tab === tab); });
-    moveReportIntoStats();
-    if(isMobile()){
-      if(tab === 'booking') attachScheduleToMobileV301(); else detachScheduleFromMobileV301();
-    }
-    updateDrawerActiveV301();
-    if(typeof oldSetTab === 'function' && oldSetTab !== window.setMobileTab){ try{ oldSetTab(tab); }catch(e){} }
-    moveReportIntoStats();
-    if(isMobile() && tab === 'booking') attachScheduleToMobileV301();
-    setTimeout(bindMobileScheduleTouchV301,90);
-    try{ window.scrollTo({top:0,behavior:'instant'}); }catch(e){ window.scrollTo(0,0); }
+  var oldSet=window.setMobileTab;
+  window.setMobileTab=function(tab){
+    if(tab==='stats') tab='query';
+    window.mobileTab=tab;
+    ['month','booking','stats','query','agenda'].forEach(function(t){ document.body.classList.remove('mobile-tab-'+t); });
+    document.body.classList.add('mobile-tab-'+tab);
+    document.querySelectorAll('.md-item[data-tab]').forEach(function(b){ b.classList.toggle('md-active', b.dataset.tab===tab); });
+    removeBottomNav();
+    if(typeof oldSet==='function' && oldSet!==window.setMobileTab){ try{ oldSet.call(this,tab); }catch(e){} }
+    if(tab==='booking' && typeof attachScheduleToMobile==='function'){ try{ attachScheduleToMobile(); }catch(e){} }
+    setTimeout(removeBottomNav,0);
   };
 
-  var oldRender = window.render;
-  window.render = function(){
-    if(typeof oldRender === 'function') oldRender.apply(this, arguments);
-    moveReportIntoStats();
-    if(isMobile() && window.mobileTab === 'booking') attachScheduleToMobileV301();
-    setTimeout(bindMobileScheduleTouchV301,50);
-  };
-
-  var oldOpenDrawer = window.openMobileDrawer;
-  window.openMobileDrawer = function(){
-    buildDrawerV301();
-    if(typeof oldOpenDrawer === 'function') oldOpenDrawer();
-    updateDrawerActiveV301();
-  };
-
-  function parseSlotData(td){
-    if(!td || td.dataset.v301Ready === '1') return;
-    var s = td.getAttribute('onclick') || '';
-    var m = s.match(/openEditor\('([^']*)','([^']*)','([^']*)'\)/);
-    if(m){
-      td.dataset.v301Date = m[1];
-      td.dataset.v301Time = m[2];
-      td.dataset.v301Coach = m[3].replace(/&amp;/g,'&').replace(/&#39;/g,"'");
+  var oldRender=window.render;
+  window.render=function(){
+    if(typeof oldRender==='function') oldRender.apply(this,arguments);
+    removeBottomNav();
+    if(isMobile() && window.mobileTab==='booking' && typeof attachScheduleToMobile==='function'){
+      try{ attachScheduleToMobile(); }catch(e){}
     }
-    td.dataset.v301Ready = '1';
+  };
+
+  /* 手機課表：短按空白格新增、短按自己的預約修改、長按自己的預約拖曳換時段 */
+  var pressTimer=null, drag=null, ghost=null, startX=0, startY=0, moved=false;
+  function makeGhost(text){
+    if(!ghost){ ghost=document.createElement('div'); ghost.className='mobile-touch-ghost'; document.body.appendChild(ghost); }
+    ghost.textContent=text||'移動預約';
+    ghost.style.transform='translate(-9999px,-9999px)';
+    return ghost;
+  }
+  function moveGhost(x,y){ if(ghost) ghost.style.transform='translate('+(x+12)+'px,'+(y+12)+'px)'; }
+  function clearTarget(){ document.querySelectorAll('.mobile-drag-target').forEach(function(n){ n.classList.remove('mobile-drag-target'); }); }
+  function tdFromPoint(x,y){
+    var el=document.elementFromPoint(x,y);
+    return el ? el.closest('td.slot, td.merged') : null;
+  }
+  function getCellInfo(td){
+    if(!td) return null;
+    var onclick=td.getAttribute('onclick')||'';
+    var m=onclick.match(/openEditor\('([^']*)','([^']*)','([^']*)'\)/);
+    if(!m) return null;
+    return {date:m[1], time:m[2], coach:m[3]};
   }
   function entryIdFromNode(node){
-    var s = node && (node.getAttribute('onclick') || '');
-    var m = s.match(/edit\('([^']+)'\)/);
-    return m ? m[1] : '';
+    var attr=(node.getAttribute('ondragstart')||'') + ' ' + (node.getAttribute('onclick')||'');
+    var m=attr.match(/(?:dragStart|edit)\(event,\s*'([^']+)'\)|edit\('([^']+)'\)/);
+    return m ? (m[1]||m[2]) : '';
   }
-  function slotFromPoint(x,y){
-    var el = document.elementFromPoint(x,y);
-    return el ? el.closest('td.slot') : null;
-  }
-  function moveEntryToSlot(id, td){
-    if(!id || !td) return;
-    parseSlotData(td);
-    var date = td.dataset.v301Date, time = td.dataset.v301Time, coach = td.dataset.v301Coach;
-    if(!date || !time || !coach) return;
-    var e = (window.entries || []).find(function(x){ return x.id === id; });
-    if(!e) return;
-    if(typeof canEditEntry === 'function' && !canEditEntry(e)){ alert('小提醒：只能修改自己的預約課程唷！'); return; }
-    if(typeof isCoach === 'function' && isCoach() && coach !== window.SELF_TRAINING) coach = window.currentCoach;
-    var proposed = Object.assign({}, e, {date:date, time:time, coach:coach});
+  function canEditId(id){
     try{
-      if(proposed.venue === 'auto' || !proposed.venue){ proposed.venue = suggestedVenue(date,time,proposed.duration,id,proposed.type); }
-      if(typeof canPlaceCandidate === 'function'){
-        var check = canPlaceCandidate(proposed,id);
-        if(!check.ok){ alert(check.msg || '此時段無法放置預約'); if(typeof render==='function') render(); return; }
-      }
-      Object.assign(e, proposed);
-      window.entries = (window.entries || []).sort(function(a,b){ return (a.date+a.time+a.coach).localeCompare(b.date+b.time+b.coach); });
-      if(typeof logActivity === 'function' && typeof entrySummary === 'function') logActivity('手機長按拖曳調整時段', entrySummary(e), e.coach);
-      if(typeof persist === 'function') persist('已拖曳調整時段'); else if(typeof saveLocal === 'function') saveLocal();
-      if(typeof render === 'function') render();
-    }catch(err){ console.error(err); alert(err.message || '拖曳失敗'); }
+      if(!id || !Array.isArray(window.entries)) return false;
+      var e=window.entries.find(function(x){ return x.id===id; });
+      return !!(e && typeof window.canEditEntry==='function' && window.canEditEntry(e));
+    }catch(err){ return false; }
   }
-
-  function bindMobileScheduleTouchV301(){
-    if(!isMobile()) return;
-    var table = byId('schedule');
-    if(!table || table.dataset.v301TouchBound === '1'){
-      if(table) table.querySelectorAll('td.slot').forEach(parseSlotData);
-      return;
-    }
-    table.dataset.v301TouchBound = '1';
-    table.querySelectorAll('td.slot').forEach(parseSlotData);
-
-    var timer = null, dragging = false, dragId = '', startX = 0, startY = 0, ghost = null, activeEntry = null, overTd = null;
-    function clearOver(){ if(overTd){ overTd.classList.remove('v301-touch-over'); overTd = null; } }
-    function removeGhost(){ if(ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost); ghost = null; }
-    function cleanup(){ clearTimeout(timer); timer=null; dragging=false; dragId=''; removeGhost(); clearOver(); if(activeEntry) activeEntry.classList.remove('v301-touch-dragging'); activeEntry=null; }
-
-    table.addEventListener('touchstart', function(ev){
-      var entry = ev.target.closest('.entry');
-      if(!entry || entry.classList.contains('readonly')) return;
-      dragId = entryIdFromNode(entry);
-      if(!dragId) return;
-      activeEntry = entry;
-      startX = ev.touches[0].clientX; startY = ev.touches[0].clientY;
-      timer = setTimeout(function(){
-        dragging = true;
-        entry.classList.add('v301-touch-dragging');
-        ghost = document.createElement('div');
-        ghost.id = 'v301DragGhost';
-        ghost.textContent = (entry.querySelector('.entry-name') && entry.querySelector('.entry-name').textContent) || '移動預約';
-        document.body.appendChild(ghost);
-        ghost.style.left = startX + 'px'; ghost.style.top = startY + 'px';
-        if(navigator.vibrate) try{ navigator.vibrate(18); }catch(e){}
-      }, 420);
-    }, {passive:true});
-
-    table.addEventListener('touchmove', function(ev){
-      if(!timer && !dragging) return;
-      var x = ev.touches[0].clientX, y = ev.touches[0].clientY;
-      if(!dragging && (Math.abs(x-startX)>10 || Math.abs(y-startY)>10)){ clearTimeout(timer); timer=null; return; }
-      if(dragging){
-        ev.preventDefault();
-        if(ghost){ ghost.style.left=x+'px'; ghost.style.top=y+'px'; }
-        var td = slotFromPoint(x,y);
-        if(td !== overTd){ clearOver(); overTd = td; if(overTd) overTd.classList.add('v301-touch-over'); }
-      }
-    }, {passive:false});
-
-    table.addEventListener('touchend', function(ev){
-      if(dragging){
-        ev.preventDefault();
-        var t = ev.changedTouches && ev.changedTouches[0];
-        var td = t ? slotFromPoint(t.clientX,t.clientY) : overTd;
-        var id = dragId;
-        cleanup();
-        if(td) moveEntryToSlot(id, td);
+  function dropMobileEntry(id, info){
+    if(!id || !info) return;
+    try{
+      if(typeof window.dropEntry==='function'){
+        var fake={preventDefault:function(){}, stopPropagation:function(){}, dataTransfer:{getData:function(){return id;}}};
+        window.dropEntry(fake,info.date,info.time,info.coach);
       }else{
-        clearTimeout(timer); timer=null;
+        var e=window.entries.find(function(x){return x.id===id;});
+        if(e && canEditId(id)){ e.date=info.date; e.time=info.time; e.coach=info.coach; if(typeof window.persist==='function') window.persist('預約已移動'); if(typeof window.render==='function') window.render(); }
       }
-    }, {passive:false});
-
-    table.addEventListener('touchcancel', cleanup, {passive:true});
+    }catch(err){ alert('移動失敗：'+(err.message||err)); }
   }
-
-  function initV301(){
-    buildDrawerV301();
-    moveReportIntoStats();
-    document.querySelectorAll('#mobileDrawer .md-item-icon').forEach(function(ic){ ic.setAttribute('aria-hidden','true'); });
-    if(isMobile()){
-      byId('mobileBottomNav') && byId('mobileBottomNav').setAttribute('aria-hidden','true');
-      if(!window.mobileTab) window.mobileTab = 'month';
-      if(window.mobileTab === 'booking') attachScheduleToMobileV301();
-      bindMobileScheduleTouchV301();
-    }else{
-      detachScheduleFromMobileV301();
+  document.addEventListener('touchstart',function(ev){
+    if(!isMobile() || window.mobileTab!=='booking') return;
+    var entry=ev.target.closest('.mbs-wrap .entry');
+    var cell=ev.target.closest('.mbs-wrap td.slot, .mbs-wrap td.merged');
+    if(!entry && !cell) return;
+    startX=ev.touches[0].clientX; startY=ev.touches[0].clientY; moved=false;
+    clearTimeout(pressTimer); clearTarget();
+    if(entry){
+      var id=entryIdFromNode(entry);
+      if(!canEditId(id)) return;
+      pressTimer=setTimeout(function(){
+        drag={id:id, entry:entry};
+        makeGhost(entry.querySelector('.entry-name')?.textContent || entry.textContent.trim() || '移動預約');
+        moveGhost(startX,startY);
+        if(navigator.vibrate) try{navigator.vibrate(12);}catch(e){}
+      },420);
     }
-    updateDrawerActiveV301();
-  }
+  },{passive:true});
 
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initV301); else initV301();
-  window.addEventListener('resize', function(){ if(isMobile()) initV301(); else detachScheduleFromMobileV301(); });
+  document.addEventListener('touchmove',function(ev){
+    if(!isMobile() || window.mobileTab!=='booking') return;
+    var x=ev.touches[0].clientX, y=ev.touches[0].clientY;
+    if(Math.abs(x-startX)>8 || Math.abs(y-startY)>8) moved=true;
+    if(drag){
+      ev.preventDefault();
+      moveGhost(x,y);
+      clearTarget();
+      var td=tdFromPoint(x,y);
+      if(td && getCellInfo(td)) td.classList.add('mobile-drag-target');
+    }else if(moved){
+      clearTimeout(pressTimer);
+    }
+  },{passive:false});
+
+  document.addEventListener('touchend',function(ev){
+    if(!isMobile() || window.mobileTab!=='booking') return;
+    clearTimeout(pressTimer);
+    if(drag){
+      ev.preventDefault();
+      var t=ev.changedTouches[0];
+      var td=tdFromPoint(t.clientX,t.clientY);
+      var info=getCellInfo(td);
+      clearTarget();
+      if(ghost) ghost.style.transform='translate(-9999px,-9999px)';
+      if(info) dropMobileEntry(drag.id,info);
+      drag=null;
+    }
+  },{passive:false});
+
+  document.addEventListener('touchcancel',function(){ clearTimeout(pressTimer); clearTarget(); if(ghost) ghost.style.transform='translate(-9999px,-9999px)'; drag=null; },{passive:true});
+
+  document.addEventListener('DOMContentLoaded',function(){ removeBottomNav(); });
+  window.addEventListener('resize',removeBottomNav);
 })();
 </script>
 
