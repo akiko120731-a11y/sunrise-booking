@@ -10486,5 +10486,195 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v303 mobile correction patch: desktop monthly stats pie + booking page visibility fix -->
+<style id="v303-mobile-correction-css">
+@media (max-width:760px){
+  /* 強制頁面只顯示目前分頁，避免「預約總覽」覆蓋預約課表 */
+  body.mobile-tab-month #mobileMonthPage{display:block!important;}
+  body.mobile-tab-month #mobileBookingPage,
+  body.mobile-tab-month #mobileStatsBlock,
+  body.mobile-tab-month #mobileReportBlock{display:none!important;}
+
+  body.mobile-tab-booking #mobileMonthPage,
+  body.mobile-tab-booking #mobileStatsBlock,
+  body.mobile-tab-booking #mobileReportBlock{display:none!important;}
+  body.mobile-tab-booking #mobileBookingPage{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:calc(100dvh - 54px)!important;
+    overflow:hidden!important;
+    position:relative!important;
+    z-index:30!important;
+    background:#faf6ee!important;
+  }
+
+  body.mobile-tab-query #mobileMonthPage,
+  body.mobile-tab-query #mobileBookingPage,
+  body.mobile-tab-query #mobileStatsBlock{display:none!important;}
+  body.mobile-tab-query #mobileReportBlock{display:block!important;}
+
+  body.mobile-tab-stats #mobileMonthPage,
+  body.mobile-tab-stats #mobileBookingPage,
+  body.mobile-tab-stats #mobileStatsBlock{display:none!important;}
+  body.mobile-tab-stats #mobileReportBlock{display:block!important;}
+
+  #mobileBookingWrap{
+    display:block!important;
+    flex:1 1 auto!important;
+    min-height:0!important;
+    overflow:auto!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y pinch-zoom!important;
+    background:#faf6ee!important;
+  }
+  #mobileBookingWrap .schedule-wrap{display:block!important;}
+
+  /* 統計/查詢作業：使用桌機「我的本月統計分析」的本月圓餅圖邏輯 */
+  #mobileQueryAnalysisCard h3::after{content:'｜我的本月統計分析';font-size:12px;color:#8a7c6d;font-weight:800;margin-left:4px;}
+  #mobileQueryAnalysisCard .hint{font-size:12px!important;line-height:1.55!important;}
+}
+</style>
+<script id="v303-mobile-correction-js">
+(function(){
+  function byId(id){return document.getElementById(id);}
+  function isMobile(){return window.matchMedia&&window.matchMedia('(max-width:760px)').matches;}
+  function setShow(node,show,display){if(node)node.style.setProperty('display',show?(display||'block'):'none','important');}
+  function safe(fn){try{return typeof fn==='function'?fn():undefined;}catch(e){console.warn(e);}}
+
+  function forceMobilePage(tab){
+    if(!isMobile()) return;
+    if(tab==='stats') tab='query';
+    window.mobileTab=tab;
+    ['month','booking','stats','query','agenda'].forEach(function(t){document.body.classList.remove('mobile-tab-'+t);});
+    document.body.classList.add('mobile-tab-'+tab);
+    setShow(byId('mobileMonthPage'),tab==='month','block');
+    setShow(byId('mobileBookingPage'),tab==='booking','flex');
+    setShow(byId('mobileStatsBlock'),false,'block');
+    setShow(byId('mobileReportBlock'),tab==='query','block');
+    document.querySelectorAll('.md-item[data-tab]').forEach(function(b){b.classList.toggle('md-active',b.dataset.tab===tab || (b.dataset.tab==='query'&&tab==='stats'));});
+    var nav=byId('mobileBottomNav');
+    if(nav){nav.style.setProperty('display','none','important');nav.style.setProperty('visibility','hidden','important');}
+  }
+
+  window.attachScheduleToMobile = function(){
+    var mbsWrap=byId('mobileBookingWrap');
+    var schedCard=byId('desktopScheduleCard');
+    if(!mbsWrap||!schedCard) return;
+    var sw=schedCard.querySelector('.schedule-wrap')||document.querySelector('#appWrap .schedule-wrap');
+    if(!sw) return;
+    if(!mbsWrap.contains(sw)) mbsWrap.appendChild(sw);
+    var ctrl=schedCard.querySelector('.controls');
+    if(ctrl) ctrl.style.setProperty('display','none','important');
+    sw.style.setProperty('display','block','important');
+  };
+  window.detachScheduleFromMobile = function(){
+    var mbsWrap=byId('mobileBookingWrap');
+    var schedCard=byId('desktopScheduleCard');
+    if(!mbsWrap||!schedCard) return;
+    var sw=mbsWrap.querySelector('.schedule-wrap');
+    if(sw&&!schedCard.contains(sw)) schedCard.appendChild(sw);
+    var ctrl=schedCard.querySelector('.controls');
+    if(ctrl) ctrl.style.removeProperty('display');
+  };
+
+  function desktopMonthStats(){
+    var wp=byId('weekPicker');
+    var base=new Date((wp&&wp.value?wp.value:new Date())+'');
+    if(isNaN(base)) base=new Date();
+    var y=base.getFullYear(), m=base.getMonth();
+    var list=(Array.isArray(window.entries)?window.entries:[]).filter(function(e){
+      var d=new Date(String(e.date||'')+'T00:00:00');
+      if(isNaN(d)) return false;
+      var visible=(typeof isAdmin==='function'&&isAdmin()) || e.coach===window.currentCoach;
+      return d.getFullYear()===y && d.getMonth()===m && visible;
+    });
+    var course=list.filter(function(e){try{return typeof countAsCourse==='function'?countAsCourse(e):['one1','one2','class'].includes(e.type);}catch(err){return false;}}).length;
+    var edu=list.filter(function(e){return e.type==='edu';}).length;
+    return {course:course,edu:edu,total:list.length,year:y,month:m+1};
+  }
+
+  function ensureQueryAnalysisV303(){
+    var block=byId('mobileReportBlock');
+    if(!block) return null;
+    var old=byId('mobileQueryAnalysisCard');
+    if(!old){
+      old=document.createElement('div');
+      old.id='mobileQueryAnalysisCard';
+      old.className='mobile-query-analysis-card';
+      block.insertBefore(old, block.firstElementChild ? block.firstElementChild.nextSibling : null);
+    }
+    old.innerHTML='<h3>圓餅圖分析</h3><div id="mobileQueryStatsCards" class="mobile-stat-cards"></div><div class="mobile-chart-wrap"><canvas id="mobileQueryChart" height="230"></canvas></div><p class="hint" id="mobileQueryPieHint"></p>';
+    return old;
+  }
+
+  var chartV303=null;
+  window.renderMobileQueryPieV302 = window.renderMobileQueryPieV303 = function(){
+    ensureQueryAnalysisV303();
+    var cards=byId('mobileQueryStatsCards'), canvas=byId('mobileQueryChart'), hint=byId('mobileQueryPieHint');
+    if(!cards||!canvas) return;
+    var s=desktopMonthStats();
+    cards.innerHTML='<div class="mobile-stat-card"><span>課程執行</span><b>'+s.course+'</b></div><div class="mobile-stat-card"><span>衛教堂數</span><b>'+s.edu+'</b></div>';
+    if(hint) hint.textContent=s.year+'年'+s.month+'月｜與桌機版「我的本月統計分析」同一套統計口徑。';
+    if(typeof Chart==='undefined') return;
+    if(chartV303){try{chartV303.destroy();}catch(e){}}
+    var sum=s.course+s.edu;
+    chartV303=new Chart(canvas,{type:'pie',data:{labels:sum?['課程執行','衛教']:['尚無資料'],datasets:[{label:'本月統計',data:sum?[s.course,s.edu]:[1]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:function(ctx){return ctx.label+'：'+(sum?ctx.raw:0);}}}}}});
+  };
+
+  window.setMobileTab=function(tab){
+    if(tab==='stats') tab='query';
+    forceMobilePage(tab);
+    if(tab==='booking'){
+      window.attachScheduleToMobile();
+      safe(window.updateMobileWeekLabelV302||window.updateWeekLabel);
+      setTimeout(function(){safe(window.render);forceMobilePage('booking');window.attachScheduleToMobile();safe(window.updateMobileWeekLabelV302||window.updateWeekLabel);},50);
+    }else{
+      window.detachScheduleFromMobile();
+    }
+    if(tab==='query') setTimeout(function(){forceMobilePage('query');window.renderMobileQueryPieV303();},50);
+    var dr=byId('mobileDrawer'), ov=byId('mobileDrawerOverlay');
+    if(dr)dr.classList.remove('md-open'); if(ov)ov.classList.remove('md-open'); document.body.style.overflow='';
+    window.scrollTo({top:0,behavior:'auto'});
+  };
+
+  var oldRender=window.render;
+  window.render=function(){
+    if(typeof oldRender==='function') oldRender.apply(this,arguments);
+    if(!isMobile()) return;
+    var tab=window.mobileTab||'month';
+    if(tab==='stats') tab='query';
+    forceMobilePage(tab);
+    if(tab==='booking') window.attachScheduleToMobile();
+    if(tab==='query') window.renderMobileQueryPieV303();
+  };
+
+  var oldApply=window.applyRoleUI;
+  window.applyRoleUI=function(){
+    if(typeof oldApply==='function') oldApply.apply(this,arguments);
+    if(!isMobile()) return;
+    var tab=window.mobileTab||'month'; if(tab==='stats') tab='query';
+    forceMobilePage(tab);
+    if(tab==='booking') window.attachScheduleToMobile();
+    if(tab==='query') window.renderMobileQueryPieV303();
+  };
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      var tab=window.mobileTab||'month'; if(tab==='stats') tab='query';
+      forceMobilePage(tab);
+      if(tab==='booking') window.attachScheduleToMobile();
+      ensureQueryAnalysisV303();
+      if(tab==='query') window.renderMobileQueryPieV303();
+    },250);
+  });
+})();
+</script>
+
 </body>
 </html>
