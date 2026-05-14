@@ -1857,6 +1857,51 @@ body.is-logged-out{
 }
 
 </style>
+
+<!-- 手機版預約表修正：雙向固定標題 + 手勢縮放 -->
+<style id="mobile-schedule-fix">
+@media (max-width: 760px) {
+  .schedule-wrap {
+    width: 100% !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: manipulation !important;
+  }
+  #schedule {
+    transform-origin: top left !important;
+    will-change: transform !important;
+  }
+  #schedule th.time, #schedule td.time {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 1350 !important;
+  }
+  #schedule tr:first-child th, #schedule tr:first-child td {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1300 !important;
+  }
+  #schedule tr:nth-child(2) th, #schedule tr:nth-child(2) td {
+    position: sticky !important;
+    top: 50px !important;
+    z-index: 1200 !important;
+  }
+  #schedule tr:first-child th.time {
+    position: sticky !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: 1400 !important;
+  }
+  #schedule tr:nth-child(2) th.time {
+    position: sticky !important;
+    left: 0 !important;
+    top: 50px !important;
+    z-index: 1350 !important;
+  }
+  .zoom-tools { display: none !important; }
+}
+</style>
+
 </head>
 <body class="is-logged-out">
 <div id="identityScreen" class="identity-screen">
@@ -1945,7 +1990,7 @@ body.is-logged-out{
     </section>
   </section>
 
-  <section id="desktopScheduleCard" class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="zoom-tools no-print"><button class="mini" onclick="zoomSchedule(-0.08)">－</button><span id="zoomPercent" class="zoom-percent">100%</span><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
+  <section id="desktopScheduleCard" class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
   <aside class="side no-print">
     <section class="card"><h2 id="dashboardTitle">我的本月統計分析</h2><div class="stats"><div class="stat-grid"><div class="stat"><span class="small" id="classStatLabel">學員名稱</span><b id="classCount">0</b></div><div class="stat"><span class="small">衛教堂數</span><b id="eduCount">0</b></div></div><canvas id="chart" height="210"></canvas><div id="chartFallback" class="hint"></div></div></section>
     <section class="card"><h2 id="historyTitle">我的預約記事歷程</h2><div id="historyList" class="history-list"></div></section>
@@ -11281,6 +11326,59 @@ window.addEventListener('resize', function(){
   }
   window.addEventListener('resize',function(){ setTimeout(fixMobileScheduleAxis,80); });
   window.addEventListener('orientationchange',function(){ setTimeout(fixMobileScheduleAxis,250); });
+})();
+</script>
+
+
+<!-- 手勢縮放 JavaScript -->
+<script id="mobile-pinch-zoom">
+(function() {
+  'use strict';
+  const scheduleWrap = document.querySelector('.schedule-wrap');
+  const schedule = document.getElementById('schedule');
+  if (!scheduleWrap || !schedule) return;
+  let currentScale = 1;
+  const minScale = 0.7;
+  const maxScale = 1.5;
+  let initialDistance = 0;
+  let initialScale = 1;
+  function getDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  scheduleWrap.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) {
+      initialDistance = getDistance(e.touches[0], e.touches[1]);
+      initialScale = currentScale;
+      e.preventDefault();
+    }
+  }, { passive: false });
+  scheduleWrap.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 2) {
+      const currentDistance = getDistance(e.touches[0], e.touches[1]);
+      const scale = (currentDistance / initialDistance) * initialScale;
+      currentScale = Math.max(minScale, Math.min(maxScale, scale));
+      schedule.style.transform = `scale(${currentScale})`;
+      schedule.style.transformOrigin = 'top left';
+      e.preventDefault();
+    }
+  }, { passive: false });
+  scheduleWrap.addEventListener('touchend', function(e) {
+    if (e.touches.length < 2) {
+      initialDistance = 0;
+      initialScale = currentScale;
+    }
+  }, { passive: false });
+  window.getScheduleZoom = function() { return currentScale; };
+  window.setScheduleZoom = function(scale) {
+    currentScale = Math.max(minScale, Math.min(maxScale, scale));
+    schedule.style.transform = `scale(${currentScale})`;
+  };
+  window.resetScheduleZoom = function() {
+    currentScale = 1;
+    schedule.style.transform = 'scale(1)';
+  };
 })();
 </script>
 
