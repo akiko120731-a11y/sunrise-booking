@@ -1857,90 +1857,61 @@ body.is-logged-out{
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -3404,90 +3375,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -3862,90 +3804,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -4706,90 +4619,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -4862,90 +4746,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -5163,90 +5018,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -5453,90 +5279,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -5750,90 +5547,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -6078,90 +5846,61 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -6448,90 +6187,61 @@ body.salary-modal-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -6846,90 +6556,61 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -7144,90 +6825,61 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -7455,90 +7107,61 @@ body.salary-manager-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -7798,90 +7421,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -8104,90 +7698,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -8378,90 +7943,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -8663,90 +8199,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -8972,90 +8479,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -9252,90 +8730,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -9653,90 +9102,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -10032,90 +9452,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -10312,90 +9703,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -10453,90 +9815,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -10749,90 +10082,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -11082,90 +10386,61 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -11359,90 +10634,61 @@ body.salary-record-open{overflow:hidden!important;}
   .edu-yn-g { gap: 6px; }
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -11603,90 +10849,61 @@ body.salary-record-open{overflow:hidden!important;}
   border-color: #c0392b;
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -11997,90 +11214,61 @@ body.role-coach.is-logged-in .side { display: none !important; }
 
 } /* end @media 760px */
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -12513,90 +11701,61 @@ window.addEventListener('resize', function(){
   .mbs-wrap .slot{touch-action:manipulation;}
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -12855,90 +12014,61 @@ window.addEventListener('resize', function(){
   #mobileReportBlock .mobile-stat-card{border-radius:18px!important;padding:11px!important;}
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -13180,90 +12310,61 @@ window.addEventListener('resize', function(){
   #mobileQueryAnalysisCard .hint{font-size:12px!important;line-height:1.55!important;}
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -13516,90 +12617,61 @@ window.addEventListener('resize', function(){
   }
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -14010,90 +13082,61 @@ window.addEventListener('resize', function(){
   }
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -14354,90 +13397,61 @@ window.addEventListener('resize', function(){
   }
 }
 
-
 @media (max-width: 768px) {
-  /* 容器層：必須移除可能影響 sticky 的屬性 */
+  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
   .table-container {
+    display: block !important;
     overflow: auto !important;
     position: relative !important;
     -webkit-overflow-scrolling: touch;
-    height: auto;
-    max-height: calc(100vh - 100px);
+    height: auto !important;
+    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
+    margin-bottom: 20px;
+    background: #fff;
   }
 
   table {
-    border-collapse: separate !important; /* 重要：sticky 在 separate 下最穩定 */
+    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
     border-spacing: 0 !important;
-    width: auto !important; /* 讓內容撐開才能滑動 */
+    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
   }
 
-  /* 所有的 Header 通用設定 */
-  th {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    background: #f5eedf !important; /* 確保不透明，滑動時才不會看到底下的字 */
+  /* --- 雙向固定核心設定 --- */
+  
+  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
+  th, .sticky-col {
+    background-color: #f5eedf !important;
     box-sizing: border-box;
-    border: 1px solid #e8e0d5 !important;
+    border: 0.5px solid #e8e0d5 !important;
   }
 
-  /* 1. 上方教練列 (Top Row Sticky) */
-  thead tr:first-child th {
-    top: 0 !important;
-    z-index: 100 !important; /* 提高層級 */
-  }
-
-  /* 2. 左側時間欄 (Left Column Sticky) */
-  /* 這裡針對每列的第一個單元格，不論是 th 還是 td 都要固定 */
-  tr th:first-child, 
-  tr td:first-child {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 90 !important; /* 略低於頂部列，但高於普通單元格 */
-    background: #f5eedf !important;
-    min-width: 60px;
-  }
-
-  /* 3. 左上角交叉點 (Corner Sticky) */
-  /* 最關鍵的一格，必須同時固定 top 和 left */
-  thead tr:first-child th:first-child {
-    z-index: 110 !important; /* 最高層級，確保不被覆蓋 */
-    top: 0 !important;
-    left: 0 !important;
-    background: #ebe3d5 !important; /* 稍微深一點區隔 */
-  }
-}
-
-
-  table {
-    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
-    border-spacing: 0;
-  }
-
-  /* 上方教練列固定 */
+  /* [1] 頂部教練列固定 */
   thead th {
-    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 10 !important;
-    background: #f5eedf !important; /* 配合原設計色系 */
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
   }
 
-  /* 左側時間欄固定 */
-  tbody th, .sticky-col {
-    position: -webkit-sticky !important;
+  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
+  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  tbody tr th:first-child,
+  tbody tr td:first-child,
+  .time-column {
     position: sticky !important;
     left: 0 !important;
-    z-index: 9 !important;
-    background: #f5eedf !important;
-    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
+    background-color: #f5eedf !important;
+    min-width: 65px !important;
+    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
   }
 
-  /* 左上角交叉點 */
-  thead th:first-child {
-    z-index: 11 !important;
+  /* [3] 左上角交叉點：絕對不能動 */
+  thead tr:first-child th:first-child {
+    position: sticky !important;
+    top: 0 !important;
     left: 0 !important;
+    z-index: 110 !important; /* 最高權限 */
+    background-color: #ebe3d5 !important;
   }
 }
 
@@ -14642,32 +13656,5 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
-<script>
-// 支援手指撥動縮放 (Pinch-to-zoom) 的輔助邏輯
-(function() {
-  if (!/Mobi|Android|iPhone/i.test(navigator.userAgent)) return;
-
-  let lastScale = 1;
-  const container = document.querySelector('.table-container');
-
-  // 監聽縮放事件以修正 sticky 偏移（部分舊瀏覽器需要）
-  window.addEventListener('resize', () => {
-    // 縮放時重新觸發 layout 以確保 sticky 正常
-    if(container) {
-        const temp = container.style.display;
-        container.style.display = 'none';
-        container.offsetHeight; 
-        container.style.display = temp;
-    }
-  });
-
-  // 如果需要更流暢的自定義縮放，通常會調整 viewport 或使用 transform
-  // 但目前最穩定方式是確保 meta tag 允許縮放：
-  const viewport = document.querySelector('meta[name="viewport"]');
-  if (viewport) {
-    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
-  }
-})();
-</script>
 </body>
 </html>
