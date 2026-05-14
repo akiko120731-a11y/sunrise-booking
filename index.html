@@ -13527,5 +13527,407 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v314 手機版課表 Safari 穩定版：移除 transform/scale/zoom，原生滑動＋首列首欄固定 -->
+<style id="v314-mobile-safari-stable-css">
+@media (max-width:760px){
+  html,body{
+    overflow-x:hidden!important;
+    overscroll-behavior-x:none!important;
+  }
+
+  /* 移除前幾版浮動備援時間欄，避免 iPhone Safari 產生殘影與雙欄 */
+  .mobile-sticky-time-col-v312,
+  .mobile-sticky-time-col-v311,
+  .mobile-sticky-time-col,
+  [class*="mobile-sticky-time-col"]{
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard,
+  body.mobile-tab-booking #desktopScheduleCard.card{
+    overflow:visible!important;
+    transform:none!important;
+    contain:none!important;
+    padding-bottom:0!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard .controls{
+    position:sticky!important;
+    top:0!important;
+    z-index:500!important;
+    background:#fffdf8!important;
+  }
+
+  /* 只讓這一層負責原生雙向滑動，避免 body / table / overlay 多層一起滾造成抖動 */
+  #desktopScheduleCard .schedule-wrap{
+    position:relative!important;
+    display:block!important;
+    overflow:auto!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:auto!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-x pan-y!important;
+    transform:none!important;
+    scale:1!important;
+    zoom:1!important;
+    will-change:auto!important;
+    contain:none!important;
+    max-height:calc(100dvh - 178px)!important;
+    height:calc(100dvh - 178px)!important;
+    min-height:64dvh!important;
+    padding:0 0 8px 0!important;
+    margin-bottom:0!important;
+    background:#fffdf8!important;
+    border-radius:0 0 18px 18px!important;
+  }
+
+  /* 關鍵：表格不可再 transform / zoom；sticky 在 iOS 只能搭配真實尺寸與 border-separate 穩定運作 */
+  #schedule{
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    table-layout:fixed!important;
+    width:max-content!important;
+    min-width:max-content!important;
+    max-width:none!important;
+    transform:none!important;
+    scale:1!important;
+    zoom:1!important;
+    translate:none!important;
+    position:relative!important;
+    margin:0!important;
+    background:#fffdf8!important;
+  }
+
+  #schedule,
+  #schedule thead,
+  #schedule tbody,
+  #schedule tr,
+  #schedule th,
+  #schedule td,
+  #schedule .entry{
+    transform:none!important;
+    scale:1!important;
+    zoom:1!important;
+    translate:none!important;
+    backface-visibility:visible!important;
+    -webkit-backface-visibility:visible!important;
+  }
+
+  #schedule th,
+  #schedule td{
+    width:92px!important;
+    min-width:92px!important;
+    max-width:92px!important;
+    height:46px!important;
+    min-height:46px!important;
+    padding:0!important;
+    font-size:12px!important;
+    line-height:1.2!important;
+    background-clip:padding-box!important;
+    border-right:1px solid #e8ded0!important;
+    border-bottom:1px solid #eadfce!important;
+  }
+
+  /* 首列日期固定 */
+  #schedule tr:first-child > th{
+    position:sticky!important;
+    top:0!important;
+    z-index:210!important;
+    height:46px!important;
+    background:#fff3dc!important;
+    box-shadow:0 2px 5px rgba(70,50,20,.08)!important;
+  }
+
+  /* 第二列教練名稱固定 */
+  #schedule tr:nth-child(2) > th{
+    position:sticky!important;
+    top:46px!important;
+    z-index:211!important;
+    height:46px!important;
+    background:#fff7e8!important;
+    box-shadow:0 2px 5px rgba(70,50,20,.08)!important;
+  }
+
+  /* 首欄時間固定 */
+  #schedule .time,
+  #schedule tr > th:first-child,
+  #schedule tr > td:first-child{
+    position:sticky!important;
+    left:0!important;
+    z-index:240!important;
+    width:64px!important;
+    min-width:64px!important;
+    max-width:64px!important;
+    background:#faf4eb!important;
+    background-clip:padding-box!important;
+    box-shadow:4px 0 8px rgba(70,50,20,.14)!important;
+    border-right:2px solid #ded2c2!important;
+    font-weight:800!important;
+  }
+
+  /* 左上角交叉區域最高層：日期/時間欄和上方標題交會處 */
+  #schedule tr:first-child > th:first-child,
+  #schedule tr:first-child > th.time{
+    top:0!important;
+    left:0!important;
+    z-index:300!important;
+    background:#faf4eb!important;
+  }
+
+  #schedule tr:nth-child(2) > th:first-child,
+  #schedule tr:nth-child(2) > th.time{
+    top:46px!important;
+    left:0!important;
+    z-index:301!important;
+    background:#faf4eb!important;
+  }
+
+  #schedule .day-title{
+    height:46px!important;
+    min-height:46px!important;
+    font-size:13px!important;
+    line-height:46px!important;
+  }
+
+  #schedule .coach-head{
+    height:46px!important;
+    min-height:46px!important;
+    font-size:12px!important;
+    line-height:46px!important;
+  }
+
+  #schedule .entry{
+    min-height:40px!important;
+    margin:3px!important;
+    padding:3px!important;
+    font-size:11px!important;
+    line-height:1.18!important;
+    border-radius:10px!important;
+  }
+
+  #schedule .entry-meta{
+    font-size:9.5px!important;
+  }
+
+  /* 手機版停用舊縮放按鈕，避免再次觸發 transform/zoom 類邏輯 */
+  #desktopScheduleCard .zoom-tools,
+  #desktopScheduleCard #zoomPercent{
+    display:none!important;
+  }
+}
+</style>
+
+<script id="v314-mobile-safari-stable-js">
+(function(){
+  'use strict';
+  var MOBILE_MAX=760;
+  function isMobile(){ return window.innerWidth<=MOBILE_MAX; }
+  function qs(s,root){ return (root||document).querySelector(s); }
+  function qsa(s,root){ return Array.prototype.slice.call((root||document).querySelectorAll(s)); }
+
+  function removeOldStickyOverlays(){
+    qsa('.mobile-sticky-time-col-v312,.mobile-sticky-time-col-v311,.mobile-sticky-time-col,[class*="mobile-sticky-time-col"]').forEach(function(n){
+      try{ n.remove(); }catch(e){ n.style.display='none'; }
+    });
+  }
+
+  function hardSet(el,prop,val){
+    if(el && el.style) el.style.setProperty(prop,val,'important');
+  }
+
+  function stabilizeSchedule(){
+    if(!isMobile()) return;
+    removeOldStickyOverlays();
+
+    document.documentElement.style.setProperty('--mobile-schedule-zoom','1');
+    document.body.style.setProperty('--mobile-schedule-zoom','1');
+
+    var wrap=qs('#desktopScheduleCard .schedule-wrap');
+    var table=qs('#schedule');
+    if(!wrap || !table) return;
+
+    hardSet(wrap,'overflow','auto');
+    hardSet(wrap,'overflow-x','auto');
+    hardSet(wrap,'overflow-y','auto');
+    hardSet(wrap,'-webkit-overflow-scrolling','auto');
+    hardSet(wrap,'touch-action','pan-x pan-y');
+    hardSet(wrap,'overscroll-behavior','contain');
+    hardSet(wrap,'transform','none');
+    hardSet(wrap,'scale','1');
+    hardSet(wrap,'zoom','1');
+    hardSet(wrap,'will-change','auto');
+    hardSet(wrap,'contain','none');
+    hardSet(wrap,'height','calc(100dvh - 178px)');
+    hardSet(wrap,'max-height','calc(100dvh - 178px)');
+    hardSet(wrap,'min-height','64dvh');
+    hardSet(wrap,'padding-bottom','8px');
+    hardSet(wrap,'margin-bottom','0');
+
+    hardSet(table,'border-collapse','separate');
+    hardSet(table,'border-spacing','0');
+    hardSet(table,'table-layout','fixed');
+    hardSet(table,'width','max-content');
+    hardSet(table,'min-width','max-content');
+    hardSet(table,'max-width','none');
+    hardSet(table,'transform','none');
+    hardSet(table,'scale','1');
+    hardSet(table,'zoom','1');
+    hardSet(table,'translate','none');
+    hardSet(table,'position','relative');
+
+    qsa('th,td',table).forEach(function(cell){
+      hardSet(cell,'transform','none');
+      hardSet(cell,'scale','1');
+      hardSet(cell,'zoom','1');
+      hardSet(cell,'translate','none');
+      hardSet(cell,'width','92px');
+      hardSet(cell,'min-width','92px');
+      hardSet(cell,'max-width','92px');
+      hardSet(cell,'height','46px');
+      hardSet(cell,'min-height','46px');
+      hardSet(cell,'background-clip','padding-box');
+    });
+
+    qsa('tr',table).forEach(function(row,ri){
+      var cells=Array.prototype.slice.call(row.children);
+      cells.forEach(function(cell,ci){
+        // 首列、第二列固定在上方
+        if(ri===0){
+          hardSet(cell,'position','sticky');
+          hardSet(cell,'top','0');
+          hardSet(cell,'z-index', ci===0?'300':'210');
+          hardSet(cell,'background', ci===0?'#faf4eb':'#fff3dc');
+          hardSet(cell,'box-shadow','0 2px 5px rgba(70,50,20,.08)');
+        }
+        if(ri===1){
+          hardSet(cell,'position','sticky');
+          hardSet(cell,'top','46px');
+          hardSet(cell,'z-index', ci===0?'301':'211');
+          hardSet(cell,'background', ci===0?'#faf4eb':'#fff7e8');
+          hardSet(cell,'box-shadow','0 2px 5px rgba(70,50,20,.08)');
+        }
+        // 首欄固定在左側
+        if(ci===0 || cell.classList.contains('time')){
+          hardSet(cell,'position','sticky');
+          hardSet(cell,'left','0');
+          hardSet(cell,'width','64px');
+          hardSet(cell,'min-width','64px');
+          hardSet(cell,'max-width','64px');
+          hardSet(cell,'background','#faf4eb');
+          hardSet(cell,'box-shadow','4px 0 8px rgba(70,50,20,.14)');
+          hardSet(cell,'border-right','2px solid #ded2c2');
+          if(ri>1) hardSet(cell,'z-index','240');
+        }
+      });
+    });
+  }
+
+  function scheduleStabilizeSoon(delay){
+    setTimeout(stabilizeSchedule, delay||0);
+  }
+
+  // 阻擋舊版自訂 pinch zoom：舊版會改 CSS 變數並觸發 overlay，這是 iPhone 抖動主因。
+  function bindPinchGuard(){
+    var wrap=qs('#desktopScheduleCard .schedule-wrap');
+    if(!wrap || wrap.__v314PinchGuardBound) return;
+    wrap.__v314PinchGuardBound=true;
+    ['touchstart','touchmove','gesturestart','gesturechange'].forEach(function(type){
+      wrap.addEventListener(type,function(e){
+        if((e.touches && e.touches.length>=2) || type.indexOf('gesture')===0){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          stabilizeSchedule();
+        }
+      },{capture:true,passive:false});
+    });
+  }
+
+  // 手機版覆蓋縮放函式：不再改 transform/zoom，只做穩定化。
+  var oldApply=window.applyScheduleZoom;
+  window.applyScheduleZoom=function(){
+    if(isMobile()){
+      stabilizeSchedule();
+      bindPinchGuard();
+      return;
+    }
+    return typeof oldApply==='function' ? oldApply.apply(this,arguments) : undefined;
+  };
+
+  var oldZoom=window.zoomSchedule;
+  window.zoomSchedule=function(delta){
+    if(isMobile()){
+      stabilizeSchedule();
+      bindPinchGuard();
+      return;
+    }
+    return typeof oldZoom==='function' ? oldZoom.apply(this,arguments) : undefined;
+  };
+
+  var oldReset=window.resetScheduleZoom;
+  window.resetScheduleZoom=function(){
+    if(isMobile()){
+      stabilizeSchedule();
+      bindPinchGuard();
+      return;
+    }
+    return typeof oldReset==='function' ? oldReset.apply(this,arguments) : undefined;
+  };
+
+  var currentRender=window.render;
+  if(typeof currentRender==='function'){
+    window.render=function(){
+      var result=currentRender.apply(this,arguments);
+      scheduleStabilizeSoon(0);
+      scheduleStabilizeSoon(80);
+      scheduleStabilizeSoon(240);
+      return result;
+    };
+  }
+
+  var currentSetMobileTab=window.setMobileTab;
+  if(typeof currentSetMobileTab==='function'){
+    window.setMobileTab=function(){
+      var result=currentSetMobileTab.apply(this,arguments);
+      bindPinchGuard();
+      scheduleStabilizeSoon(0);
+      scheduleStabilizeSoon(120);
+      return result;
+    };
+  }
+
+  var observer=new MutationObserver(function(){
+    if(!isMobile()) return;
+    removeOldStickyOverlays();
+  });
+  if(document.documentElement){
+    observer.observe(document.documentElement,{childList:true,subtree:true});
+  }
+
+  function boot(){
+    if(!isMobile()) return;
+    removeOldStickyOverlays();
+    bindPinchGuard();
+    stabilizeSchedule();
+    scheduleStabilizeSoon(120);
+    scheduleStabilizeSoon(400);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot);
+  }else{
+    boot();
+  }
+  window.addEventListener('resize',function(){ scheduleStabilizeSoon(120); });
+  window.addEventListener('orientationchange',function(){ scheduleStabilizeSoon(320); });
+  window.fixMobileScheduleSafariStable=boot;
+})();
+</script>
+
 </body>
 </html>
