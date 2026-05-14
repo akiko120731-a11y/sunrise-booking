@@ -14049,5 +14049,392 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v315 手機版預約表重置版：獨立滾動容器＋滿版 timetable＋穩定首列首欄固定 -->
+<style id="v315-mobile-schedule-reset-css">
+@media (max-width: 760px){
+  :root{
+    --v315-time-w: 68px;
+    --v315-col-w: 96px;
+    --v315-row-h: 46px;
+    --v315-head-h: 46px;
+  }
+
+  html, body{
+    overflow-x:hidden!important;
+    background:var(--bg)!important;
+  }
+
+  body.mobile-tab-booking,
+  body.mobile-tab-booking .wrap,
+  body.mobile-tab-booking main,
+  body.mobile-tab-booking section,
+  body.mobile-tab-booking .card{
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+    filter:none!important;
+    perspective:none!important;
+    contain:initial!important;
+  }
+
+  body.mobile-tab-booking .wrap{
+    display:block!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    padding:0!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+
+  body.mobile-tab-booking .side{
+    display:none!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard{
+    display:block!important;
+    position:relative!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    margin:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    background:var(--paper)!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard > h2,
+  body.mobile-tab-booking #desktopScheduleCard .print-title{
+    display:none!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard .controls{
+    position:relative!important;
+    z-index:5!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    padding:8px 10px!important;
+    margin:0!important;
+    border-radius:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:auto!important;
+    background:#fffdf8!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard .controls .zoom-tools,
+  body.mobile-tab-booking #desktopScheduleCard .controls #zoomPercent{
+    display:none!important;
+  }
+
+  body.mobile-tab-booking #desktopScheduleCard .schedule-wrap{
+    display:block!important;
+    position:relative!important;
+    isolation:isolate!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    min-width:100vw!important;
+    height:calc(100dvh - 176px)!important;
+    max-height:calc(100dvh - 176px)!important;
+    min-height:68dvh!important;
+    margin:0!important;
+    padding:0 0 4px 0!important;
+    border-radius:0!important;
+    overflow:auto!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:auto!important;
+    touch-action:pan-x pan-y!important;
+    background:#fffdf8!important;
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+    zoom:1!important;
+    contain:none!important;
+    will-change:auto!important;
+  }
+
+  body.mobile-tab-booking #schedule{
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    table-layout:fixed!important;
+    width:max-content!important;
+    min-width:max-content!important;
+    max-width:none!important;
+    margin:0!important;
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+    zoom:1!important;
+    transform-origin:initial!important;
+    will-change:auto!important;
+    contain:none!important;
+    background:#fffdf8!important;
+  }
+
+  body.mobile-tab-booking #schedule thead,
+  body.mobile-tab-booking #schedule tbody,
+  body.mobile-tab-booking #schedule tr,
+  body.mobile-tab-booking #schedule th,
+  body.mobile-tab-booking #schedule td{
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+    zoom:1!important;
+    will-change:auto!important;
+    contain:none!important;
+  }
+
+  body.mobile-tab-booking #schedule th,
+  body.mobile-tab-booking #schedule td{
+    box-sizing:border-box!important;
+    width:var(--v315-col-w)!important;
+    min-width:var(--v315-col-w)!important;
+    max-width:var(--v315-col-w)!important;
+    height:var(--v315-row-h)!important;
+    min-height:var(--v315-row-h)!important;
+    max-height:none!important;
+    padding:0!important;
+    font-size:11.5px!important;
+    line-height:1.2!important;
+    text-align:center!important;
+    vertical-align:middle!important;
+    border-right:1px solid #eadfce!important;
+    border-bottom:1px solid #eadfce!important;
+    background-clip:padding-box!important;
+  }
+
+  body.mobile-tab-booking #schedule .day-title,
+  body.mobile-tab-booking #schedule .coach-head{
+    height:var(--v315-head-h)!important;
+    min-height:var(--v315-head-h)!important;
+    line-height:1.25!important;
+    font-size:12px!important;
+    font-weight:900!important;
+  }
+
+  body.mobile-tab-booking #schedule tr:first-child > th,
+  body.mobile-tab-booking #schedule tr:first-child > td{
+    position:sticky!important;
+    top:0!important;
+    z-index:60!important;
+    background:#fff3dc!important;
+    box-shadow:0 2px 0 rgba(197,170,131,.34)!important;
+  }
+
+  body.mobile-tab-booking #schedule tr:nth-child(2) > th,
+  body.mobile-tab-booking #schedule tr:nth-child(2) > td{
+    position:sticky!important;
+    top:var(--v315-head-h)!important;
+    z-index:59!important;
+    background:#fff7e8!important;
+    box-shadow:0 2px 0 rgba(197,170,131,.25)!important;
+  }
+
+  body.mobile-tab-booking #schedule .time,
+  body.mobile-tab-booking #schedule th.time,
+  body.mobile-tab-booking #schedule td.time,
+  body.mobile-tab-booking #schedule tr > :first-child{
+    position:sticky!important;
+    left:0!important;
+    z-index:80!important;
+    width:var(--v315-time-w)!important;
+    min-width:var(--v315-time-w)!important;
+    max-width:var(--v315-time-w)!important;
+    background:#faf4eb!important;
+    color:#3d3933!important;
+    font-weight:900!important;
+    box-shadow:4px 0 10px rgba(82,63,39,.12)!important;
+    border-right:2px solid #dfd2bd!important;
+  }
+
+  body.mobile-tab-booking #schedule tr:first-child > .time,
+  body.mobile-tab-booking #schedule tr:first-child > :first-child{
+    top:0!important;
+    left:0!important;
+    z-index:120!important;
+    background:#f7ead2!important;
+    box-shadow:4px 2px 12px rgba(82,63,39,.16)!important;
+  }
+
+  body.mobile-tab-booking #schedule tr:nth-child(2) > .time,
+  body.mobile-tab-booking #schedule tr:nth-child(2) > :first-child{
+    top:var(--v315-head-h)!important;
+    left:0!important;
+    z-index:119!important;
+    background:#faf4eb!important;
+    box-shadow:4px 2px 12px rgba(82,63,39,.14)!important;
+  }
+
+  body.mobile-tab-booking #schedule .slot{
+    cursor:pointer!important;
+    touch-action:manipulation!important;
+  }
+
+  body.mobile-tab-booking #schedule .entry{
+    min-height:38px!important;
+    height:auto!important;
+    margin:3px!important;
+    padding:3px 4px!important;
+    border-radius:10px!important;
+    font-size:10.5px!important;
+    line-height:1.15!important;
+    overflow:hidden!important;
+    transform:none!important;
+    scale:1!important;
+    translate:none!important;
+    zoom:1!important;
+  }
+
+  body.mobile-tab-booking #schedule .entry-meta{
+    font-size:9px!important;
+    line-height:1.1!important;
+  }
+
+  body.mobile-tab-booking .mobile-sticky-time-col-v312,
+  body.mobile-tab-booking .mobile-sticky-time-col-v311,
+  body.mobile-tab-booking .mobile-sticky-time-col,
+  body.mobile-tab-booking [class*="mobile-sticky-time-col"]{
+    display:none!important;
+    pointer-events:none!important;
+  }
+}
+</style>
+
+<script id="v315-mobile-schedule-reset-js">
+(function(){
+  'use strict';
+  var MOBILE_MAX=760;
+  function isMobile(){ return window.innerWidth<=MOBILE_MAX; }
+  function qs(s,r){ return (r||document).querySelector(s); }
+  function qsa(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+  function hard(el,prop,val){ if(el && el.style) el.style.setProperty(prop,val,'important'); }
+  function clear(el,prop){ if(el && el.style) el.style.removeProperty(prop); }
+
+  function removeLegacyStickyArtifacts(){
+    qsa('.mobile-sticky-time-col-v312,.mobile-sticky-time-col-v311,.mobile-sticky-time-col,[class*="mobile-sticky-time-col"]').forEach(function(n){
+      try{ n.remove(); }catch(e){ hard(n,'display','none'); }
+    });
+  }
+
+  function resetInlineScheduleStyles(){
+    var wrap=qs('#desktopScheduleCard .schedule-wrap');
+    var table=qs('#schedule');
+    if(!wrap || !table) return;
+
+    ['transform','scale','translate','zoom','will-change','filter','perspective','contain'].forEach(function(p){
+      hard(wrap,p,p==='zoom'?'1':(p==='scale'?'1':(p==='translate'?'none':(p==='will-change'?'auto':(p==='contain'?'none':'none')))));
+      hard(table,p,p==='zoom'?'1':(p==='scale'?'1':(p==='translate'?'none':(p==='will-change'?'auto':(p==='contain'?'none':'none')))));
+    });
+
+    hard(wrap,'overflow','auto');
+    hard(wrap,'overflow-x','auto');
+    hard(wrap,'overflow-y','auto');
+    hard(wrap,'-webkit-overflow-scrolling','auto');
+    hard(wrap,'touch-action','pan-x pan-y');
+    hard(wrap,'overscroll-behavior','contain');
+    hard(wrap,'position','relative');
+    hard(wrap,'isolation','isolate');
+
+    hard(table,'border-collapse','separate');
+    hard(table,'border-spacing','0');
+    hard(table,'table-layout','fixed');
+    hard(table,'width','max-content');
+    hard(table,'min-width','max-content');
+    hard(table,'max-width','none');
+
+    qsa('thead,tbody,tr,th,td',table).forEach(function(n){
+      hard(n,'transform','none');
+      hard(n,'scale','1');
+      hard(n,'translate','none');
+      hard(n,'zoom','1');
+      hard(n,'will-change','auto');
+      hard(n,'contain','none');
+    });
+  }
+
+  function ensureMobileScheduleReset(){
+    if(!isMobile()) return;
+    removeLegacyStickyArtifacts();
+    resetInlineScheduleStyles();
+    document.body.classList.add('mobile-schedule-v315-reset');
+    var z=qs('#zoomPercent');
+    if(z) z.textContent='100%';
+    try{ localStorage.setItem('sunrise_schedule_zoom','1'); }catch(e){}
+    if(typeof window.scheduleZoom!=='undefined') window.scheduleZoom=1;
+  }
+
+  window.fixMobileScheduleResetV315=ensureMobileScheduleReset;
+
+  var oldApply=window.applyScheduleZoom;
+  window.applyScheduleZoom=function(){
+    if(isMobile()){
+      ensureMobileScheduleReset();
+      return;
+    }
+    return typeof oldApply==='function' ? oldApply.apply(this,arguments) : undefined;
+  };
+
+  var oldZoom=window.zoomSchedule;
+  window.zoomSchedule=function(delta){
+    if(isMobile()){
+      ensureMobileScheduleReset();
+      return;
+    }
+    return typeof oldZoom==='function' ? oldZoom.apply(this,arguments) : undefined;
+  };
+
+  var oldReset=window.resetScheduleZoom;
+  window.resetScheduleZoom=function(){
+    if(isMobile()){
+      ensureMobileScheduleReset();
+      return;
+    }
+    return typeof oldReset==='function' ? oldReset.apply(this,arguments) : undefined;
+  };
+
+  var oldRender=window.render;
+  if(typeof oldRender==='function'){
+    window.render=function(){
+      var result=oldRender.apply(this,arguments);
+      setTimeout(ensureMobileScheduleReset,0);
+      setTimeout(ensureMobileScheduleReset,80);
+      setTimeout(ensureMobileScheduleReset,240);
+      return result;
+    };
+  }
+
+  var oldSetMobileTab=window.setMobileTab;
+  if(typeof oldSetMobileTab==='function'){
+    window.setMobileTab=function(){
+      var result=oldSetMobileTab.apply(this,arguments);
+      setTimeout(ensureMobileScheduleReset,0);
+      setTimeout(ensureMobileScheduleReset,120);
+      return result;
+    };
+  }
+
+  function boot(){
+    if(!isMobile()) return;
+    ensureMobileScheduleReset();
+    setTimeout(ensureMobileScheduleReset,120);
+    setTimeout(ensureMobileScheduleReset,400);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+  else boot();
+
+  window.addEventListener('resize',function(){ setTimeout(ensureMobileScheduleReset,120); });
+  window.addEventListener('orientationchange',function(){ setTimeout(ensureMobileScheduleReset,320); });
+
+  var mo=new MutationObserver(function(){ if(isMobile()) removeLegacyStickyArtifacts(); });
+  if(document.documentElement) mo.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
