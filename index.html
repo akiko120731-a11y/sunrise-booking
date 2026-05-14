@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, user-scalable=yes" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
 <title>煦陽內部預約登記系統 v93 薪資單一教練查詢限制版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js">
 
@@ -1857,79 +1857,45 @@ body.is-logged-out{
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -3393,79 +3359,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -3840,79 +3772,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -4673,79 +4571,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -4818,79 +4682,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -5108,79 +4938,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -5387,79 +5183,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -5673,79 +5435,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -5990,79 +5718,45 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -6349,79 +6043,45 @@ body.salary-modal-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -6736,79 +6396,45 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -7023,79 +6649,45 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -7323,79 +6915,45 @@ body.salary-manager-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -7655,79 +7213,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -7950,79 +7474,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -8213,79 +7703,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -8487,79 +7943,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -8785,79 +8207,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -9054,79 +8442,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -9444,79 +8798,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -9812,79 +9132,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -10081,79 +9367,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -10211,79 +9463,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -10496,79 +9714,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -10818,79 +10002,45 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -11084,79 +10234,45 @@ body.salary-record-open{overflow:hidden!important;}
   .edu-yn-g { gap: 6px; }
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -11317,79 +10433,45 @@ body.salary-record-open{overflow:hidden!important;}
   border-color: #c0392b;
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -11700,79 +10782,45 @@ body.role-coach.is-logged-in .side { display: none !important; }
 
 } /* end @media 760px */
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -12205,79 +11253,45 @@ window.addEventListener('resize', function(){
   .mbs-wrap .slot{touch-action:manipulation;}
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -12536,79 +11550,45 @@ window.addEventListener('resize', function(){
   #mobileReportBlock .mobile-stat-card{border-radius:18px!important;padding:11px!important;}
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -12850,79 +11830,45 @@ window.addEventListener('resize', function(){
   #mobileQueryAnalysisCard .hint{font-size:12px!important;line-height:1.55!important;}
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -13175,79 +12121,45 @@ window.addEventListener('resize', function(){
   }
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -13658,79 +12570,45 @@ window.addEventListener('resize', function(){
   }
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -13991,79 +12869,45 @@ window.addEventListener('resize', function(){
   }
 }
 
+/* 手機版優化：雙向固定與縮放支援 */
 @media (max-width: 768px) {
-  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
-    display: block !important;
-    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
-    top: 50px !important;      /* 留給頂部導覽列 */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;     /* 延伸到底部 */
-    height: auto !important;
-    max-height: none !important;
     overflow: auto !important;
     -webkit-overflow-scrolling: touch;
-    background: #fff;
-    z-index: 10;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
 
-  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: max-content !important; 
-    min-width: 100%;
-    table-layout: fixed;
-    background: white;
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
   }
 
-  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
-  th, td {
-    border: 0.5px solid #d1d5db !important; /* 灰細線 */
-    padding: 8px 4px !important;
-    font-size: 13px !important;
-    box-sizing: border-box;
-    height: 48px !important; /* 標準點擊高度 */
-  }
-
-  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
-  
-  /* [頂部教練列固定] */
+  /* 上方教練列固定 */
   thead th {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 100 !important;
-    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
-    font-weight: bold;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左側時間欄固定] - 解決被吃掉的問題 */
-  tbody tr th:first-child,
-  tbody tr td:first-child {
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important;
-    background: #f8f9fa !important;
-    min-width: 60px !important;
-    text-align: center;
-    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
   }
 
-  /* [左上角交叉格] */
-  thead tr:first-child th:first-child {
-    position: sticky !important;
-    top: 0 !important;
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
     left: 0 !important;
-    z-index: 110 !important;
-    background: #e8eaed !important;
-  }
-
-  /* 5. 移除不必要的邊距，最大化表格區域 */
-  .wrap {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
   }
 }
 
@@ -14265,6 +13109,421 @@ window.addEventListener('resize', function(){
 
   window.fixMobileScheduleStickyHeaders = fixStickyHeaders;
   window.applyMobileSchedulePinchZoom = applyMobileScheduleZoom;
+})();
+</script>
+
+<script>
+// 支援手指撥動縮放 (Pinch-to-zoom) 的輔助邏輯
+(function() {
+  if (!/Mobi|Android|iPhone/i.test(navigator.userAgent)) return;
+
+  let lastScale = 1;
+  const container = document.querySelector('.table-container');
+
+  // 監聽縮放事件以修正 sticky 偏移（部分舊瀏覽器需要）
+  window.addEventListener('resize', () => {
+    // 縮放時重新觸發 layout 以確保 sticky 正常
+    if(container) {
+        const temp = container.style.display;
+        container.style.display = 'none';
+        container.offsetHeight; 
+        container.style.display = temp;
+    }
+  });
+
+  // 如果需要更流暢的自定義縮放，通常會調整 viewport 或使用 transform
+  // 但目前最穩定方式是確保 meta tag 允許縮放：
+  const viewport = document.querySelector('meta[name="viewport"]');
+  if (viewport) {
+    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+  }
+})();
+</script>
+
+<!-- v312 手機版：徹底固定時間欄＋首列，修正 sticky 在 iOS 橫向滑動失效，並延伸課表高度 -->
+<style id="v312-mobile-hard-sticky-time-css">
+@media (max-width:760px){
+  body{overflow-x:hidden!important;}
+
+  .mobile-tab-booking .schedule-wrap,
+  .mobile-tab-booking .mbs-wrap,
+  #mobileBookingScheduleHost .schedule-wrap,
+  #mobileBookingScheduleHost .mbs-wrap{
+    position:relative!important;
+    overflow:auto!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-x pan-y!important;
+    max-height:calc(90dvh - 138px)!important;
+    min-height:calc(86dvh - 160px)!important;
+    height:calc(90dvh - 138px)!important;
+    margin-bottom:0!important;
+    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)!important;
+    transform:none!important;
+    contain:none!important;
+    background:#fffefb!important;
+  }
+
+  #schedule{
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    table-layout:fixed!important;
+    width:max-content!important;
+    min-width:max-content!important;
+    transform:none!important;
+    zoom:1!important;
+    transform-origin:top left!important;
+    will-change:auto!important;
+    isolation:isolate!important;
+  }
+
+  #schedule th,
+  #schedule td{
+    background-clip:padding-box!important;
+    position:relative;
+  }
+
+  /* 第一欄時間欄：原表格仍使用 sticky，作為第一層保護 */
+  #schedule tr > :first-child,
+  #schedule .time,
+  #schedule th.time,
+  #schedule td.time{
+    position:sticky!important;
+    left:0!important;
+    z-index:180!important;
+    background:#faf4eb!important;
+    box-shadow:4px 0 10px rgba(92,72,48,.16)!important;
+    border-right:2px solid #e2d4bd!important;
+    width:calc(62px * var(--mobile-schedule-zoom,1))!important;
+    min-width:calc(62px * var(--mobile-schedule-zoom,1))!important;
+    max-width:calc(62px * var(--mobile-schedule-zoom,1))!important;
+  }
+
+  /* 首列日期固定 */
+  #schedule tr:first-child > *{
+    position:sticky!important;
+    top:0!important;
+    z-index:150!important;
+    background:#fff3dc!important;
+    box-shadow:0 2px 0 rgba(226,212,189,.95)!important;
+  }
+
+  /* 第二列教練固定 */
+  #schedule tr:nth-child(2) > *{
+    position:sticky!important;
+    top:calc(58px * var(--mobile-schedule-zoom,1))!important;
+    z-index:145!important;
+    background:#fff7e8!important;
+    box-shadow:0 2px 0 rgba(226,212,189,.95)!important;
+  }
+
+  #schedule tr:first-child > :first-child{
+    z-index:260!important;
+    background:#f6ead8!important;
+  }
+
+  #schedule tr:nth-child(2) > :first-child{
+    z-index:250!important;
+    background:#f6ead8!important;
+  }
+
+  /* 浮動時間欄備援：iOS sticky 偶發失效時，這層仍固定在左側 */
+  .mobile-sticky-time-col-v312{
+    position:absolute!important;
+    left:0!important;
+    top:0!important;
+    z-index:500!important;
+    pointer-events:none!important;
+    width:calc(62px * var(--mobile-schedule-zoom,1))!important;
+    min-width:calc(62px * var(--mobile-schedule-zoom,1))!important;
+    max-width:calc(62px * var(--mobile-schedule-zoom,1))!important;
+    background:transparent!important;
+    will-change:transform!important;
+  }
+
+  .mobile-sticky-time-col-v312 .mtc-cell{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    box-sizing:border-box!important;
+    padding:0 4px!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+    background:#faf4eb!important;
+    border-right:2px solid #e2d4bd!important;
+    border-bottom:1px solid #eadfce!important;
+    color:#3d3933!important;
+    font-weight:800!important;
+    font-size:calc(11.5px * var(--mobile-schedule-zoom,1))!important;
+    box-shadow:4px 0 10px rgba(92,72,48,.16)!important;
+  }
+
+  .mobile-sticky-time-col-v312 .mtc-cell.row-0{
+    position:sticky!important;
+    top:0!important;
+    z-index:520!important;
+    background:#f6ead8!important;
+  }
+
+  .mobile-sticky-time-col-v312 .mtc-cell.row-1{
+    position:sticky!important;
+    top:var(--mobile-sticky-row0-h,58px)!important;
+    z-index:515!important;
+    background:#f6ead8!important;
+  }
+
+  .mobile-sticky-time-col-v312 .mtc-cell.body-time{
+    z-index:500!important;
+  }
+}
+</style>
+
+<script id="v312-mobile-hard-sticky-time-js">
+(function(){
+  'use strict';
+
+  var rafId=0;
+  var rebuildTimer=0;
+  var currentZoom=Number(getComputedStyle(document.documentElement).getPropertyValue('--mobile-schedule-zoom')) || 1;
+
+  function isMobile(){
+    return window.matchMedia && window.matchMedia('(max-width:760px)').matches;
+  }
+
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+  function table(){ return document.getElementById('schedule'); }
+
+  function wrap(){
+    var t=table();
+    if(!t) return null;
+    return t.closest('.mbs-wrap') || t.closest('.schedule-wrap') || t.parentElement;
+  }
+
+  function forceCoreSticky(){
+    if(!isMobile()) return;
+    var t=table();
+    var w=wrap();
+    if(!t || !w) return;
+
+    document.documentElement.style.setProperty('--mobile-schedule-zoom', String(currentZoom || 1));
+    document.body.style.setProperty('--mobile-schedule-zoom', String(currentZoom || 1));
+
+    w.style.setProperty('position','relative','important');
+    w.style.setProperty('overflow','auto','important');
+    w.style.setProperty('overflow-x','auto','important');
+    w.style.setProperty('overflow-y','auto','important');
+    w.style.setProperty('-webkit-overflow-scrolling','touch','important');
+    w.style.setProperty('touch-action','pan-x pan-y','important');
+    w.style.setProperty('max-height','calc(90dvh - 138px)','important');
+    w.style.setProperty('height','calc(90dvh - 138px)','important');
+    w.style.setProperty('margin-bottom','0','important');
+    w.style.setProperty('transform','none','important');
+    w.style.setProperty('contain','none','important');
+
+    t.style.setProperty('border-collapse','separate','important');
+    t.style.setProperty('border-spacing','0','important');
+    t.style.setProperty('table-layout','fixed','important');
+    t.style.setProperty('width','max-content','important');
+    t.style.setProperty('min-width','max-content','important');
+    t.style.setProperty('zoom','1','important');
+    t.style.setProperty('transform','none','important');
+
+    Array.prototype.forEach.call(t.rows,function(row,ri){
+      Array.prototype.forEach.call(row.children,function(cell,ci){
+        if(ci===0){
+          cell.classList.add('time');
+          cell.style.setProperty('position','sticky','important');
+          cell.style.setProperty('left','0','important');
+          cell.style.setProperty('z-index', ri===0 ? '260' : (ri===1 ? '250' : '180'), 'important');
+          cell.style.setProperty('background', ri<2 ? '#f6ead8' : '#faf4eb', 'important');
+          cell.style.setProperty('box-shadow','4px 0 10px rgba(92,72,48,.16)','important');
+          cell.style.setProperty('border-right','2px solid #e2d4bd','important');
+        }
+        if(ri===0){
+          cell.style.setProperty('position','sticky','important');
+          cell.style.setProperty('top','0','important');
+          cell.style.setProperty('z-index', ci===0 ? '260' : '150', 'important');
+          cell.style.setProperty('background', ci===0 ? '#f6ead8' : '#fff3dc', 'important');
+        }
+        if(ri===1){
+          cell.style.setProperty('position','sticky','important');
+          cell.style.setProperty('top','calc(58px * var(--mobile-schedule-zoom,1))','important');
+          cell.style.setProperty('z-index', ci===0 ? '250' : '145', 'important');
+          cell.style.setProperty('background', ci===0 ? '#f6ead8' : '#fff7e8', 'important');
+        }
+      });
+    });
+  }
+
+  function removeOverlay(){
+    document.querySelectorAll('.mobile-sticky-time-col-v312').forEach(function(n){ n.remove(); });
+  }
+
+  function buildOverlay(){
+    if(!isMobile()) { removeOverlay(); return; }
+    var t=table();
+    var w=wrap();
+    if(!t || !w || !t.rows || !t.rows.length) return;
+
+    forceCoreSticky();
+    removeOverlay();
+
+    var firstCell=t.rows[0] && t.rows[0].children[0];
+    var timeWidth=62;
+    if(firstCell){
+      var r=firstCell.getBoundingClientRect();
+      if(r && r.width) timeWidth=Math.round(r.width);
+    }
+
+    var overlay=document.createElement('div');
+    overlay.className='mobile-sticky-time-col-v312';
+    overlay.setAttribute('aria-hidden','true');
+    overlay.style.width=timeWidth+'px';
+    overlay.style.minWidth=timeWidth+'px';
+    overlay.style.maxWidth=timeWidth+'px';
+
+    Array.prototype.forEach.call(t.rows,function(row,ri){
+      var source=row.children && row.children[0];
+      if(!source) return;
+      var rect=source.getBoundingClientRect();
+      var h=Math.max(1, Math.round(rect.height || source.offsetHeight || 44));
+      var cell=document.createElement('div');
+      cell.className='mtc-cell '+(ri===0?'row-0':ri===1?'row-1':'body-time');
+      cell.textContent=(source.innerText || source.textContent || '').trim();
+      cell.style.height=h+'px';
+      cell.style.minHeight=h+'px';
+      cell.style.maxHeight=h+'px';
+      overlay.appendChild(cell);
+      if(ri===0){
+        w.style.setProperty('--mobile-sticky-row0-h',h+'px');
+      }
+    });
+
+    w.appendChild(overlay);
+    syncOverlay();
+    if(!w.__v312StickyTimeScrollBound){
+      w.__v312StickyTimeScrollBound=true;
+      w.addEventListener('scroll',function(){
+        if(rafId) cancelAnimationFrame(rafId);
+        rafId=requestAnimationFrame(syncOverlay);
+      },{passive:true});
+    }
+  }
+
+  function syncOverlay(){
+    var w=wrap();
+    var overlay=document.querySelector('.mobile-sticky-time-col-v312');
+    if(!w || !overlay) return;
+    overlay.style.transform='translateX('+w.scrollLeft+'px)';
+  }
+
+  function scheduleRebuild(delay){
+    clearTimeout(rebuildTimer);
+    rebuildTimer=setTimeout(function(){
+      forceCoreSticky();
+      buildOverlay();
+      setTimeout(function(){ forceCoreSticky(); buildOverlay(); },120);
+    },delay==null?60:delay);
+  }
+
+  function getDistance(t1,t2){
+    var dx=t1.clientX-t2.clientX, dy=t1.clientY-t2.clientY;
+    return Math.sqrt(dx*dx+dy*dy);
+  }
+
+  function bindPinch(){
+    var w=wrap();
+    if(!isMobile() || !w || w.__v312PinchBound) return;
+    w.__v312PinchBound=true;
+    var startDist=0;
+    var startZoom=currentZoom;
+    w.addEventListener('touchstart',function(e){
+      if(e.touches && e.touches.length===2){
+        startDist=getDistance(e.touches[0],e.touches[1]);
+        startZoom=currentZoom || 1;
+      }
+    },{passive:true});
+    w.addEventListener('touchmove',function(e){
+      if(e.touches && e.touches.length===2 && startDist>0){
+        e.preventDefault();
+        var d=getDistance(e.touches[0],e.touches[1]);
+        currentZoom=clamp(startZoom*(d/startDist),0.75,1.45);
+        document.documentElement.style.setProperty('--mobile-schedule-zoom',String(currentZoom));
+        document.body.style.setProperty('--mobile-schedule-zoom',String(currentZoom));
+        forceCoreSticky();
+        scheduleRebuild(40);
+      }
+    },{passive:false});
+    w.addEventListener('touchend',function(e){
+      if(!e.touches || e.touches.length<2){
+        startDist=0;
+        scheduleRebuild(80);
+      }
+    },{passive:true});
+  }
+
+  function boot(){
+    if(!isMobile()) { removeOverlay(); return; }
+    forceCoreSticky();
+    bindPinch();
+    buildOverlay();
+    setTimeout(function(){ forceCoreSticky(); bindPinch(); buildOverlay(); },180);
+    setTimeout(function(){ forceCoreSticky(); buildOverlay(); },500);
+  }
+
+  var oldRender=window.render;
+  if(typeof oldRender==='function' && !oldRender.__v312HardStickyTimeWrapped){
+    window.render=function(){
+      var r=oldRender.apply(this,arguments);
+      scheduleRebuild(0);
+      scheduleRebuild(180);
+      return r;
+    };
+    window.render.__v312HardStickyTimeWrapped=true;
+  }
+
+  var oldSetMobileTab=window.setMobileTab;
+  if(typeof oldSetMobileTab==='function' && !oldSetMobileTab.__v312HardStickyTimeWrapped){
+    window.setMobileTab=function(){
+      var r=oldSetMobileTab.apply(this,arguments);
+      scheduleRebuild(80);
+      scheduleRebuild(260);
+      return r;
+    };
+    window.setMobileTab.__v312HardStickyTimeWrapped=true;
+  }
+
+  var oldApply=window.applyScheduleZoom;
+  if(typeof oldApply==='function' && !oldApply.__v312HardStickyTimeWrapped){
+    window.applyScheduleZoom=function(){
+      if(isMobile()){
+        forceCoreSticky();
+        scheduleRebuild(40);
+        return;
+      }
+      return oldApply.apply(this,arguments);
+    };
+    window.applyScheduleZoom.__v312HardStickyTimeWrapped=true;
+  }
+
+  window.fixMobileScheduleHardStickyTime=function(){
+    forceCoreSticky();
+    bindPinch();
+    buildOverlay();
+  };
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot);
+  }else{
+    boot();
+  }
+  window.addEventListener('resize',function(){ scheduleRebuild(120); });
+  window.addEventListener('orientationchange',function(){ scheduleRebuild(300); });
 })();
 </script>
 
