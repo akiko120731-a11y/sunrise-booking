@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, user-scalable=yes" />
 <title>煦陽內部預約登記系統 v93 薪資單一教練查詢限制版</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js">
 
@@ -1858,60 +1858,78 @@ body.is-logged-out{
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -3376,60 +3394,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -3805,60 +3841,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -4620,60 +4674,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -4747,60 +4819,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -5019,60 +5109,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -5280,60 +5388,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -5548,60 +5674,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -5847,60 +5991,78 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -6188,60 +6350,78 @@ body.salary-modal-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -6557,60 +6737,78 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -6826,60 +7024,78 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -7108,60 +7324,78 @@ body.salary-manager-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -7422,60 +7656,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -7699,60 +7951,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -7944,60 +8214,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -8200,60 +8488,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -8480,60 +8786,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -8731,60 +9055,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -9103,60 +9445,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -9453,60 +9813,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -9704,60 +10082,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -9816,60 +10212,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -10083,60 +10497,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -10387,60 +10819,78 @@ body.salary-record-open{overflow:hidden!important;}
 
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -10635,60 +11085,78 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -10850,60 +11318,78 @@ body.salary-record-open{overflow:hidden!important;}
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -11215,60 +11701,78 @@ body.role-coach.is-logged-in .side { display: none !important; }
 } /* end @media 760px */
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -11702,60 +12206,78 @@ window.addEventListener('resize', function(){
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -12015,60 +12537,78 @@ window.addEventListener('resize', function(){
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -12311,60 +12851,78 @@ window.addEventListener('resize', function(){
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -12618,60 +13176,78 @@ window.addEventListener('resize', function(){
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -13083,60 +13659,78 @@ window.addEventListener('resize', function(){
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
@@ -13398,60 +13992,78 @@ window.addEventListener('resize', function(){
 }
 
 @media (max-width: 768px) {
-  /* 延伸下方空間：將容器高度拉長，填滿更多螢幕空間 */
+  /* 1. 滿版容器：模擬 Google Sheets 填滿畫面 */
   .table-container {
     display: block !important;
-    overflow: auto !important;
-    position: relative !important;
-    -webkit-overflow-scrolling: touch;
+    position: fixed !important; /* 固定在畫面，不隨 body 捲動 */
+    top: 50px !important;      /* 留給頂部導覽列 */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;     /* 延伸到底部 */
     height: auto !important;
-    max-height: 85vh !important; /* 從 80vh 延伸到 85vh，利用下方空間 */
-    margin-bottom: 20px;
+    max-height: none !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
     background: #fff;
+    z-index: 10;
   }
 
+  /* 2. 表格結構：寬度由內容撐開以觸發原生橫向捲動 */
   table {
-    border-collapse: separate !important; /* 必須分離邊框，sticky 才會在橫移時生效 */
+    border-collapse: separate !important;
     border-spacing: 0 !important;
-    width: max-content !important; /* 確保表格由內容撐開，才能觸發橫向捲動 */
+    width: max-content !important; 
+    min-width: 100%;
+    table-layout: fixed;
+    background: white;
   }
 
-  /* --- 雙向固定核心設定 --- */
-  
-  /* 基礎：所有 Header 與第一欄都要有不透明背景 */
-  th, .sticky-col {
-    background-color: #f5eedf !important;
+  /* 3. 格線與儲存格：模擬 Sheets 的細格線 */
+  th, td {
+    border: 0.5px solid #d1d5db !important; /* 灰細線 */
+    padding: 8px 4px !important;
+    font-size: 13px !important;
     box-sizing: border-box;
-    border: 0.5px solid #e8e0d5 !important;
+    height: 48px !important; /* 標準點擊高度 */
   }
 
-  /* [1] 頂部教練列固定 */
+  /* 4. 雙向固定機制 (Google Sheets 核心體驗) */
+  
+  /* [頂部教練列固定] */
   thead th {
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
+    background: #f8f9fa !important; /* Sheets 常用的淡灰標題色 */
+    font-weight: bold;
   }
 
-  /* [2] 左側時間欄固定：這是最容易被吃掉的地方 */
-  /* 強制針對 tbody 裡面的第一個單元格 (th 或 td) 進行固定 */
+  /* [左側時間欄固定] - 解決被吃掉的問題 */
   tbody tr th:first-child,
-  tbody tr td:first-child,
-  .time-column {
+  tbody tr td:first-child {
     position: sticky !important;
     left: 0 !important;
-    z-index: 90 !important; /* 必須高於一般格子 (z-index 1) */
-    background-color: #f5eedf !important;
-    min-width: 65px !important;
-    box-shadow: 2px 0 5px -2px rgba(0,0,0,0.15); /* 增加右側陰影，視覺上更清楚有固定 */
+    z-index: 90 !important;
+    background: #f8f9fa !important;
+    min-width: 60px !important;
+    text-align: center;
+    border-right: 2px solid #d1d5db !important; /* 稍微加深右側邊界線 */
   }
 
-  /* [3] 左上角交叉點：絕對不能動 */
+  /* [左上角交叉格] */
   thead tr:first-child th:first-child {
     position: sticky !important;
     top: 0 !important;
     left: 0 !important;
-    z-index: 110 !important; /* 最高權限 */
-    background-color: #ebe3d5 !important;
+    z-index: 110 !important;
+    background: #e8eaed !important;
+  }
+
+  /* 5. 移除不必要的邊距，最大化表格區域 */
+  .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 }
 
