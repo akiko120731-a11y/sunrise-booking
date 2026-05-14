@@ -11062,5 +11062,227 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v308 mobile sticky time column final fix -->
+<style id="v308-mobile-sticky-time-fix">
+@media (max-width: 760px){
+  html, body{
+    overflow-x:hidden !important;
+  }
+
+  /* 只讓課表容器負責橫向滑動，避免整頁或漢堡選單被撐寬 */
+  .mobile-tab-booking .schedule-wrap,
+  body.role-coach.mobile-tab-booking .schedule-wrap,
+  #mobileBookingPage .schedule-wrap,
+  .mbs-wrap .schedule-wrap{
+    position:relative !important;
+    overflow-x:auto !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    touch-action:pan-x pan-y !important;
+    max-width:100vw !important;
+    width:100% !important;
+    border-radius:16px !important;
+    background:#fffefb !important;
+  }
+
+  /* 手機版不要縮放 table；縮放會讓 iPhone/Safari 的 sticky 與點擊座標失準 */
+  .mobile-tab-booking #schedule,
+  body.role-coach.mobile-tab-booking #schedule,
+  #mobileBookingPage #schedule,
+  .mbs-wrap #schedule{
+    zoom:1 !important;
+    transform:none !important;
+    transform-origin:top left !important;
+    border-collapse:separate !important;
+    border-spacing:0 !important;
+    table-layout:fixed !important;
+    width:max-content !important;
+    min-width:max-content !important;
+  }
+
+  /* 教練欄位保留足夠點擊寬度 */
+  .mobile-tab-booking #schedule th,
+  .mobile-tab-booking #schedule td,
+  body.role-coach.mobile-tab-booking #schedule th,
+  body.role-coach.mobile-tab-booking #schedule td,
+  #mobileBookingPage #schedule th,
+  #mobileBookingPage #schedule td,
+  .mbs-wrap #schedule th,
+  .mbs-wrap #schedule td{
+    min-width:85px !important;
+    width:85px !important;
+    max-width:85px !important;
+    height:44px !important;
+    min-height:44px !important;
+    font-size:11px !important;
+    box-sizing:border-box !important;
+  }
+
+  /* 左側時間軸固定在螢幕左側 */
+  .mobile-tab-booking #schedule .time,
+  body.role-coach.mobile-tab-booking #schedule .time,
+  #mobileBookingPage #schedule .time,
+  .mbs-wrap #schedule .time{
+    position:sticky !important;
+    left:0 !important;
+    z-index:80 !important;
+    min-width:58px !important;
+    width:58px !important;
+    max-width:58px !important;
+    height:44px !important;
+    min-height:44px !important;
+    background:#faf4eb !important;
+    color:#6f5b44 !important;
+    font-size:11px !important;
+    font-weight:800 !important;
+    line-height:1.15 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:clip !important;
+    box-shadow:3px 0 8px rgba(80,60,30,.10) !important;
+    border-right:2px solid #e6d9c7 !important;
+  }
+
+  /* 左上角時間標題格需要壓在日期/教練標題上方 */
+  .mobile-tab-booking #schedule th.time,
+  body.role-coach.mobile-tab-booking #schedule th.time,
+  #mobileBookingPage #schedule th.time,
+  .mbs-wrap #schedule th.time{
+    z-index:120 !important;
+    top:0 !important;
+    background:#f7efe2 !important;
+  }
+
+  /* 日期列與教練列維持上方固定，但不可蓋過時間軸 */
+  .mobile-tab-booking #schedule th:not(.time),
+  body.role-coach.mobile-tab-booking #schedule th:not(.time),
+  #mobileBookingPage #schedule th:not(.time),
+  .mbs-wrap #schedule th:not(.time){
+    z-index:50 !important;
+  }
+
+  .mobile-tab-booking #schedule .coach-head,
+  body.role-coach.mobile-tab-booking #schedule .coach-head,
+  #mobileBookingPage #schedule .coach-head,
+  .mbs-wrap #schedule .coach-head{
+    top:44px !important;
+  }
+
+  .mobile-tab-booking #schedule .day-title,
+  body.role-coach.mobile-tab-booking #schedule .day-title,
+  #mobileBookingPage #schedule .day-title,
+  .mbs-wrap #schedule .day-title{
+    height:44px !important;
+    min-height:44px !important;
+  }
+
+  .mobile-tab-booking #schedule .entry,
+  body.role-coach.mobile-tab-booking #schedule .entry,
+  #mobileBookingPage #schedule .entry,
+  .mbs-wrap #schedule .entry{
+    min-height:calc(100% - 4px) !important;
+    font-size:10px !important;
+    line-height:1.15 !important;
+    padding:3px 2px !important;
+  }
+}
+</style>
+<script id="v308-mobile-sticky-time-fix-js">
+(function(){
+  function isMobile(){ return window.innerWidth <= 760; }
+  function fixSchedule(){
+    if(!isMobile()) return;
+    var schedule = document.getElementById('schedule');
+    if(!schedule) return;
+
+    // 移除舊版 inline zoom/transform，避免 sticky 與點擊位置失準
+    schedule.style.zoom = '1';
+    schedule.style.transform = 'none';
+    schedule.style.transformOrigin = 'top left';
+
+    var wrap = schedule.closest('.schedule-wrap');
+    if(wrap){
+      wrap.style.overflowX = 'auto';
+      wrap.style.overflowY = 'auto';
+      wrap.style.webkitOverflowScrolling = 'touch';
+      wrap.style.position = 'relative';
+      wrap.style.maxWidth = '100vw';
+    }
+
+    schedule.querySelectorAll('.time').forEach(function(cell){
+      cell.style.position = 'sticky';
+      cell.style.left = '0px';
+      cell.style.zIndex = cell.tagName === 'TH' ? '120' : '80';
+      cell.style.background = cell.tagName === 'TH' ? '#f7efe2' : '#faf4eb';
+      cell.style.boxShadow = '3px 0 8px rgba(80,60,30,.10)';
+    });
+  }
+
+  // 手機版固定使用 100%，不再讓舊版 resetScheduleZoom 把表格縮小
+  try{
+    if(typeof window.defaultScheduleZoom === 'function'){
+      window.defaultScheduleZoom = function(){ return isMobile() ? 1 : 1; };
+    }
+    if(typeof window.applyScheduleZoom === 'function'){
+      var oldApply = window.applyScheduleZoom;
+      window.applyScheduleZoom = function(){
+        var r = oldApply.apply(this, arguments);
+        fixSchedule();
+        return r;
+      };
+    }
+    if(typeof window.resetScheduleZoom === 'function'){
+      var oldReset = window.resetScheduleZoom;
+      window.resetScheduleZoom = function(){
+        if(isMobile()){
+          fixSchedule();
+          var z = document.getElementById('zoomPercent');
+          if(z) z.textContent = '100%';
+          if(typeof window.toast === 'function') window.toast('手機版已固定課表比例 100%');
+          return;
+        }
+        return oldReset.apply(this, arguments);
+      };
+    }
+  }catch(e){}
+
+  // render 後補強，避免重新渲染課表後 sticky 被舊樣式覆蓋
+  if(typeof window.render === 'function' && !window.render.__v308StickyTimeWrapped){
+    var oldRender = window.render;
+    window.render = function(){
+      var r = oldRender.apply(this, arguments);
+      setTimeout(fixSchedule, 0);
+      setTimeout(fixSchedule, 80);
+      return r;
+    };
+    window.render.__v308StickyTimeWrapped = true;
+  }
+
+  if(typeof window.setMobileTab === 'function' && !window.setMobileTab.__v308StickyTimeWrapped){
+    var oldSetMobileTab = window.setMobileTab;
+    window.setMobileTab = function(tab){
+      var r = oldSetMobileTab.apply(this, arguments);
+      if(tab === 'booking'){
+        setTimeout(fixSchedule, 80);
+        setTimeout(fixSchedule, 250);
+      }
+      return r;
+    };
+    window.setMobileTab.__v308StickyTimeWrapped = true;
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(fixSchedule, 200); });
+  }else{
+    setTimeout(fixSchedule, 200);
+  }
+  window.addEventListener('resize', function(){ setTimeout(fixSchedule, 100); });
+  window.addEventListener('orientationchange', function(){ setTimeout(fixSchedule, 300); });
+})();
+</script>
+
 </body>
 </html>
