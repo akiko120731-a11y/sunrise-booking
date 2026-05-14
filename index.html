@@ -1856,52 +1856,50 @@ body.is-logged-out{
   }
 }
 
-</style>
 
-<!-- 手機版預約表修正：雙向固定標題 + 手勢縮放 -->
-<style id="mobile-schedule-fix">
-@media (max-width: 760px) {
-  .schedule-wrap {
-    width: 100% !important;
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
     overflow: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    touch-action: manipulation !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
   }
-  #schedule {
-    transform-origin: top left !important;
-    will-change: transform !important;
-  }
-  #schedule th.time, #schedule td.time {
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 1350 !important;
-  }
-  #schedule tr:first-child th, #schedule tr:first-child td {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 1300 !important;
-  }
-  #schedule tr:nth-child(2) th, #schedule tr:nth-child(2) td {
-    position: sticky !important;
-    top: 50px !important;
-    z-index: 1200 !important;
-  }
-  #schedule tr:first-child th.time {
-    position: sticky !important;
-    left: 0 !important;
-    top: 0 !important;
-    z-index: 1400 !important;
-  }
-  #schedule tr:nth-child(2) th.time {
-    position: sticky !important;
-    left: 0 !important;
-    top: 50px !important;
-    z-index: 1350 !important;
-  }
-  .zoom-tools { display: none !important; }
-}
-</style>
 
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
+</style>
 </head>
 <body class="is-logged-out">
 <div id="identityScreen" class="identity-screen">
@@ -1990,7 +1988,7 @@ body.is-logged-out{
     </section>
   </section>
 
-  <section id="desktopScheduleCard" class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
+  <section id="desktopScheduleCard" class="card"><div class="print-title"><h2>煦陽內部預約週報表</h2></div><div class="controls no-print"><select id="filterCoach" onchange="render()"><option value="">全部教練</option></select><select id="filterType" onchange="render()"><option value="">全部類型</option><option value="one1">1對1課程</option><option value="one2">1對2課程</option><option value="massage">運動按摩</option><option value="edu">衛教</option><option value="rest">休假/排事</option><option value="event">其他</option></select><span class="zoom-tools no-print"><button class="mini" onclick="zoomSchedule(-0.08)">－</button><span id="zoomPercent" class="zoom-percent">100%</span><button class="mini" onclick="zoomSchedule(0.08)">＋</button><button class="mini" onclick="resetScheduleZoom()">重設</button></span><span class="hint" id="saveStatus">點空白格新增；拖曳自己的預約即可改時段。只能增訂自己的欄位；FREE 欄位所有教練皆可新增。</span></div><div class="schedule-wrap"><table id="schedule"></table></div></section>
   <aside class="side no-print">
     <section class="card"><h2 id="dashboardTitle">我的本月統計分析</h2><div class="stats"><div class="stat-grid"><div class="stat"><span class="small" id="classStatLabel">學員名稱</span><b id="classCount">0</b></div><div class="stat"><span class="small">衛教堂數</span><b id="eduCount">0</b></div></div><canvas id="chart" height="210"></canvas><div id="chartFallback" class="hint"></div></div></section>
     <section class="card"><h2 id="historyTitle">我的預約記事歷程</h2><div id="historyList" class="history-list"></div></section>
@@ -3360,6 +3358,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script id="v59-desktop-header-date-script">
 (function(){
@@ -3727,6 +3768,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -4486,6 +4570,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 
@@ -4551,6 +4678,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -4767,6 +4937,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script id="studentNewOldBadgeScript">
 (function(){
@@ -4966,6 +5179,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -5175,6 +5431,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -5415,6 +5714,49 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -5697,6 +6039,49 @@ body.salary-modal-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -6010,6 +6395,49 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script>
 /* v78 薪資明細：加給、扣除、其他費用、教練管理與核發紀錄 */
@@ -6217,6 +6645,49 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -6440,6 +6911,49 @@ body.salary-manager-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -6698,6 +7212,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 <dialog id="salaryRecordDialog" class="salary-record-dialog">
@@ -6916,6 +7473,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script>
 /* v82 薪資明細分區摘要版 */
@@ -7099,6 +7699,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -7296,6 +7939,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -7520,6 +8206,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script>
 /* v85：薪資明細使用完整寬度，上方標題＋總薪資，下方三大分區 */
@@ -7709,6 +8438,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -8025,6 +8797,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script>
 (function(){
@@ -8316,6 +9131,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script>
 (function(){
@@ -8508,6 +9366,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 
@@ -8558,6 +9459,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -8766,6 +9710,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
   .salary-save-btn{
     min-height:36px;
+  }
+}
+
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
   }
 }
 
@@ -9014,6 +10001,49 @@ body.salary-record-open{overflow:hidden!important;}
   }
 }
 
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script>
 /* v93：教練薪資作業限制為單一教練查詢；全部教練時不統計、不顯示明細、不匯出 */
@@ -9203,6 +10233,49 @@ body.salary-record-open{overflow:hidden!important;}
   .sv101-table th, .sv101-table td { padding: 10px 8px; font-size: 12px; }
   .edu-yn-g { gap: 6px; }
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 <script>
@@ -9359,6 +10432,49 @@ body.salary-record-open{overflow:hidden!important;}
   background: #ffe0e0;
   border-color: #c0392b;
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 <!-- v300 手機版重構 CSS：Drawer Menu + App Header + 滿版課表 + MUJI 底部導航 -->
@@ -9665,6 +10781,49 @@ body.mobile-tab-query   .mobile-page-query   { display: block !important; }
 body.role-coach.is-logged-in .side { display: none !important; }
 
 } /* end @media 760px */
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 
@@ -10093,6 +11252,49 @@ window.addEventListener('resize', function(){
   .mbs-wrap .entry{touch-action:none;}
   .mbs-wrap .slot{touch-action:manipulation;}
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 <script id="v301-mobile-request-patch-js">
@@ -10347,6 +11549,49 @@ window.addEventListener('resize', function(){
   #mobileReportBlock .mobile-stat-cards{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin-bottom:10px!important;}
   #mobileReportBlock .mobile-stat-card{border-radius:18px!important;padding:11px!important;}
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 <script id="v302-final-mobile-repair-js">
@@ -10584,6 +11829,49 @@ window.addEventListener('resize', function(){
   #mobileQueryAnalysisCard h3::after{content:'｜我的本月統計分析';font-size:12px;color:#8a7c6d;font-weight:800;margin-left:4px;}
   #mobileQueryAnalysisCard .hint{font-size:12px!important;line-height:1.55!important;}
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script id="v303-mobile-correction-js">
 (function(){
@@ -10832,6 +12120,49 @@ window.addEventListener('resize', function(){
     z-index:2!important;
   }
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 
 <script id="v304-mobile-query-and-save-fix-js">
@@ -11238,6 +12569,49 @@ window.addEventListener('resize', function(){
     z-index:150!important;
   }
 }
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
 </style>
 <script id="v309-mobile-sticky-time-axis-final-js">
 (function(){
@@ -11330,57 +12704,440 @@ window.addEventListener('resize', function(){
 </script>
 
 
-<!-- 手勢縮放 JavaScript -->
-<script id="mobile-pinch-zoom">
-(function() {
-  'use strict';
-  const scheduleWrap = document.querySelector('.schedule-wrap');
-  const schedule = document.getElementById('schedule');
-  if (!scheduleWrap || !schedule) return;
-  let currentScale = 1;
-  const minScale = 0.7;
-  const maxScale = 1.5;
-  let initialDistance = 0;
-  let initialScale = 1;
-  function getDistance(touch1, touch2) {
-    const dx = touch1.clientX - touch2.clientX;
-    const dy = touch1.clientY - touch2.clientY;
-    return Math.sqrt(dx * dx + dy * dy);
+
+<!-- v310 手機版：預約表首列＋首欄雙向固定，並支援雙指縮放（不使用 transform，避免 sticky 失效） -->
+<style id="v310-mobile-sticky-header-pinch-css">
+@media (max-width:760px){
+  :root{
+    --mobile-schedule-zoom:1;
+    --mobile-time-w:58px;
+    --mobile-coach-w:88px;
+    --mobile-body-h:44px;
+    --mobile-day-h:48px;
+    --mobile-coach-h:42px;
   }
-  scheduleWrap.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 2) {
-      initialDistance = getDistance(e.touches[0], e.touches[1]);
-      initialScale = currentScale;
-      e.preventDefault();
+
+  body.mobile-tab-booking,
+  body.role-coach.mobile-tab-booking{
+    overflow-x:hidden!important;
+  }
+
+  body.mobile-tab-booking .schedule-wrap,
+  body.role-coach.mobile-tab-booking .schedule-wrap,
+  body.mobile-tab-booking .mbs-wrap,
+  body.role-coach.mobile-tab-booking .mbs-wrap,
+  .mbs-wrap{
+    position:relative!important;
+    overflow:auto!important;
+    overflow-x:auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-x pan-y!important;
+    transform:none!important;
+    contain:none!important;
+    max-height:calc(100dvh - 190px)!important;
+    background:#fffdf8!important;
+  }
+
+  body.mobile-tab-booking #schedule,
+  body.role-coach.mobile-tab-booking #schedule,
+  .mbs-wrap #schedule{
+    position:relative!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    table-layout:fixed!important;
+    width:max-content!important;
+    min-width:max-content!important;
+    max-width:none!important;
+    zoom:1!important;
+    transform:none!important;
+    transform-origin:top left!important;
+  }
+
+  /* 手機縮放採用 CSS 變數調整真實欄寬與列高，不用 transform，sticky 才會穩 */
+  body.mobile-tab-booking #schedule th,
+  body.mobile-tab-booking #schedule td,
+  body.role-coach.mobile-tab-booking #schedule th,
+  body.role-coach.mobile-tab-booking #schedule td,
+  .mbs-wrap #schedule th,
+  .mbs-wrap #schedule td{
+    width:calc(var(--mobile-coach-w) * var(--mobile-schedule-zoom))!important;
+    min-width:calc(var(--mobile-coach-w) * var(--mobile-schedule-zoom))!important;
+    max-width:calc(var(--mobile-coach-w) * var(--mobile-schedule-zoom))!important;
+    height:calc(var(--mobile-body-h) * var(--mobile-schedule-zoom))!important;
+    min-height:calc(var(--mobile-body-h) * var(--mobile-schedule-zoom))!important;
+    max-height:calc(var(--mobile-body-h) * var(--mobile-schedule-zoom))!important;
+    font-size:calc(10.5px * var(--mobile-schedule-zoom))!important;
+    box-sizing:border-box!important;
+  }
+
+  /* 首欄：日期／時間／07:00... 固定在左側 */
+  body.mobile-tab-booking #schedule tr > th:first-child,
+  body.mobile-tab-booking #schedule tr > td:first-child,
+  body.mobile-tab-booking #schedule .time,
+  body.role-coach.mobile-tab-booking #schedule tr > th:first-child,
+  body.role-coach.mobile-tab-booking #schedule tr > td:first-child,
+  body.role-coach.mobile-tab-booking #schedule .time,
+  .mbs-wrap #schedule tr > th:first-child,
+  .mbs-wrap #schedule tr > td:first-child,
+  .mbs-wrap #schedule .time{
+    position:sticky!important;
+    left:0!important;
+    z-index:140!important;
+    width:calc(var(--mobile-time-w) * var(--mobile-schedule-zoom))!important;
+    min-width:calc(var(--mobile-time-w) * var(--mobile-schedule-zoom))!important;
+    max-width:calc(var(--mobile-time-w) * var(--mobile-schedule-zoom))!important;
+    background:#faf4eb!important;
+    color:#3d3933!important;
+    font-weight:800!important;
+    border-right:2px solid #e5d8c6!important;
+    box-shadow:2px 0 0 #e5d8c6, 5px 0 10px rgba(80,60,30,.08)!important;
+    white-space:nowrap!important;
+  }
+
+  /* 首列：日期列固定在上方 */
+  body.mobile-tab-booking #schedule tr:first-child > th,
+  body.mobile-tab-booking #schedule tr:first-child > td,
+  body.mobile-tab-booking #schedule .day-title,
+  body.role-coach.mobile-tab-booking #schedule tr:first-child > th,
+  body.role-coach.mobile-tab-booking #schedule tr:first-child > td,
+  body.role-coach.mobile-tab-booking #schedule .day-title,
+  .mbs-wrap #schedule tr:first-child > th,
+  .mbs-wrap #schedule tr:first-child > td,
+  .mbs-wrap #schedule .day-title{
+    position:sticky!important;
+    top:0!important;
+    z-index:120!important;
+    height:calc(var(--mobile-day-h) * var(--mobile-schedule-zoom))!important;
+    min-height:calc(var(--mobile-day-h) * var(--mobile-schedule-zoom))!important;
+    max-height:calc(var(--mobile-day-h) * var(--mobile-schedule-zoom))!important;
+    background:#fff3dc!important;
+    box-shadow:0 2px 0 #e8dccc!important;
+  }
+
+  /* 第二列表頭：時間／FREE／教練名稱固定在日期列下方 */
+  body.mobile-tab-booking #schedule tr:nth-child(2) > th,
+  body.mobile-tab-booking #schedule tr:nth-child(2) > td,
+  body.mobile-tab-booking #schedule .coach-head,
+  body.role-coach.mobile-tab-booking #schedule tr:nth-child(2) > th,
+  body.role-coach.mobile-tab-booking #schedule tr:nth-child(2) > td,
+  body.role-coach.mobile-tab-booking #schedule .coach-head,
+  .mbs-wrap #schedule tr:nth-child(2) > th,
+  .mbs-wrap #schedule tr:nth-child(2) > td,
+  .mbs-wrap #schedule .coach-head{
+    position:sticky!important;
+    top:calc(var(--mobile-day-h) * var(--mobile-schedule-zoom))!important;
+    z-index:115!important;
+    height:calc(var(--mobile-coach-h) * var(--mobile-schedule-zoom))!important;
+    min-height:calc(var(--mobile-coach-h) * var(--mobile-schedule-zoom))!important;
+    max-height:calc(var(--mobile-coach-h) * var(--mobile-schedule-zoom))!important;
+    background:#fff7e8!important;
+    box-shadow:0 2px 0 #e8dccc!important;
+  }
+
+  /* 左上角交會格：同時固定 top + left，層級最高 */
+  body.mobile-tab-booking #schedule tr:first-child > th:first-child,
+  body.mobile-tab-booking #schedule tr:first-child > td:first-child,
+  body.role-coach.mobile-tab-booking #schedule tr:first-child > th:first-child,
+  body.role-coach.mobile-tab-booking #schedule tr:first-child > td:first-child,
+  .mbs-wrap #schedule tr:first-child > th:first-child,
+  .mbs-wrap #schedule tr:first-child > td:first-child{
+    left:0!important;
+    top:0!important;
+    z-index:220!important;
+    background:#f6ead8!important;
+  }
+
+  body.mobile-tab-booking #schedule tr:nth-child(2) > th:first-child,
+  body.mobile-tab-booking #schedule tr:nth-child(2) > td:first-child,
+  body.role-coach.mobile-tab-booking #schedule tr:nth-child(2) > th:first-child,
+  body.role-coach.mobile-tab-booking #schedule tr:nth-child(2) > td:first-child,
+  .mbs-wrap #schedule tr:nth-child(2) > th:first-child,
+  .mbs-wrap #schedule tr:nth-child(2) > td:first-child{
+    left:0!important;
+    top:calc(var(--mobile-day-h) * var(--mobile-schedule-zoom))!important;
+    z-index:215!important;
+    background:#f6ead8!important;
+  }
+
+  body.mobile-tab-booking #schedule .entry,
+  body.role-coach.mobile-tab-booking #schedule .entry,
+  .mbs-wrap #schedule .entry{
+    font-size:calc(9.5px * var(--mobile-schedule-zoom))!important;
+    line-height:1.15!important;
+  }
+}
+
+/* 手機版優化：雙向固定與縮放支援 */
+@media (max-width: 768px) {
+  .table-container {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y; /* 允許原生捲動，縮放由 JS 或系統接管 */
+    position: relative;
+    max-height: 80vh;
+  }
+
+  table {
+    border-collapse: separate; /* sticky 在 border-separate 表現較佳 */
+    border-spacing: 0;
+  }
+
+  /* 上方教練列固定 */
+  thead th {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background: #f5eedf !important; /* 配合原設計色系 */
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左側時間欄固定 */
+  tbody th, .sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 9 !important;
+    background: #f5eedf !important;
+    box-shadow: 2px 0 2px -1px rgba(0,0,0,0.1);
+  }
+
+  /* 左上角交叉點 */
+  thead th:first-child {
+    z-index: 11 !important;
+    left: 0 !important;
+  }
+}
+
+</style>
+
+<script id="v310-mobile-sticky-header-pinch-js">
+(function(){
+  var MIN_ZOOM = 0.72;
+  var MAX_ZOOM = 1.45;
+  var currentZoom = 1;
+  var pinchStartDistance = 0;
+  var pinchStartZoom = 1;
+  var isPinching = false;
+
+  function isMobile(){
+    return window.matchMedia && window.matchMedia('(max-width:760px)').matches;
+  }
+
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+  function getDistance(t1,t2){
+    var dx=t1.clientX-t2.clientX;
+    var dy=t1.clientY-t2.clientY;
+    return Math.sqrt(dx*dx+dy*dy);
+  }
+
+  function getScheduleWrap(){
+    var table=document.getElementById('schedule');
+    if(!table) return null;
+    return table.closest('.mbs-wrap') || table.closest('.schedule-wrap') || table.parentElement;
+  }
+
+  function applyMobileScheduleZoom(z){
+    if(!isMobile()) return;
+    currentZoom = clamp(Number(z)||1, MIN_ZOOM, MAX_ZOOM);
+    document.documentElement.style.setProperty('--mobile-schedule-zoom', String(currentZoom));
+    document.body.style.setProperty('--mobile-schedule-zoom', String(currentZoom));
+
+    var table=document.getElementById('schedule');
+    if(table){
+      table.style.setProperty('zoom','1','important');
+      table.style.setProperty('transform','none','important');
+      table.style.setProperty('transform-origin','top left','important');
     }
-  }, { passive: false });
-  scheduleWrap.addEventListener('touchmove', function(e) {
-    if (e.touches.length === 2) {
-      const currentDistance = getDistance(e.touches[0], e.touches[1]);
-      const scale = (currentDistance / initialDistance) * initialScale;
-      currentScale = Math.max(minScale, Math.min(maxScale, scale));
-      schedule.style.transform = `scale(${currentScale})`;
-      schedule.style.transformOrigin = 'top left';
-      e.preventDefault();
+
+    var percent=document.getElementById('zoomPercent') || document.querySelector('.zoom-percent');
+    if(percent) percent.textContent = Math.round(currentZoom*100)+'%';
+    fixStickyHeaders();
+  }
+
+  function fixStickyHeaders(){
+    if(!isMobile()) return;
+    var table=document.getElementById('schedule');
+    if(!table) return;
+
+    table.style.setProperty('zoom','1','important');
+    table.style.setProperty('transform','none','important');
+    table.style.setProperty('border-collapse','separate','important');
+    table.style.setProperty('border-spacing','0','important');
+    table.style.setProperty('width','max-content','important');
+    table.style.setProperty('min-width','max-content','important');
+
+    var wrap=getScheduleWrap();
+    if(wrap){
+      wrap.style.setProperty('position','relative','important');
+      wrap.style.setProperty('overflow','auto','important');
+      wrap.style.setProperty('overflow-x','auto','important');
+      wrap.style.setProperty('overflow-y','auto','important');
+      wrap.style.setProperty('-webkit-overflow-scrolling','touch','important');
+      wrap.style.setProperty('touch-action','pan-x pan-y','important');
+      wrap.style.setProperty('transform','none','important');
+      wrap.style.setProperty('contain','none','important');
     }
-  }, { passive: false });
-  scheduleWrap.addEventListener('touchend', function(e) {
-    if (e.touches.length < 2) {
-      initialDistance = 0;
-      initialScale = currentScale;
-    }
-  }, { passive: false });
-  window.getScheduleZoom = function() { return currentScale; };
-  window.setScheduleZoom = function(scale) {
-    currentScale = Math.max(minScale, Math.min(maxScale, scale));
-    schedule.style.transform = `scale(${currentScale})`;
-  };
-  window.resetScheduleZoom = function() {
-    currentScale = 1;
-    schedule.style.transform = 'scale(1)';
-  };
+
+    Array.prototype.forEach.call(table.rows,function(row,idx){
+      var first=row.children && row.children[0];
+      if(first){
+        first.classList.add('time');
+        first.style.setProperty('position','sticky','important');
+        first.style.setProperty('left','0','important');
+        first.style.setProperty('z-index', idx===0 ? '220' : (idx===1 ? '215' : '140'), 'important');
+        first.style.setProperty('background', idx<2 ? '#f6ead8' : '#faf4eb', 'important');
+        first.style.setProperty('box-shadow','2px 0 0 #e5d8c6, 5px 0 10px rgba(80,60,30,.08)','important');
+      }
+      if(idx===0){
+        Array.prototype.forEach.call(row.children,function(cell){
+          cell.style.setProperty('position','sticky','important');
+          cell.style.setProperty('top','0','important');
+          cell.style.setProperty('z-index', cell===first ? '220' : '120', 'important');
+          cell.style.setProperty('background', cell===first ? '#f6ead8' : '#fff3dc', 'important');
+        });
+      }
+      if(idx===1){
+        Array.prototype.forEach.call(row.children,function(cell){
+          cell.style.setProperty('position','sticky','important');
+          cell.style.setProperty('top','calc(var(--mobile-day-h) * var(--mobile-schedule-zoom))','important');
+          cell.style.setProperty('z-index', cell===first ? '215' : '115', 'important');
+          cell.style.setProperty('background', cell===first ? '#f6ead8' : '#fff7e8', 'important');
+        });
+      }
+    });
+  }
+
+  function bindPinchZoom(){
+    if(!isMobile()) return;
+    var wrap=getScheduleWrap();
+    if(!wrap || wrap.__v310PinchBound) return;
+    wrap.__v310PinchBound=true;
+
+    wrap.addEventListener('touchstart',function(e){
+      if(e.touches && e.touches.length===2){
+        isPinching=true;
+        pinchStartDistance=getDistance(e.touches[0],e.touches[1]);
+        pinchStartZoom=currentZoom;
+      }
+    },{passive:true});
+
+    wrap.addEventListener('touchmove',function(e){
+      if(e.touches && e.touches.length===2 && pinchStartDistance>0){
+        e.preventDefault();
+        var d=getDistance(e.touches[0],e.touches[1]);
+        var next=pinchStartZoom*(d/pinchStartDistance);
+        applyMobileScheduleZoom(next);
+      }
+    },{passive:false});
+
+    wrap.addEventListener('touchend',function(e){
+      if(!e.touches || e.touches.length<2){
+        isPinching=false;
+        pinchStartDistance=0;
+        setTimeout(fixStickyHeaders,60);
+      }
+    },{passive:true});
+  }
+
+  // 手機版覆蓋原本縮放：保留雙指縮放，但不用 transform/zoom 破壞 sticky。
+  var oldApply=window.applyScheduleZoom;
+  if(typeof oldApply==='function' && !oldApply.__v310StickyHeaderPinchWrapped){
+    window.applyScheduleZoom=function(){
+      if(isMobile()){
+        applyMobileScheduleZoom(currentZoom || 1);
+        return;
+      }
+      return oldApply.apply(this,arguments);
+    };
+    window.applyScheduleZoom.__v310StickyHeaderPinchWrapped=true;
+  }
+
+  var oldReset=window.resetScheduleZoom;
+  if(typeof oldReset==='function' && !oldReset.__v310StickyHeaderPinchWrapped){
+    window.resetScheduleZoom=function(){
+      if(isMobile()){
+        applyMobileScheduleZoom(1);
+        return;
+      }
+      return oldReset.apply(this,arguments);
+    };
+    window.resetScheduleZoom.__v310StickyHeaderPinchWrapped=true;
+  }
+
+  var oldRender=window.render;
+  if(typeof oldRender==='function' && !oldRender.__v310StickyHeaderPinchWrapped){
+    window.render=function(){
+      var r=oldRender.apply(this,arguments);
+      setTimeout(function(){ fixStickyHeaders(); bindPinchZoom(); applyMobileScheduleZoom(currentZoom); },0);
+      setTimeout(function(){ fixStickyHeaders(); bindPinchZoom(); },120);
+      return r;
+    };
+    window.render.__v310StickyHeaderPinchWrapped=true;
+  }
+
+  var oldSetMobileTab=window.setMobileTab;
+  if(typeof oldSetMobileTab==='function' && !oldSetMobileTab.__v310StickyHeaderPinchWrapped){
+    window.setMobileTab=function(tab){
+      var r=oldSetMobileTab.apply(this,arguments);
+      setTimeout(function(){ fixStickyHeaders(); bindPinchZoom(); applyMobileScheduleZoom(currentZoom); },100);
+      setTimeout(function(){ fixStickyHeaders(); bindPinchZoom(); },260);
+      return r;
+    };
+    window.setMobileTab.__v310StickyHeaderPinchWrapped=true;
+  }
+
+  function boot(){
+    if(!isMobile()) return;
+    applyMobileScheduleZoom(currentZoom);
+    fixStickyHeaders();
+    bindPinchZoom();
+    setTimeout(function(){ fixStickyHeaders(); bindPinchZoom(); },180);
+    setTimeout(function(){ fixStickyHeaders(); bindPinchZoom(); },500);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',boot);
+  }else{
+    boot();
+  }
+  window.addEventListener('resize',function(){ setTimeout(boot,120); });
+  window.addEventListener('orientationchange',function(){ setTimeout(boot,300); });
+
+  window.fixMobileScheduleStickyHeaders = fixStickyHeaders;
+  window.applyMobileSchedulePinchZoom = applyMobileScheduleZoom;
 })();
 </script>
 
+<script>
+// 支援手指撥動縮放 (Pinch-to-zoom) 的輔助邏輯
+(function() {
+  if (!/Mobi|Android|iPhone/i.test(navigator.userAgent)) return;
+
+  let lastScale = 1;
+  const container = document.querySelector('.table-container');
+
+  // 監聽縮放事件以修正 sticky 偏移（部分舊瀏覽器需要）
+  window.addEventListener('resize', () => {
+    // 縮放時重新觸發 layout 以確保 sticky 正常
+    if(container) {
+        const temp = container.style.display;
+        container.style.display = 'none';
+        container.offsetHeight; 
+        container.style.display = temp;
+    }
+  });
+
+  // 如果需要更流暢的自定義縮放，通常會調整 viewport 或使用 transform
+  // 但目前最穩定方式是確保 meta tag 允許縮放：
+  const viewport = document.querySelector('meta[name="viewport"]');
+  if (viewport) {
+    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+  }
+})();
+</script>
 </body>
 </html>
