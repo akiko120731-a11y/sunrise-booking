@@ -681,7 +681,7 @@ button,input,select,textarea{font-family:inherit}button{touch-action:manipulatio
   .controls select{max-width:42%!important;min-height:34px!important;}
   .zoom-tools{order:2!important;}
   .controls .hint{order:3!important;font-size:10.5px!important;line-height:1.45!important;}
-  .calendar-dialog{width:98vw!important;max-height:92dvh!important;padding:9px!important;overflow:hidden!important;}
+  .calendar-dialog{width:98vw!important;max-height:92dvh!important;padding:9px!important;}
   .calendar-scroll{max-height:78dvh!important;overflow:auto!important;}
   .month-calendar{min-width:660px!important;gap:5px!important;}
   .month-cell{min-height:88px!important;padding:5px!important;border-radius:13px!important;}
@@ -705,7 +705,7 @@ body.is-logged-out{min-height:100dvh;overflow-x:hidden;}
 body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
 @media(max-width:760px){
   body.is-logged-out #appHeader,
-  body.is-logged-out #appWrap{display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;}
+  body.is-logged-out #appWrap{display:none!important;visibility:hidden!important;height:0!important;}
   body.is-logged-out #identityScreen{position:relative!important;z-index:9999!important;background:linear-gradient(180deg,#fbfaf6,#f3efe7)!important;}
   body.is-logged-in{overflow-y:auto!important;}
   .wrap{height:auto!important;min-height:0!important;overflow:visible!important;}
@@ -715,17 +715,15 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
   .side .card{flex:0 0 auto!important;}
   .side .card:first-child canvas{max-height:none!important;height:160px!important;}
   .schedule-wrap{height:auto!important;max-height:none!important;min-height:0!important;overflow-x:auto!important;overflow-y:visible!important;}
-  #schedule .time{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:0 1px!important;}
-  #schedule th,#schedule td{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;overflow:hidden!important;}
+  #schedule .time{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;white-space:nowrap!important;text-overflow:clip!important;padding:0 1px!important;}
+  #schedule th,#schedule td{font-size:clamp(7px, calc(9.6px * var(--schedule-scale, .58)), 10px)!important;line-height:1.05!important;}
   #schedule .coach-head{font-size:clamp(7px, calc(9.8px * var(--schedule-scale, .58)), 10px)!important;}
 }
 
 
 /* v45 手機預約卡片不撐開表格：固定格線、文字跟縮放縮小、內容超出裁切 */
 @media(max-width:760px){
-  #schedule{
-    table-layout:fixed!important;
-    border-collapse:separate!important;
+  #schedule{border-collapse:separate !important;
     border-spacing:0!important;
   }
   #schedule th,#schedule td{
@@ -733,7 +731,7 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
     height:25px!important;
     min-height:25px!important;
     max-height:25px!important;
-    overflow:hidden!important;
+    
     vertical-align:middle!important;
     line-height:1.05!important;
   }
@@ -750,7 +748,7 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
   #schedule td.merged{
     position:relative!important;
     padding:0!important;
-    overflow:hidden!important;
+    
     vertical-align:top!important;
   }
   #schedule td.merged .entry{
@@ -762,7 +760,7 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
     max-height:calc(100% - 4px)!important;
     margin:0!important;
     padding:2px 1px!important;
-    overflow:hidden!important;
+    
     display:flex!important;
     flex-direction:column!important;
     align-items:center!important;
@@ -775,7 +773,7 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
     display:-webkit-box!important;
     -webkit-box-orient:vertical!important;
     -webkit-line-clamp:2!important;
-    overflow:hidden!important;
+    
     word-break:break-all!important;
     overflow-wrap:anywhere!important;
     max-width:100%!important;
@@ -787,7 +785,7 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
     display:-webkit-box!important;
     -webkit-box-orient:vertical!important;
     -webkit-line-clamp:2!important;
-    overflow:hidden!important;
+    
     max-width:100%!important;
     line-height:1.02!important;
     font-size:clamp(5.5px, calc(8px * var(--schedule-scale, .68)), 7.5px)!important;
@@ -797,7 +795,7 @@ body.is-logged-out #identityScreen{display:flex!important;min-height:100dvh;}
     max-width:100%!important;
   }
   #schedule .slot{
-    overflow:hidden!important;
+    
   }
 }
 
@@ -877,7 +875,7 @@ body.is-logged-out .mobile-bottom-nav{
   visibility:hidden!important;
   height:0!important;
   max-height:0!important;
-  overflow:hidden!important;
+  
   pointer-events:none!important;
 }
 body.is-logged-out #identityScreen{
@@ -908,7 +906,7 @@ body.is-logged-out{
     visibility:hidden!important;
     height:0!important;
     max-height:0!important;
-    overflow:hidden!important;
+    
   }
   body.is-logged-out #identityScreen{
     display:flex!important;
@@ -943,7 +941,7 @@ body.is-logged-out{
   width:100%;
   text-align:left!important;
   white-space:normal!important;
-  overflow:hidden!important;
+  
   text-overflow:ellipsis!important;
   word-break:break-word!important;
   line-height:1.15!important;
@@ -953,7 +951,7 @@ body.is-logged-out{
   width:100%;
   text-align:left!important;
   white-space:normal!important;
-  overflow:hidden!important;
+  
   text-overflow:ellipsis!important;
   line-height:1.15!important;
 }
@@ -971,7 +969,7 @@ body.is-logged-out{
     padding:2px 3px!important;
     display:block!important;
     text-align:left!important;
-    overflow:hidden!important;
+    
     line-height:1.02!important;
   }
   #schedule td.schedule-cell-start .entry-name{
@@ -1112,11 +1110,7 @@ body.is-logged-out{
   overscroll-behavior:contain!important;
   position:relative!important;
 }
-#schedule{
-  table-layout:fixed!important;
-  width:max-content!important;
-  min-width:0!important;
-  border-collapse:separate!important;
+#schedule{border-collapse:separate !important;
   border-spacing:0!important;
   position:relative!important;
   isolation:isolate!important;
@@ -1124,7 +1118,7 @@ body.is-logged-out{
 #schedule th,
 #schedule td{
   box-sizing:border-box!important;
-  overflow:hidden!important;
+  
   white-space:normal!important;
   border-right:1px solid #e8ded0!important;
   border-bottom:1px solid #eadfce!important;
@@ -1222,7 +1216,7 @@ body.is-logged-out{
   padding:4px 5px!important;
   display:block!important;
   text-align:left!important;
-  overflow:hidden!important;
+  
   box-sizing:border-box!important;
   z-index:8!important;
   line-height:1.15!important;
@@ -1236,7 +1230,7 @@ body.is-logged-out{
   font-weight:900!important;
   text-align:left!important;
   white-space:normal!important;
-  overflow:hidden!important;
+  
   text-overflow:ellipsis!important;
   word-break:break-word!important;
   overflow-wrap:anywhere!important;
@@ -1250,7 +1244,7 @@ body.is-logged-out{
   color:var(--muted)!important;
   margin-top:2px!important;
   white-space:nowrap!important;
-  overflow:hidden!important;
+  
   text-overflow:ellipsis!important;
 }
 #schedule .entry,
@@ -1384,7 +1378,7 @@ body.is-logged-out{
 #schedule td.schedule-cell-start{
   position:relative!important;
   vertical-align:top!important;
-  overflow:hidden!important;
+  
 }
 #schedule td.schedule-cell-start .start-entry{
   position:absolute!important;
@@ -1434,14 +1428,14 @@ body.is-logged-out{
     line-height:1.15!important;
     display:block!important;
     white-space:normal!important;
-    overflow:hidden!important;
+    
     text-overflow:ellipsis!important;
     word-break:break-word!important;
   }
   #schedule td.schedule-cell-start .entry-meta{
     font-size:10px!important;
     white-space:nowrap!important;
-    overflow:hidden!important;
+    
     text-overflow:ellipsis!important;
   }
 }
@@ -1488,11 +1482,11 @@ body.is-logged-out{
   .mobile-day-switcher{display:grid;grid-template-columns:52px 1fr 52px;gap:8px;align-items:center;margin:0 0 12px;}.mobile-day-switcher button{min-height:48px!important;border-radius:18px!important;font-size:18px!important;background:#fffefb!important;}.mobile-current-day{font-size:17px!important;font-weight:900!important;color:#3d3933!important;}
   .mobile-single-day-scroll{overflow-x:auto!important;overflow-y:visible!important;-webkit-overflow-scrolling:touch;border:1px solid #eadfce;border-radius:20px;background:#fffaf1;}
   .mobile-single-day-table{border-collapse:separate!important;border-spacing:0!important;table-layout:fixed!important;width:max-content!important;min-width:100%!important;font-size:14px!important;}
-  .mobile-single-day-table th,.mobile-single-day-table td{height:56px!important;min-height:56px!important;max-height:56px!important;border-right:1px solid #eadfce!important;border-bottom:1px solid #eadfce!important;overflow:hidden!important;position:relative!important;background:#fffefb;}
+  .mobile-single-day-table th,.mobile-single-day-table td{height:56px!important;min-height:56px!important;max-height:56px!important;border-right:1px solid #eadfce!important;border-bottom:1px solid #eadfce!important;position:relative!important;background:#fffefb;}
   .mobile-single-day-table th{position:sticky!important;top:0!important;z-index:1000!important;background:#fff3dc!important;font-size:13px!important;font-weight:900!important;}
   .mobile-single-day-table .m-time{position:sticky!important;left:0!important;z-index:1100!important;width:62px!important;min-width:62px!important;max-width:62px!important;background:#faf4eb!important;font-size:13px!important;color:#7a6042!important;font-weight:900!important;text-align:center!important;}
   .mobile-single-day-table .m-col{width:128px!important;min-width:128px!important;max-width:128px!important;}.mobile-single-day-table td.m-covered{background:#d8d4cd!important;}.mobile-single-day-table td.m-start{vertical-align:top!important;}
-  .mobile-mini-entry{position:relative!important;z-index:5!important;margin:3px!important;padding:5px 6px!important;border-radius:10px!important;background:#fffdf8!important;border:1px solid rgba(90,70,45,.12)!important;text-align:left!important;line-height:1.15!important;max-height:50px!important;overflow:hidden!important;}.mobile-mini-entry b{display:block;font-size:13px;white-space:normal;overflow:hidden;text-overflow:ellipsis;}.mobile-mini-entry small{display:block;font-size:10px;color:#8a7c6d;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mobile-mini-entry{position:relative!important;z-index:5!important;margin:3px!important;padding:5px 6px!important;border-radius:10px!important;background:#fffdf8!important;border:1px solid rgba(90,70,45,.12)!important;text-align:left!important;line-height:1.15!important;max-height:50px!important;}.mobile-mini-entry b{display:block;font-size:13px;white-space:normal;overflow:hidden;text-overflow:ellipsis;}.mobile-mini-entry small{display:block;font-size:10px;color:#8a7c6d;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .mobile-agenda-list{display:flex!important;flex-direction:column!important;gap:14px!important;height:auto!important;overflow:visible!important;}.mobile-date-group{display:flex;flex-direction:column;gap:8px;}.mobile-date-title{font-size:16px;font-weight:900;color:#3d3933;padding:6px 2px;display:flex;align-items:baseline;gap:8px;}.mobile-date-title small{font-size:12px;color:#bd695d;font-weight:800;}
   .mobile-booking-card{background:#fffefb;border:1px solid #eadfce;border-radius:22px;padding:12px 13px;box-shadow:0 8px 22px rgba(80,60,30,.055);display:grid;grid-template-columns:78px 1fr;gap:10px;align-items:start;position:relative;overflow:hidden;}.mobile-booking-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:#b99b72;opacity:.75;}.mobile-booking-time{font-size:14px;font-weight:900;color:#8f704c;line-height:1.35;padding-left:4px;}.mobile-booking-main{min-width:0}.mobile-booking-name{font-size:16px;font-weight:900;margin-bottom:4px;word-break:break-word}.mobile-booking-meta{font-size:13px;color:#6f665b;line-height:1.55}.mobile-booking-note{font-size:12px;color:#8a7c6d;background:#fff7e8;border-radius:12px;padding:5px 7px;margin-top:6px;line-height:1.45;}.mobile-empty{background:#fffefb;border:1px dashed #eadfce;border-radius:20px;padding:18px;text-align:center;color:#8a7c6d;font-size:14px;}
   .mobile-stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;}.mobile-stat-card{background:#fffaf1;border:1px solid #eadfce;border-radius:18px;padding:12px;}.mobile-stat-card span{display:block;color:#8a7c6d;font-size:12px}.mobile-stat-card b{font-size:24px;line-height:1.2;}.mobile-chart-wrap{height:220px!important;min-height:220px!important;overflow:visible!important;margin-top:12px;}.mobile-chart-wrap canvas{height:220px!important;max-height:none!important;}
@@ -1613,7 +1607,7 @@ body.is-logged-out{
   border:1px solid #ece3d6!important;
   border-radius:28px!important;
   box-shadow:0 22px 64px rgba(80,60,30,.16)!important;
-  overflow:hidden!important;
+  
   box-sizing:border-box!important;
 }
 #dayDetailDialog::backdrop{
@@ -1721,7 +1715,7 @@ body.is-logged-out{
   border-radius:20px!important;
   background:#fffaf4!important;
   box-shadow:0 4px 12px rgba(80,60,30,.04)!important;
-  overflow:hidden!important;
+  
   overflow-wrap:anywhere!important;
   word-break:break-word!important;
   text-align:left!important;
@@ -1900,6 +1894,140 @@ body.is-logged-out{
 }
 
 </style>
+<style>
+
+
+  #schedule {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: max-content !important;
+  }
+
+  /* 垂直固定：日期列 (第一列) */
+  #schedule tr:first-child th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2000 !important;
+    background: #fff3dc !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+  }
+
+  /* 垂直固定：教練列 (第二列) */
+  #schedule tr:nth-child(2) th {
+    position: sticky !important;
+    top: 50px !important; /* 根據第一列高度調整 */
+    z-index: 1900 !important;
+    background: #fff7e8 !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+  }
+
+  /* 水平固定：時間欄 (首欄) */
+  #schedule th.time, 
+  #schedule td.time {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 1800 !important;
+    background: #faf4eb !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05) !important;
+  }
+
+  /* 左上角交點 1：時間 + 日期 */
+  #schedule tr:first-child th.time {
+    z-index: 2100 !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  /* 左上角交點 2：時間 + 教練 */
+  #schedule tr:nth-child(2) th.time {
+    z-index: 2050 !important;
+    top: 50px !important;
+    left: 0 !important;
+  }
+  
+  /* 確保內容不會蓋過固定欄位 */
+  #schedule td {
+    z-index: 1 !important;
+  }
+}
+</style>
+
+<style id="mobile-ultimate-fix">
+@media (max-width: 760px) {
+  /* 容器：必須有 overflow: auto 且 position: relative */
+  .schedule-wrap {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 75vh !important;
+    overflow: auto !important;
+    position: relative !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: manipulation !important;
+    border: 1px solid #eadfce !important;
+    border-radius: 12px !important;
+  }
+
+  /* 表格：關鍵在於 border-collapse: separate */
+  #schedule {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: max-content !important;
+    transform-origin: top left !important;
+    will-change: transform !important;
+    table-layout: fixed !important;
+  }
+
+  /* 垂直凍結：thead 中的所有 th */
+  #schedule thead th,
+  #schedule tr:first-child th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    background: #fff3dc !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
+  }
+
+  /* 垂直凍結：第二行 (教練名稱) */
+  #schedule tr:nth-child(2) th {
+    position: sticky !important;
+    top: 42px !important; /* 配合第一行高度 */
+    z-index: 90 !important;
+    background: #fff7e8 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+  }
+
+  /* 水平凍結：時間欄 (th.time) */
+  #schedule th.time,
+  #schedule td.time {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 80 !important;
+    background: #faf4eb !important;
+    box-shadow: 2px 0 4px rgba(0,0,0,0.05) !important;
+  }
+
+  /* 交點 1：時間 + 日期 (最高優先級) */
+  #schedule tr:first-child th.time {
+    z-index: 120 !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  /* 交點 2：時間 + 教練 */
+  #schedule tr:nth-child(2) th.time {
+    z-index: 110 !important;
+    top: 42px !important;
+    left: 0 !important;
+  }
+
+  /* 隱藏舊的縮放按鈕 */
+  .zoom-tools, .mobile-table-zoom-tools {
+    display: none !important;
+  }
+}
+</style>
+
 </head>
 <body class="is-logged-out">
 <div id="identityScreen" class="identity-screen">
@@ -3115,7 +3243,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border:1px solid #ece3d6!important;
   border-radius:28px!important;
   box-shadow:0 22px 64px rgba(80,60,30,.16)!important;
-  overflow:hidden!important;
+  
   box-sizing:border-box!important;
 }
 #dayDetailDialog::backdrop{
@@ -3223,7 +3351,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border-radius:20px!important;
   background:#fffaf4!important;
   box-shadow:0 4px 12px rgba(80,60,30,.04)!important;
-  overflow:hidden!important;
+  
   overflow-wrap:anywhere!important;
   word-break:break-word!important;
   text-align:left!important;
@@ -3528,7 +3656,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border:1px solid #ece3d6!important;
   border-radius:28px!important;
   box-shadow:0 22px 64px rgba(80,60,30,.16)!important;
-  overflow:hidden!important;
+  
   box-sizing:border-box!important;
 }
 #dayDetailDialog::backdrop{
@@ -3636,7 +3764,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border-radius:20px!important;
   background:#fffaf4!important;
   box-shadow:0 4px 12px rgba(80,60,30,.04)!important;
-  overflow:hidden!important;
+  
   overflow-wrap:anywhere!important;
   word-break:break-word!important;
   text-align:left!important;
@@ -4191,7 +4319,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   max-height:88vh!important;
   padding:16px 16px 16px 16px!important;
   background:var(--paper)!important;
-  overflow:hidden!important;
+  
   box-sizing:border-box!important;
   border-radius:24px!important;
 }
@@ -4269,7 +4397,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border:1px solid var(--line)!important;
   border-radius:14px!important;
   background:#fffdf8!important;
-  overflow:hidden!important;
+  
   overflow-wrap:anywhere!important;
   word-break:break-word!important;
 }
@@ -4327,7 +4455,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border:1px solid #ece3d6!important;
   border-radius:28px!important;
   box-shadow:0 22px 64px rgba(80,60,30,.16)!important;
-  overflow:hidden!important;
+  
   box-sizing:border-box!important;
 }
 #dayDetailDialog::backdrop{
@@ -4435,7 +4563,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
   border-radius:20px!important;
   background:#fffaf4!important;
   box-shadow:0 4px 12px rgba(80,60,30,.04)!important;
-  overflow:hidden!important;
+  
   overflow-wrap:anywhere!important;
   word-break:break-word!important;
   text-align:left!important;
@@ -5980,7 +6108,7 @@ setTimeout(()=>{applyScheduleZoom();bindPinchZoom();},100);
 
 /* v77 教練薪資作業：薪資明細前置＋柔和 Modal 背景模糊 */
 .salary-dialog::backdrop{background:rgba(248,245,239,.42)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important;}
-body.salary-modal-open{overflow:hidden!important;}
+body.salary-modal-open{}
 .salary-dialog{box-shadow:0 24px 80px rgba(80,60,30,.16)!important;border:1px solid rgba(234,223,206,.95)!important;}
 .salary-head{align-items:center!important;}
 .salary-top-actions{align-items:center!important;}
@@ -6304,7 +6432,7 @@ body.salary-modal-open{overflow:hidden!important;}
 
 <style>
 /* v78 薪資明細加給／扣除項目＋教練管理：MUJI 財務摘要風 */
-body.salary-modal-open{overflow:hidden!important;}
+body.salary-modal-open{}
 body.salary-modal-open #appHeader,
 body.salary-modal-open #appWrap,
 body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transition:filter .18s ease;pointer-events:none;user-select:none;}
@@ -6839,7 +6967,7 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 .salary-v79-line.has-input{grid-template-columns:minmax(150px,1fr) minmax(160px,auto) minmax(150px,220px)!important;}
 .salary-v79-line.memo{grid-template-columns:160px 1fr minmax(220px,320px)!important;}
 .salary-record-focus{outline:3px solid rgba(185,155,114,.45)!important;box-shadow:0 0 0 8px rgba(185,155,114,.12),0 8px 22px rgba(80,60,30,.05)!important;transition:.2s!important;}
-.salary-coach-manager-dialog{width:min(1080px,96vw)!important;max-height:90vh!important;border:0!important;border-radius:32px!important;padding:0!important;overflow:hidden!important;background:transparent!important;box-shadow:0 24px 80px rgba(80,60,30,.18)!important;}
+.salary-coach-manager-dialog{width:min(1080px,96vw)!important;max-height:90vh!important;border:0!important;border-radius:32px!important;padding:0!important;background:transparent!important;box-shadow:0 24px 80px rgba(80,60,30,.18)!important;}
 .salary-coach-manager-dialog::backdrop{background:rgba(255,255,255,.38)!important;backdrop-filter:blur(9px)!important;-webkit-backdrop-filter:blur(9px)!important;}
 .salary-manager-body{background:linear-gradient(180deg,#fffefb,#fbf7ee)!important;border:1px solid #eadfce!important;border-radius:32px!important;padding:22px!important;max-height:90vh!important;overflow:auto!important;}
 .salary-manager-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:2px 2px 16px;border-bottom:1px dashed #eadfce;margin-bottom:16px;}
@@ -6858,7 +6986,7 @@ body.salary-modal-open #identityScreen{filter:blur(8px) brightness(.94);transiti
 .salary-manager-grid label{font-size:11.5px;color:#8a7c6d;font-weight:800;display:flex;flex-direction:column;gap:5px;}
 .salary-manager-grid input{width:100%;border:0;background:#fffaf1;border-radius:16px;padding:10px 12px;box-shadow:inset 0 0 0 1px #eadfce;color:#3d3933;min-height:40px;}
 .salary-manager-grid input:focus{outline:none;box-shadow:inset 0 0 0 2px #d6ba8d,0 3px 12px rgba(185,155,114,.13);background:#fffefb;}
-body.salary-manager-open{overflow:hidden!important;}
+body.salary-manager-open{}
 @media(max-width:760px){
   .salary-dialog-v80 .salary-head{flex-direction:column!important;gap:12px!important;}
   .salary-v80-actions{justify-content:flex-start!important;margin-right:0!important;width:100%!important;}
@@ -7145,7 +7273,7 @@ body.salary-manager-open{overflow:hidden!important;}
   border:0!important;
   border-radius:30px!important;
   padding:0!important;
-  overflow:hidden!important;
+  
   background:transparent!important;
   box-shadow:0 24px 80px rgba(80,60,30,.18)!important;
 }
@@ -7158,7 +7286,7 @@ body.salary-manager-open{overflow:hidden!important;}
 .salary-record-field{background:#fffaf4;border:1px solid #eadfce;border-radius:22px;padding:14px 16px;box-shadow:0 6px 18px rgba(80,60,30,.04);}
 .salary-record-field label{display:block;font-size:12px;font-weight:900;color:#7d6c58;margin-bottom:8px;}.salary-record-field input,.salary-record-field select,.salary-record-field textarea{width:100%;border:0;background:#fffefb;border-radius:16px;padding:10px 12px;box-shadow:inset 0 0 0 1px #eadfce;min-height:42px;}
 .salary-record-field.full{grid-column:1 / -1;}.salary-record-history{background:#fffefb;border:1px solid #eadfce;border-radius:24px;padding:16px;margin-top:12px;}.salary-record-history h3{margin:0 0 10px;font-size:15px;color:#6f5b44;}.salary-record-history-item{padding:9px 0;border-bottom:1px dashed #eadfce;font-size:13px;color:#5f5449;line-height:1.6;}.salary-record-history-item:last-child{border-bottom:0;}
-body.salary-record-open{overflow:hidden!important;}
+body.salary-record-open{}
 @media(max-width:760px){
   #salaryDialog.salary-dialog-v81 .salary-head{padding-right:48px!important;}
   #salaryDialog.salary-dialog-v81 .salary-v80-actions{justify-content:flex-start!important;width:100%!important;}
@@ -11233,7 +11361,7 @@ window.addEventListener('resize', function(){
 <style id="v301-mobile-request-patch">
 /* v301 手機版指定調整：移除底部導覽、漢堡靠左、所有入口集中到漢堡 */
 @media (max-width:760px){
-  #mobileBottomNav{display:none!important;visibility:hidden!important;pointer-events:none!important;height:0!important;padding:0!important;border:0!important;overflow:hidden!important;}
+  #mobileBottomNav{display:none!important;visibility:hidden!important;pointer-events:none!important;height:0!important;padding:0!important;border:0!important;}
   body.role-coach.is-logged-in #mobileBottomNav{display:none!important;}
   .mh-header{justify-content:flex-start!important;gap:4px!important;padding:0 10px 0 6px!important;}
   .mh-hamburger{margin-right:4px!important;align-items:center!important;justify-content:center!important;}
@@ -11462,7 +11590,7 @@ window.addEventListener('resize', function(){
   body.role-coach.is-logged-in #mobileBottomNav,
   body.is-logged-out #mobileBottomNav{
     display:none!important;visibility:hidden!important;pointer-events:none!important;height:0!important;min-height:0!important;
-    padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;
+    padding:0!important;margin:0!important;border:0!important;
   }
 
   /* 手機頁面底部不再預留底部導覽高度 */
@@ -11471,7 +11599,7 @@ window.addEventListener('resize', function(){
   }
 
   /* 預約課表溢出優化：外層水平＋垂直滾動，不壓壞版面 */
-  body.mobile-tab-booking .mobile-page-booking{overflow:hidden!important;min-height:0!important;}
+  body.mobile-tab-booking .mobile-page-booking{min-height:0!important;}
   .mbs-controls{
     display:grid!important;grid-template-columns:52px minmax(0,1fr) 52px!important;gap:8px!important;
     align-items:center!important;padding:8px 10px!important;flex-shrink:0!important;
@@ -11481,7 +11609,7 @@ window.addEventListener('resize', function(){
     min-width:48px!important;min-height:44px!important;font-size:18px!important;padding:8px 12px!important;
     border-radius:999px!important;touch-action:manipulation!important;
   }
-  .mbs-week-label{font-size:13px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+  .mbs-week-label{font-size:13px!important;white-space:nowrap!important;text-overflow:ellipsis!important;}
   .mbs-wrap{
     flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow:auto!important;overflow-x:auto!important;overflow-y:auto!important;
     -webkit-overflow-scrolling:touch!important;touch-action:pan-x pan-y pinch-zoom!important;padding-bottom:16px!important;
@@ -11796,7 +11924,7 @@ window.addEventListener('resize', function(){
     flex:1 1 auto!important;
     min-height:0!important;
     height:calc(100dvh - 54px)!important;
-    overflow:hidden!important;
+    
     position:relative!important;
     z-index:30!important;
     background:#faf6ee!important;
@@ -12022,7 +12150,7 @@ window.addEventListener('resize', function(){
     height:0!important;
     min-height:0!important;
     max-height:0!important;
-    overflow:hidden!important;
+    
     padding:0!important;
     margin:0!important;
     border:0!important;
@@ -12039,7 +12167,7 @@ window.addEventListener('resize', function(){
     margin:0 0 14px!important;
     padding:0!important;
     border-radius:22px!important;
-    overflow:hidden!important;
+    
     background:#fffefb!important;
     border:1px solid #eadfce!important;
     box-shadow:0 6px 18px rgba(80,60,30,.045)!important;
@@ -12467,11 +12595,7 @@ window.addEventListener('resize', function(){
   /* 不再縮放整張課表；iPhone 上縮放會讓 position:sticky 與點擊座標失準 */
   body.role-coach.mobile-tab-booking #schedule,
   body.mobile-tab-booking #schedule,
-  .mbs-wrap #schedule{
-    zoom:1!important;
-    transform:none!important;
-    transform-origin:top left!important;
-    border-collapse:separate!important;
+  .mbs-wrap #schedule{border-collapse:separate !important;
     border-spacing:0!important;
     table-layout:fixed!important;
     width:max-content!important;
@@ -12742,9 +12866,7 @@ window.addEventListener('resize', function(){
 
   body.mobile-tab-booking #schedule,
   body.role-coach.mobile-tab-booking #schedule,
-  .mbs-wrap #schedule{
-    position:relative!important;
-    border-collapse:separate!important;
+  .mbs-wrap #schedule{border-collapse:separate !important;
     border-spacing:0!important;
     table-layout:fixed!important;
     width:max-content!important;
@@ -13166,8 +13288,7 @@ window.addEventListener('resize', function(){
     background:#fffefb!important;
   }
 
-  #schedule{
-    border-collapse:separate!important;
+  #schedule{border-collapse:separate !important;
     border-spacing:0!important;
     table-layout:fixed!important;
     width:max-content!important;
@@ -13250,7 +13371,7 @@ window.addEventListener('resize', function(){
     width:100%!important;
     box-sizing:border-box!important;
     padding:0 4px!important;
-    overflow:hidden!important;
+    
     white-space:nowrap!important;
     text-overflow:ellipsis!important;
     background:#faf4eb!important;
@@ -13588,8 +13709,7 @@ window.addEventListener('resize', function(){
   }
 
   /* 關鍵：表格不可再 transform / zoom；sticky 在 iOS 只能搭配真實尺寸與 border-separate 穩定運作 */
-  #schedule{
-    border-collapse:separate!important;
+  #schedule{border-collapse:separate !important;
     border-spacing:0!important;
     table-layout:fixed!important;
     width:max-content!important;
