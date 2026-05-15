@@ -11286,272 +11286,215 @@ window.addEventListener('resize', function(){
 
 
 
-<!-- v316 mobile reset refinement: narrower coach columns + month date jump to booking -->
-<style id="v316-mobile-cols-and-datejump-css">
+<!-- v317 mobile month date jump + compact coach columns -->
+<style id="v317-mobile-month-datejump-css">
 @media (max-width:760px){
-  /* 1) 手機版課表欄寬縮小：維持可點擊，但讓更多教練欄位能同時看見 */
-  #mobileBookingPage,
-  #mobileBookingPage *{
-    -webkit-tap-highlight-color:transparent;
-  }
-  #mobileBookingPage #mobileBookingWrap{
-    width:100vw!important;
-    max-width:100vw!important;
-    overflow:auto!important;
-    overscroll-behavior:contain!important;
-    background:#faf6ee!important;
-  }
-
-  #mobileBookingPage .schedule-wrap{
-    width:100vw!important;
-    max-width:100vw!important;
-    overflow:auto!important;
-    border-radius:0!important;
-    margin:0!important;
-    padding:0!important;
-    background:#faf6ee!important;
+  /* 手機版教練欄位再縮小一些，但仍保留可點擊面積 */
+  body.mobile-tab-booking #schedule th:not(.time),
+  body.mobile-tab-booking #schedule td:not(.time),
+  #mobileBookingPage #schedule th:not(.time),
+  #mobileBookingPage #schedule td:not(.time),
+  .mbs-wrap #schedule th:not(.time),
+  .mbs-wrap #schedule td:not(.time){
+    min-width:74px !important;
+    width:74px !important;
+    max-width:74px !important;
   }
 
-  #mobileBookingPage #schedule{
-    border-collapse:separate!important;
-    border-spacing:0!important;
-    table-layout:fixed!important;
-    width:max-content!important;
-    min-width:max-content!important;
-    transform:none!important;
-    zoom:1!important;
+  body.mobile-tab-booking #schedule .time,
+  #mobileBookingPage #schedule .time,
+  .mbs-wrap #schedule .time{
+    min-width:54px !important;
+    width:54px !important;
+    max-width:54px !important;
   }
 
-  /* 教練欄位縮小：原先偏寬，手機改為 72px */
-  #mobileBookingPage #schedule .coach-head,
-  #mobileBookingPage #schedule td.slot,
-  #mobileBookingPage #schedule td.merged,
-  #mobileBookingPage #schedule .self-col{
-    width:72px!important;
-    min-width:72px!important;
-    max-width:72px!important;
+  /* 日期跳轉時的淡色提示 */
+  #schedule .v317-day-focus{
+    outline:3px solid rgba(185,155,114,.55) !important;
+    outline-offset:-3px !important;
+    box-shadow:inset 0 0 0 9999px rgba(255,244,216,.32) !important;
   }
-
-  #mobileBookingPage #schedule .time{
-    width:50px!important;
-    min-width:50px!important;
-    max-width:50px!important;
-    position:sticky!important;
-    left:0!important;
-    z-index:120!important;
-    background:#faf4eb!important;
-    box-shadow:3px 0 8px rgba(80,60,30,.10)!important;
-  }
-
-  #mobileBookingPage #schedule th.time{
-    z-index:180!important;
-    background:#f7efe2!important;
-  }
-
-  #mobileBookingPage #schedule th{
-    position:sticky!important;
-    top:0!important;
-    z-index:100!important;
-    background:#fff7e8!important;
-  }
-
-  #mobileBookingPage #schedule .day-title{
-    height:42px!important;
-    font-size:12px!important;
-    z-index:110!important;
-    background:#fff3dc!important;
-  }
-
-  #mobileBookingPage #schedule .coach-head{
-    height:38px!important;
-    font-size:11px!important;
-    top:42px!important;
-    z-index:105!important;
-  }
-
-  #mobileBookingPage #schedule td{
-    height:42px!important;
-    font-size:11px!important;
-  }
-
-  #mobileBookingPage #schedule .entry{
-    font-size:10px!important;
-    line-height:1.15!important;
-    padding:3px 2px!important;
-    border-radius:9px!important;
-  }
-  #mobileBookingPage #schedule .entry-meta{
-    font-size:8.8px!important;
-  }
-
-  /* 本月總覽單日格：明確提示可跳轉 */
-  #mobileMonthOverviewGrid .mobile-month-cell{
-    cursor:pointer!important;
-    touch-action:manipulation!important;
+  #schedule .v317-entry-focus{
+    outline:3px solid rgba(185,155,114,.8) !important;
+    outline-offset:2px !important;
   }
 }
 </style>
-
-<script id="v316-mobile-cols-and-datejump-js">
+<script id="v317-mobile-month-datejump-js">
 (function(){
-  function byId(id){return document.getElementById(id);}
-  function isMobile(){return window.matchMedia && window.matchMedia('(max-width:760px)').matches;}
-  function fmtDate(d){
-    if(typeof window.fmt==='function') return window.fmt(d);
-    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  function byId(id){ return document.getElementById(id); }
+  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function fmtLocal(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function parseDate(dateStr){
+    var parts=String(dateStr||'').slice(0,10).split('-').map(Number);
+    if(parts.length>=3 && parts[0]) return new Date(parts[0], (parts[1]||1)-1, parts[2]||1);
+    return new Date();
   }
-  function mondayOf(dateStr){
-    var d=new Date(String(dateStr)+'T00:00:00');
-    if(isNaN(d)) d=new Date();
+  function mondayLocal(dateStr){
     if(typeof window.monday==='function'){
-      try{return fmtDate(window.monday(d));}catch(e){}
+      try{return window.monday(dateStr);}catch(e){}
     }
-    var day=d.getDay();
-    var diff=(day===0?-6:1-day);
-    d.setDate(d.getDate()+diff);
-    return fmtDate(d);
+    var d=parseDate(dateStr);
+    var delta=(d.getDay()+6)%7;
+    d.setDate(d.getDate()-delta);
+    return d;
   }
-  function setBodyTab(tab){
-    ['month','booking','stats','query','agenda'].forEach(function(t){document.body.classList.remove('mobile-tab-'+t);});
-    document.body.classList.add('mobile-tab-'+tab);
-    window.mobileTab=tab;
+  function escSel(value){
+    if(window.CSS && typeof CSS.escape==='function') return CSS.escape(String(value));
+    return String(value).replace(/[^a-zA-Z0-9_-]/g,'\\$&');
   }
-  function closeDrawer(){
-    var dr=byId('mobileDrawer'), ov=byId('mobileDrawerOverlay');
-    if(dr) dr.classList.remove('md-open');
-    if(ov) ov.classList.remove('md-open');
-    document.body.style.overflow='';
+  function ensureMobileBookingPage(){
+    try{
+      if(typeof window.setMobileTab==='function') window.setMobileTab('booking');
+      else window.mobileTab='booking';
+    }catch(e){ window.mobileTab='booking'; }
+    try{ document.body.classList.remove('mobile-tab-month','mobile-tab-query','mobile-tab-stats','mobile-tab-agenda'); document.body.classList.add('mobile-tab-booking'); }catch(e){}
+    try{ if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile(); }catch(e){}
   }
-  function fixMobileScheduleLayout(){
-    if(!isMobile()) return;
-    var wrap=byId('mobileBookingWrap');
+  function annotateScheduleForJump(){
     var schedule=byId('schedule');
-    if(!wrap || !schedule) return;
-    wrap.style.width='100vw';
-    wrap.style.maxWidth='100vw';
-    wrap.style.overflow='auto';
-    wrap.style.webkitOverflowScrolling='auto';
-    var scWrap=schedule.closest('.schedule-wrap');
-    if(scWrap){
-      scWrap.style.width='100vw';
-      scWrap.style.maxWidth='100vw';
-      scWrap.style.overflow='auto';
-      scWrap.style.webkitOverflowScrolling='auto';
-    }
-    schedule.style.transform='none';
-    schedule.style.zoom='1';
-    schedule.style.borderCollapse='separate';
-    schedule.style.borderSpacing='0';
-  }
-  function scrollToSelectedDate(dateStr){
-    if(!isMobile()) return;
-    var wrap=byId('mobileBookingWrap');
-    var schedule=byId('schedule');
-    if(!wrap || !schedule) return;
-    var monday=mondayOf(dateStr);
-    var target=new Date(String(dateStr)+'T00:00:00');
-    var start=new Date(String(monday)+'T00:00:00');
-    var dayIndex=Math.max(0, Math.min(6, Math.round((target-start)/(24*60*60*1000))));
-    var timeW=50;
-    var colW=72;
-    var perDay=(Array.isArray(window.coaches)?window.coaches.length:0)+1;
-    var x=Math.max(0, timeW + dayIndex*perDay*colW - timeW);
-    var scWrap=schedule.closest('.schedule-wrap') || wrap;
-    scWrap.scrollTo({left:x, top:0, behavior:'auto'});
-    wrap.scrollTo({left:x, top:0, behavior:'auto'});
-  }
+    if(!schedule) return;
+    var wp=byId('weekPicker');
+    var base=wp && wp.value ? wp.value : fmtLocal(new Date());
+    var start=mondayLocal(base);
+    var dayTitles=schedule.querySelectorAll('tr:first-child .day-title');
+    dayTitles.forEach(function(th,i){
+      var d=new Date(start); d.setDate(start.getDate()+i);
+      th.dataset.date=fmtLocal(d);
+    });
 
-  window.mobileJumpToBookingDateV316=function(dateStr){
-    if(!dateStr) return;
-    window.mobileSelectedDate=dateStr;
-    var picker=byId('weekPicker');
-    if(picker) picker.value=dateStr;
-    setBodyTab('booking');
-    closeDrawer();
-    if(typeof window.attachScheduleToMobile==='function'){
-      try{window.attachScheduleToMobile();}catch(e){}
+    // 為每一格加日期，讓捲動定位不依賴文字內容
+    var rows=schedule.querySelectorAll('tr');
+    var visibleCount=(function(){
+      try{ return (byId('filterCoach') && byId('filterCoach').value) ? 1 : (Array.isArray(window.coaches)?window.coaches.length:0); }catch(e){ return 0; }
+    })();
+    var perDay=visibleCount+1; // FREE + 教練數
+    rows.forEach(function(row,ri){
+      if(ri<2) return;
+      var cells=[].slice.call(row.children).filter(function(c){return !c.classList.contains('time');});
+      var logicalIndex=0;
+      cells.forEach(function(cell){
+        var span=Number(cell.getAttribute('colspan')||1);
+        var dayIndex=Math.floor(logicalIndex/perDay);
+        if(dayIndex>=0 && dayIndex<7){
+          var d=new Date(start); d.setDate(start.getDate()+dayIndex);
+          cell.dataset.date=fmtLocal(d);
+        }
+        logicalIndex += span;
+      });
+    });
+  }
+  window.v317AnnotateScheduleForJump=annotateScheduleForJump;
+
+  function focusScheduleDate(dateStr){
+    var schedule=byId('schedule');
+    if(!schedule) return false;
+    annotateScheduleForJump();
+    var wrap=schedule.closest('.schedule-wrap') || byId('mobileBookingWrap');
+    var targetDate=String(dateStr).slice(0,10);
+    var dayHeader=schedule.querySelector('.day-title[data-date="'+escSel(targetDate)+'"]');
+    if(!wrap || !dayHeader) return false;
+
+    var left=Math.max(0, dayHeader.offsetLeft - 56);
+    wrap.scrollLeft=left;
+
+    // 優先捲到該日最早一筆預約；若沒有預約，停在表格上方。
+    var entries=[].slice.call(schedule.querySelectorAll('td[data-date="'+escSel(targetDate)+'"] .entry'));
+    if(entries.length){
+      var first=entries[0];
+      var row=first.closest('tr');
+      if(row) wrap.scrollTop=Math.max(0, row.offsetTop - 92);
+      first.classList.add('v317-entry-focus');
+      setTimeout(function(){ first.classList.remove('v317-entry-focus'); },2200);
+    }else{
+      wrap.scrollTop=0;
     }
-    if(typeof window.render==='function'){
-      try{window.render();}catch(e){console.warn(e);}
-    }
-    if(typeof window.setMobileTab==='function'){
-      try{window.setMobileTab('booking');}catch(e){console.warn(e);}
-    }
+
+    dayHeader.classList.add('v317-day-focus');
+    setTimeout(function(){ dayHeader.classList.remove('v317-day-focus'); },2200);
+    return true;
+  }
+  window.focusScheduleDateV317=focusScheduleDate;
+
+  window.jumpMobileMonthDateToScheduleV317=function(dateStr){
+    var date=String(dateStr||'').slice(0,10);
+    if(!date) return;
+
+    // 重要：用「點選的日期」作為 weekPicker 值，render() 內會自行換算該週週一。
+    // 這樣與桌機版日期選擇邏輯一致，也避免 UTC 導致日期前一天。
+    window.mobileSelectedDate=date;
+    var wp=byId('weekPicker');
+    if(wp) wp.value=date;
+    if(byId('filterType')) byId('filterType').value='';
+
+    ensureMobileBookingPage();
+    try{ if(typeof window.render==='function') window.render(); }catch(e){ console.warn(e); }
+    try{ if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile(); }catch(e){}
+
     setTimeout(function(){
-      if(typeof window.attachScheduleToMobile==='function'){
-        try{window.attachScheduleToMobile();}catch(e){}
-      }
-      fixMobileScheduleLayout();
-      scrollToSelectedDate(dateStr);
-      var page=byId('mobileBookingPage');
-      if(page) page.scrollIntoView({block:'start', inline:'nearest', behavior:'auto'});
-      window.scrollTo({top:0, behavior:'auto'});
+      try{ if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile(); }catch(e){}
+      try{ if(typeof window.render==='function') window.render(); }catch(e){}
+      setTimeout(function(){
+        var ok=focusScheduleDate(date);
+        if(typeof window.toast==='function') window.toast(ok?'已跳到該日期預約表':'已切換到該日期週次');
+      },80);
     },80);
-    setTimeout(function(){fixMobileScheduleLayout();scrollToSelectedDate(dateStr);},260);
   };
 
-  /* 攔截本月總覽日期點擊：避免舊版只切 tab，卻沒有鎖頂與跳到該日期週課表 */
+  // 攔截手機版本月總覽日期格：不要只改 selectedDate，要完整執行「切頁＋render＋定位」
   document.addEventListener('click',function(ev){
     if(!isMobile()) return;
-    var cell=ev.target && ev.target.closest ? ev.target.closest('#mobileMonthOverviewGrid .mobile-month-cell') : null;
+    var cell=ev.target.closest && ev.target.closest('.mobile-month-cell');
     if(!cell) return;
-    var onclick=cell.getAttribute('onclick')||'';
-    var m=onclick.match(/setMobileSelectedDate\('([0-9]{4}-[0-9]{2}-[0-9]{2})'\)/);
-    var dateStr=cell.getAttribute('data-date') || (m && m[1]);
-    if(!dateStr) return;
+    var raw=cell.dataset.date || cell.getAttribute('data-date') || '';
+    if(!raw){
+      var oc=cell.getAttribute('onclick')||'';
+      var m=oc.match(/setMobileSelectedDate\('([^']+)'\)/);
+      if(m) raw=m[1];
+    }
+    if(!raw) return;
     ev.preventDefault();
     ev.stopPropagation();
-    window.mobileJumpToBookingDateV316(dateStr);
+    if(typeof ev.stopImmediatePropagation==='function') ev.stopImmediatePropagation();
+    window.jumpMobileMonthDateToScheduleV317(raw);
   },true);
 
-  /* renderMobileMonthOverview 後補上 data-date，方便穩定攔截 */
-  if(typeof window.renderMobileMonthOverview==='function' && !window.renderMobileMonthOverview.__v316Wrapped){
-    var oldMonth=window.renderMobileMonthOverview;
+  // 重新包 renderMobileMonthOverview：給每個日期格補 data-date，之後點擊不用再解析 inline onclick。
+  if(typeof window.renderMobileMonthOverview==='function' && !window.renderMobileMonthOverview.__v317Wrapped){
+    var oldRenderMobileMonthOverview=window.renderMobileMonthOverview;
     window.renderMobileMonthOverview=function(){
-      var r=oldMonth.apply(this,arguments);
-      var cells=document.querySelectorAll('#mobileMonthOverviewGrid .mobile-month-cell');
-      cells.forEach(function(cell){
-        var onclick=cell.getAttribute('onclick')||'';
-        var m=onclick.match(/setMobileSelectedDate\('([0-9]{4}-[0-9]{2}-[0-9]{2})'\)/);
-        if(m) cell.setAttribute('data-date',m[1]);
-      });
+      var r=oldRenderMobileMonthOverview.apply(this,arguments);
+      setTimeout(function(){
+        var cells=document.querySelectorAll('.mobile-month-cell');
+        cells.forEach(function(cell){
+          if(cell.dataset.date) return;
+          var oc=cell.getAttribute('onclick')||'';
+          var m=oc.match(/setMobileSelectedDate\('([^']+)'\)/);
+          if(m) cell.dataset.date=m[1];
+        });
+      },0);
       return r;
     };
-    window.renderMobileMonthOverview.__v316Wrapped=true;
+    window.renderMobileMonthOverview.__v317Wrapped=true;
   }
 
-  if(typeof window.render==='function' && !window.render.__v316MobileColsWrapped){
+  if(typeof window.render==='function' && !window.render.__v317JumpWrapped){
     var oldRender=window.render;
     window.render=function(){
       var r=oldRender.apply(this,arguments);
-      setTimeout(fixMobileScheduleLayout,0);
-      setTimeout(fixMobileScheduleLayout,120);
+      setTimeout(annotateScheduleForJump,0);
+      setTimeout(annotateScheduleForJump,120);
       return r;
     };
-    window.render.__v316MobileColsWrapped=true;
-  }
-
-  if(typeof window.setMobileTab==='function' && !window.setMobileTab.__v316MobileColsWrapped){
-    var oldSet=window.setMobileTab;
-    window.setMobileTab=function(tab){
-      var r=oldSet.apply(this,arguments);
-      if(tab==='booking'){
-        setTimeout(fixMobileScheduleLayout,80);
-        setTimeout(function(){
-          fixMobileScheduleLayout();
-          var selected=window.mobileSelectedDate || (byId('weekPicker') && byId('weekPicker').value);
-          if(selected) scrollToSelectedDate(selected);
-        },220);
-      }
-      return r;
-    };
-    window.setMobileTab.__v316MobileColsWrapped=true;
+    window.render.__v317JumpWrapped=true;
   }
 
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',function(){setTimeout(fixMobileScheduleLayout,250);});
+    document.addEventListener('DOMContentLoaded',function(){ setTimeout(annotateScheduleForJump,300); });
   }else{
-    setTimeout(fixMobileScheduleLayout,250);
+    setTimeout(annotateScheduleForJump,300);
   }
 })();
 </script>
