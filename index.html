@@ -9842,6 +9842,9 @@ body.role-coach.is-logged-in .side { display: none !important; }
   <button type="button" class="md-item" data-tab="query" onclick="closeMobileDrawer();setMobileTab('query')">
     <span class="md-item-icon ico-query">◈</span>統計/查詢作業
   </button>
+  <button type="button" class="md-item coach-only" id="mdBtnStudentCoach" onclick="closeMobileDrawer();openStudentManager()">
+    <span class="md-item-icon ico-stud">⊛</span>學員管理
+  </button>
 
   <div class="md-divider"></div>
   <div class="md-section admin-only" id="mdAdminSection">管理功能</div>
@@ -11286,207 +11289,248 @@ window.addEventListener('resize', function(){
 
 
 
-<!-- v319 mobile month-date jump + coach student manager (minimal patch) -->
-<style id="v319-mobile-datejump-focus-css">
+<!-- v317 mobile month date jump + compact coach columns -->
+<style id="v317-mobile-month-datejump-css">
 @media (max-width:760px){
-  #schedule .v319-day-focus{
+  /* 手機版教練欄位再縮小一些，但仍保留可點擊面積 */
+  body.mobile-tab-booking #schedule th:not(.time),
+  body.mobile-tab-booking #schedule td:not(.time),
+  #mobileBookingPage #schedule th:not(.time),
+  #mobileBookingPage #schedule td:not(.time),
+  .mbs-wrap #schedule th:not(.time),
+  .mbs-wrap #schedule td:not(.time){
+    min-width:74px !important;
+    width:74px !important;
+    max-width:74px !important;
+  }
+
+  body.mobile-tab-booking #schedule .time,
+  #mobileBookingPage #schedule .time,
+  .mbs-wrap #schedule .time{
+    min-width:54px !important;
+    width:54px !important;
+    max-width:54px !important;
+  }
+
+  /* 日期跳轉時的淡色提示 */
+  #schedule .v317-day-focus{
     outline:3px solid rgba(185,155,114,.55) !important;
     outline-offset:-3px !important;
-    box-shadow:inset 0 0 0 9999px rgba(255,244,216,.22) !important;
+    box-shadow:inset 0 0 0 9999px rgba(255,244,216,.32) !important;
+  }
+  #schedule .v317-entry-focus{
+    outline:3px solid rgba(185,155,114,.8) !important;
+    outline-offset:2px !important;
   }
 }
 </style>
-<script id="v319-mobile-month-datejump-and-student-manager">
+<script id="v317-mobile-month-datejump-js">
 (function(){
   function byId(id){ return document.getElementById(id); }
   function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
   function pad(n){ return String(n).padStart(2,'0'); }
+  function fmtLocal(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
   function parseDate(dateStr){
-    var p=String(dateStr||'').slice(0,10).split('-').map(Number);
-    if(p.length>=3 && p[0]) return new Date(p[0], (p[1]||1)-1, p[2]||1);
+    var parts=String(dateStr||'').slice(0,10).split('-').map(Number);
+    if(parts.length>=3 && parts[0]) return new Date(parts[0], (parts[1]||1)-1, parts[2]||1);
     return new Date();
   }
-  function fmtLocal(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
   function mondayLocal(dateStr){
     if(typeof window.monday==='function'){
-      try{ return window.monday(dateStr); }catch(e){}
+      try{return window.monday(dateStr);}catch(e){}
     }
     var d=parseDate(dateStr);
-    d.setDate(d.getDate()-((d.getDay()+6)%7));
+    var delta=(d.getDay()+6)%7;
+    d.setDate(d.getDate()-delta);
     return d;
   }
-
-  function getVisibleColumnCount(){
-    try{
-      var filterCoach=byId('filterCoach');
-      if(filterCoach && filterCoach.value) return 2; // 自主 + 指定教練
-      if(Array.isArray(window.coaches)) return window.coaches.length+1; // 自主 + 全部教練
-    }catch(e){}
-    var row=document.querySelector('#schedule tr:nth-child(2)');
-    return row ? Math.max(1,row.children.length-1)/7 : 1;
+  function escSel(value){
+    if(window.CSS && typeof CSS.escape==='function') return CSS.escape(String(value));
+    return String(value).replace(/[^a-zA-Z0-9_-]/g,'\\$&');
   }
-
-  function annotateScheduleForMobileJump(){
-    var table=byId('schedule');
-    var picker=byId('weekPicker');
-    if(!table || !picker) return;
-    var start=mondayLocal(picker.value || new Date());
-    var dates=[];
-    for(var i=0;i<7;i++){
-      var d=new Date(start); d.setDate(start.getDate()+i); dates.push(fmtLocal(d));
-    }
-
-    var dayHeads=table.querySelectorAll('th.day-title');
-    dayHeads.forEach(function(th,i){ if(dates[i]) th.setAttribute('data-v319-date',dates[i]); });
-
-    var secondRow=table.rows && table.rows[1];
-    var perDay=Math.max(1, Math.round(getVisibleColumnCount()));
-    if(secondRow){
-      for(var c=1;c<secondRow.cells.length;c++){
-        var di=Math.floor((c-1)/perDay);
-        if(dates[di]) secondRow.cells[c].setAttribute('data-v319-date',dates[di]);
-      }
-    }
-  }
-
-  function firstVisibleEntryForDate(dateStr){
+  function ensureMobileBookingPage(){
     try{
-      var list=(window.entries||[]).filter(function(e){
-        if(e.date!==dateStr) return false;
-        if(typeof window.isAdmin==='function' && window.isAdmin()) return true;
-        if(typeof window.isCoach==='function' && window.isCoach()){
-          return e.coach===window.currentCoach || e.coach===window.SELF_TRAINING;
+      if(typeof window.setMobileTab==='function') window.setMobileTab('booking');
+      else window.mobileTab='booking';
+    }catch(e){ window.mobileTab='booking'; }
+    try{ document.body.classList.remove('mobile-tab-month','mobile-tab-query','mobile-tab-stats','mobile-tab-agenda'); document.body.classList.add('mobile-tab-booking'); }catch(e){}
+    try{ if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile(); }catch(e){}
+  }
+  function annotateScheduleForJump(){
+    var schedule=byId('schedule');
+    if(!schedule) return;
+    var wp=byId('weekPicker');
+    var base=wp && wp.value ? wp.value : fmtLocal(new Date());
+    var start=mondayLocal(base);
+    var dayTitles=schedule.querySelectorAll('tr:first-child .day-title');
+    dayTitles.forEach(function(th,i){
+      var d=new Date(start); d.setDate(start.getDate()+i);
+      th.dataset.date=fmtLocal(d);
+    });
+
+    // 為每一格加日期，讓捲動定位不依賴文字內容
+    var rows=schedule.querySelectorAll('tr');
+    var visibleCount=(function(){
+      try{ return (byId('filterCoach') && byId('filterCoach').value) ? 1 : (Array.isArray(window.coaches)?window.coaches.length:0); }catch(e){ return 0; }
+    })();
+    var perDay=visibleCount+1; // FREE + 教練數
+    rows.forEach(function(row,ri){
+      if(ri<2) return;
+      var cells=[].slice.call(row.children).filter(function(c){return !c.classList.contains('time');});
+      var logicalIndex=0;
+      cells.forEach(function(cell){
+        var span=Number(cell.getAttribute('colspan')||1);
+        var dayIndex=Math.floor(logicalIndex/perDay);
+        if(dayIndex>=0 && dayIndex<7){
+          var d=new Date(start); d.setDate(start.getDate()+dayIndex);
+          cell.dataset.date=fmtLocal(d);
         }
-        return true;
-      }).sort(function(a,b){ return String(a.time||'').localeCompare(String(b.time||'')); });
-      return list[0] || null;
-    }catch(e){ return null; }
+        logicalIndex += span;
+      });
+    });
   }
+  window.v317AnnotateScheduleForJump=annotateScheduleForJump;
 
-  function findTimeRow(timeText){
-    var table=byId('schedule');
-    if(!table || !timeText) return null;
-    var rows=Array.prototype.slice.call(table.rows||[]);
-    return rows.find(function(row){
-      var cell=row.cells && row.cells[0];
-      return cell && cell.classList.contains('time') && cell.textContent.trim()===timeText;
-    }) || null;
-  }
+  function focusScheduleDate(dateStr){
+    var schedule=byId('schedule');
+    if(!schedule) return false;
+    annotateScheduleForJump();
+    var wrap=schedule.closest('.schedule-wrap') || byId('mobileBookingWrap');
+    var targetDate=String(dateStr).slice(0,10);
+    var dayHeader=schedule.querySelector('.day-title[data-date="'+escSel(targetDate)+'"]');
+    if(!wrap || !dayHeader) return false;
 
-  function scrollMobileScheduleToDate(dateStr){
-    annotateScheduleForMobileJump();
-    var wrap=byId('mobileBookingWrap') || document.querySelector('.mbs-wrap') || document.querySelector('.schedule-wrap');
-    var table=byId('schedule');
-    if(!wrap || !table) return;
+    var left=Math.max(0, dayHeader.offsetLeft - 56);
+    wrap.scrollLeft=left;
 
-    table.querySelectorAll('.v319-day-focus').forEach(function(el){ el.classList.remove('v319-day-focus'); });
-
-    var targetHead=table.querySelector('th.day-title[data-v319-date="'+dateStr+'"]');
-    if(targetHead){
-      targetHead.classList.add('v319-day-focus');
-      var timeCol=table.querySelector('th.time,td.time');
-      var stickyWidth=timeCol ? timeCol.offsetWidth : 54;
-      wrap.scrollLeft=Math.max(0, targetHead.offsetLeft-stickyWidth-8);
+    // 優先捲到該日最早一筆預約；若沒有預約，停在表格上方。
+    var entries=[].slice.call(schedule.querySelectorAll('td[data-date="'+escSel(targetDate)+'"] .entry'));
+    if(entries.length){
+      var first=entries[0];
+      var row=first.closest('tr');
+      if(row) wrap.scrollTop=Math.max(0, row.offsetTop - 92);
+      first.classList.add('v317-entry-focus');
+      setTimeout(function(){ first.classList.remove('v317-entry-focus'); },2200);
+    }else{
+      wrap.scrollTop=0;
     }
 
-    var first=firstVisibleEntryForDate(dateStr);
-    var row=findTimeRow(first && first.time ? first.time : '07:00');
-    var headerRows=table.rows[0] && table.rows[1] ? (table.rows[0].offsetHeight+table.rows[1].offsetHeight) : 72;
-    if(row) wrap.scrollTop=Math.max(0,row.offsetTop-headerRows-8);
-    else wrap.scrollTop=0;
+    dayHeader.classList.add('v317-day-focus');
+    setTimeout(function(){ dayHeader.classList.remove('v317-day-focus'); },2200);
+    return true;
   }
+  window.focusScheduleDateV317=focusScheduleDate;
 
-  window.mobileJumpToMonthDateV319=function(dateStr){
-    if(!dateStr) return;
-    window.mobileSelectedDate=dateStr;
-    var picker=byId('weekPicker');
-    if(picker) picker.value=dateStr;
-    if(typeof window.closeMobileDrawer==='function') window.closeMobileDrawer();
+  window.jumpMobileMonthDateToScheduleV317=function(dateStr){
+    var date=String(dateStr||'').slice(0,10);
+    if(!date) return;
 
-    // 直接切到手機預約課表，讓 render 使用 weekPicker 日期渲染該週。
-    if(typeof window.setMobileTab==='function') window.setMobileTab('booking');
-    else window.mobileTab='booking';
+    // 重要：用「點選的日期」作為 weekPicker 值，render() 內會自行換算該週週一。
+    // 這樣與桌機版日期選擇邏輯一致，也避免 UTC 導致日期前一天。
+    window.mobileSelectedDate=date;
+    var wp=byId('weekPicker');
+    if(wp) wp.value=date;
+    if(byId('filterType')) byId('filterType').value='';
 
-    if(typeof window.render==='function'){
-      try{ window.render(); }catch(e){}
-    }
+    ensureMobileBookingPage();
+    try{ if(typeof window.render==='function') window.render(); }catch(e){ console.warn(e); }
+    try{ if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile(); }catch(e){}
 
-    setTimeout(function(){ scrollMobileScheduleToDate(dateStr); },80);
-    setTimeout(function(){ scrollMobileScheduleToDate(dateStr); },260);
-    setTimeout(function(){ scrollMobileScheduleToDate(dateStr); },520);
+    setTimeout(function(){
+      try{ if(typeof window.attachScheduleToMobile==='function') window.attachScheduleToMobile(); }catch(e){}
+      try{ if(typeof window.render==='function') window.render(); }catch(e){}
+      setTimeout(function(){
+        var ok=focusScheduleDate(date);
+        if(typeof window.toast==='function') window.toast(ok?'已跳到該日期預約表':'已切換到該日期週次');
+      },80);
+    },80);
   };
 
-  // 攔截手機版「本月總覽」日期按鈕，避免原本只切 tab、沒有定位到日期欄位。
+  // 攔截手機版本月總覽日期格：不要只改 selectedDate，要完整執行「切頁＋render＋定位」
   document.addEventListener('click',function(ev){
     if(!isMobile()) return;
-    var btn=ev.target.closest && ev.target.closest('.mobile-month-cell');
-    if(!btn) return;
-    var onclick=btn.getAttribute('onclick')||'';
-    var m=onclick.match(/setMobileSelectedDate\(['"](\d{4}-\d{2}-\d{2})['"]\)/);
-    if(!m) return;
+    var cell=ev.target.closest && ev.target.closest('.mobile-month-cell');
+    if(!cell) return;
+    var raw=cell.dataset.date || cell.getAttribute('data-date') || '';
+    if(!raw){
+      var oc=cell.getAttribute('onclick')||'';
+      var m=oc.match(/setMobileSelectedDate\('([^']+)'\)/);
+      if(m) raw=m[1];
+    }
+    if(!raw) return;
     ev.preventDefault();
     ev.stopPropagation();
     if(typeof ev.stopImmediatePropagation==='function') ev.stopImmediatePropagation();
-    window.mobileJumpToMonthDateV319(m[1]);
+    window.jumpMobileMonthDateToScheduleV317(raw);
   },true);
 
-  function ensureCoachStudentButton(){
-    var drawer=byId('mobileDrawer');
-    if(!drawer || byId('mdBtnStudentCoach')) return;
-    var queryBtn=drawer.querySelector('button[data-tab="query"]');
-    var btn=document.createElement('button');
-    btn.type='button';
-    btn.className='md-item';
-    btn.id='mdBtnStudentCoach';
-    btn.style.display='none';
-    btn.setAttribute('onclick',"closeMobileDrawer();openStudentManager()");
-    btn.innerHTML='<span class="md-item-icon ico-stud">⊛</span>學員管理';
-    if(queryBtn && queryBtn.parentNode) queryBtn.parentNode.insertBefore(btn, queryBtn.nextSibling);
-  }
-
-  function applyCoachStudentButtonVisibility(){
-    ensureCoachStudentButton();
-    var btn=byId('mdBtnStudentCoach');
-    if(!btn) return;
-    var coach=(typeof window.isCoach==='function') && window.isCoach();
-    var admin=(typeof window.isAdmin==='function') && window.isAdmin();
-    btn.style.display=(coach && !admin) ? '' : 'none';
-  }
-
-  var oldOpenDrawer=window.openMobileDrawer;
-  window.openMobileDrawer=function(){
-    if(typeof oldOpenDrawer==='function') oldOpenDrawer.apply(this,arguments);
-    applyCoachStudentButtonVisibility();
-  };
-
-  var oldApplyRoleUI=window.applyRoleUI;
-  window.applyRoleUI=function(){
-    if(typeof oldApplyRoleUI==='function') oldApplyRoleUI.apply(this,arguments);
-    applyCoachStudentButtonVisibility();
-  };
-
-  var oldRender=window.render;
-  if(typeof oldRender==='function' && !oldRender.__v319Wrapped){
-    window.render=function(){
-      var result=oldRender.apply(this,arguments);
-      setTimeout(annotateScheduleForMobileJump,0);
-      setTimeout(annotateScheduleForMobileJump,160);
-      return result;
+  // 重新包 renderMobileMonthOverview：給每個日期格補 data-date，之後點擊不用再解析 inline onclick。
+  if(typeof window.renderMobileMonthOverview==='function' && !window.renderMobileMonthOverview.__v317Wrapped){
+    var oldRenderMobileMonthOverview=window.renderMobileMonthOverview;
+    window.renderMobileMonthOverview=function(){
+      var r=oldRenderMobileMonthOverview.apply(this,arguments);
+      setTimeout(function(){
+        var cells=document.querySelectorAll('.mobile-month-cell');
+        cells.forEach(function(cell){
+          if(cell.dataset.date) return;
+          var oc=cell.getAttribute('onclick')||'';
+          var m=oc.match(/setMobileSelectedDate\('([^']+)'\)/);
+          if(m) cell.dataset.date=m[1];
+        });
+      },0);
+      return r;
     };
-    window.render.__v319Wrapped=true;
+    window.renderMobileMonthOverview.__v317Wrapped=true;
+  }
+
+  if(typeof window.render==='function' && !window.render.__v317JumpWrapped){
+    var oldRender=window.render;
+    window.render=function(){
+      var r=oldRender.apply(this,arguments);
+      setTimeout(annotateScheduleForJump,0);
+      setTimeout(annotateScheduleForJump,120);
+      return r;
+    };
+    window.render.__v317JumpWrapped=true;
   }
 
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',function(){
-      ensureCoachStudentButton();
-      applyCoachStudentButtonVisibility();
-      setTimeout(annotateScheduleForMobileJump,250);
-    });
+    document.addEventListener('DOMContentLoaded',function(){ setTimeout(annotateScheduleForJump,300); });
   }else{
-    ensureCoachStudentButton();
-    applyCoachStudentButtonVisibility();
-    setTimeout(annotateScheduleForMobileJump,250);
+    setTimeout(annotateScheduleForJump,300);
   }
+})();
+</script>
+
+
+
+<!-- v318 手機版教練主要功能加入學員管理 -->
+<script id="v318-mobile-coach-student-manager">
+(function(){
+  function byId(id){return document.getElementById(id);}
+
+  // 讓手機版漢堡選單的「學員管理」出現在教練主要功能區，管理員仍保留原本管理功能區入口。
+  function applyCoachStudentDrawerVisibility(){
+    var coachBtn = byId('mdBtnStudentCoach');
+    if(!coachBtn) return;
+    var isCoachRole = (typeof isCoach === 'function') && isCoach();
+    var isAdminRole = (typeof isAdmin === 'function') && isAdmin();
+    coachBtn.style.display = (isCoachRole && !isAdminRole) ? '' : 'none';
+  }
+
+  var oldOpenDrawer = window.openMobileDrawer;
+  window.openMobileDrawer = function(){
+    if(typeof oldOpenDrawer === 'function') oldOpenDrawer();
+    applyCoachStudentDrawerVisibility();
+  };
+
+  var oldApplyRoleUI = window.applyRoleUI;
+  window.applyRoleUI = function(){
+    if(typeof oldApplyRoleUI === 'function') oldApplyRoleUI();
+    applyCoachStudentDrawerVisibility();
+  };
+
+  document.addEventListener('DOMContentLoaded', applyCoachStudentDrawerVisibility);
 })();
 </script>
 
