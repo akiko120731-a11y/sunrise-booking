@@ -11286,175 +11286,174 @@ window.addEventListener('resize', function(){
 
 
 
-<!-- v319 手機本月總覽日期跳轉修正：只修正點日期後切週與定位，不改其他版面 -->
-<script>
+<!-- v320 mobile month overview safe date jump only -->
+<script id="v320-mobile-month-datejump-safe">
 (function(){
-  'use strict';
-  if(window.__v319MobileMonthDateJumpFixed) return;
-  window.__v319MobileMonthDateJumpFixed = true;
-
-  var pendingJumpDate = '';
-  var isProgrammaticJump = false;
-
+  function isMobile(){ return window.innerWidth <= 760; }
   function byId(id){ return document.getElementById(id); }
-  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
-  function parseDate(date){ return new Date(String(date || '') + 'T00:00:00'); }
-  function fmtDate(d){
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  }
-  function mondayOf(date){
-    var d = parseDate(date);
-    if(isNaN(d)) d = new Date();
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function toDate(dateStr){ return new Date(String(dateStr || '').slice(0,10) + 'T00:00:00'); }
+  function fmtLocal(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function mondayOf(dateStr){
+    var d = toDate(dateStr);
+    if(isNaN(d.getTime())) d = new Date();
     var day = d.getDay();
     var diff = day === 0 ? -6 : 1 - day;
     d.setDate(d.getDate() + diff);
-    return d;
+    return fmtLocal(d);
   }
-  function dayIndexInWeek(date){
-    var target = parseDate(date);
-    var mon = mondayOf(date);
-    return Math.max(0, Math.min(6, Math.round((target - mon) / 86400000)));
+  function dayIndexInWeek(dateStr){
+    var d = toDate(dateStr);
+    var m = toDate(mondayOf(dateStr));
+    return Math.max(0, Math.min(6, Math.round((d - m) / 86400000)));
   }
-  function getEntriesForDate(date){
-    try{
-      if(!Array.isArray(window.entries)) return [];
-      var arr = window.entries.filter(function(e){ return e && e.date === date; });
-      if(typeof window.isCoach === 'function' && window.isCoach() && window.currentCoach){
-        arr = arr.filter(function(e){ return e.coach === window.currentCoach || e.coach === window.SELF_TRAINING; });
-      }
-      arr.sort(function(a,b){ return String(a.time || '').localeCompare(String(b.time || '')); });
-      return arr;
-    }catch(e){ return []; }
-  }
-  function getFirstTimeForDate(date){
-    var arr = getEntriesForDate(date);
-    return arr.length ? arr[0].time : '';
-  }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
 
-  function scrollToDateColumn(date){
-    var wrap = document.querySelector('.schedule-wrap');
+  function getScheduleWrap(){
     var schedule = byId('schedule');
-    if(!wrap || !schedule || !schedule.rows || schedule.rows.length < 2) return;
-
-    var idx = dayIndexInWeek(date);
-    var firstRow = schedule.rows[0];
-    var dayHeader = firstRow ? firstRow.cells[idx + 1] : null;
-    var timeCell = firstRow ? firstRow.cells[0] : null;
-    if(dayHeader){
-      var timeWidth = timeCell ? timeCell.offsetWidth : 56;
-      wrap.scrollLeft = Math.max(0, dayHeader.offsetLeft - timeWidth - 2);
-    }
+    if(!schedule) return null;
+    return schedule.closest('.schedule-wrap') || schedule.parentElement;
   }
 
-  function scrollToFirstBookingTime(date){
-    var wrap = document.querySelector('.schedule-wrap');
-    var schedule = byId('schedule');
-    if(!wrap || !schedule || !schedule.rows) return;
-
-    var firstTime = getFirstTimeForDate(date);
-    var targetRow = null;
-    if(firstTime && Array.isArray(window.times)){
-      var ti = window.times.indexOf(firstTime);
-      if(ti >= 0) targetRow = schedule.rows[2 + ti];
-    }
-    if(!targetRow){
-      targetRow = schedule.rows[2] || schedule.rows[0];
-    }
-
-    var headerHeight = 0;
-    if(schedule.rows[0]) headerHeight += schedule.rows[0].offsetHeight || 0;
-    if(schedule.rows[1]) headerHeight += schedule.rows[1].offsetHeight || 0;
-    wrap.scrollTop = Math.max(0, targetRow.offsetTop - headerHeight - 4);
-  }
-
-  function lockPageToScheduleTop(){
-    var wrap = document.querySelector('.schedule-wrap');
-    if(!wrap) return;
-    var card = wrap.closest('.card') || wrap;
-    var top = card.getBoundingClientRect().top + window.pageYOffset - 8;
-    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
-  }
-
-  function performDateJump(date){
-    if(!date) return;
-    pendingJumpDate = date;
-
-    try{ window.mobileSelectedDate = date; }catch(e){}
-    var picker = byId('weekPicker');
-    if(picker) picker.value = date;
-
-    isProgrammaticJump = true;
+  function getVisibleCoachCount(){
     try{
-      if(typeof window.setMobileTab === 'function'){
-        window.setMobileTab('booking');
-      }else if(typeof window.render === 'function'){
-        window.render();
+      var filter = byId('filterCoach');
+      if(filter && filter.value) return 1;
+      if(Array.isArray(window.coaches) && window.coaches.length) return window.coaches.length;
+    }catch(e){}
+    var heads = document.querySelectorAll('#schedule tr:nth-child(2) th.coach-head:not(.self-head)');
+    return Math.max(1, heads.length ? Math.round(heads.length / 7) : 1);
+  }
+
+  function firstEntryTimeForDate(dateStr){
+    try{
+      if(typeof window.mobileEntriesForDate === 'function'){
+        var list = window.mobileEntriesForDate(dateStr) || [];
+        if(list.length){
+          list = list.slice().sort(function(a,b){ return String(a.time || '').localeCompare(String(b.time || '')); });
+          return list[0].time || '';
+        }
       }
-    }finally{
-      isProgrammaticJump = false;
+    }catch(e){}
+    try{
+      var all = Array.isArray(window.entries) ? window.entries : [];
+      var list2 = all.filter(function(e){ return e && e.date === dateStr; })
+        .sort(function(a,b){ return String(a.time || '').localeCompare(String(b.time || '')); });
+      return list2.length ? (list2[0].time || '') : '';
+    }catch(e){}
+    return '';
+  }
+
+  function scrollScheduleToDate(dateStr){
+    if(!isMobile()) return;
+    var schedule = byId('schedule');
+    var wrap = getScheduleWrap();
+    if(!schedule || !wrap) return;
+
+    // 確保不沿用舊版縮放，避免 Safari sticky/scroll 座標錯位。
+    schedule.style.transform = 'none';
+    schedule.style.zoom = '1';
+    schedule.style.transformOrigin = 'top left';
+
+    var timeCell = schedule.querySelector('th.time, td.time');
+    var stickyW = timeCell ? timeCell.getBoundingClientRect().width : 58;
+    var dayTitle = schedule.querySelectorAll('tr:first-child th.day-title')[dayIndexInWeek(dateStr)];
+    var groupW = 0;
+    var targetLeft = 0;
+
+    if(dayTitle){
+      targetLeft = dayTitle.offsetLeft - stickyW - 4;
+    }else{
+      var coachCount = getVisibleCoachCount();
+      var sampleCol = schedule.querySelector('tr:nth-child(2) th.coach-head') || schedule.querySelector('td.slot');
+      var colW = sampleCol ? sampleCol.getBoundingClientRect().width : 85;
+      groupW = (coachCount + 1) * colW;
+      targetLeft = dayIndexInWeek(dateStr) * groupW;
     }
 
+    var maxLeft = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+    targetLeft = clamp(Math.round(targetLeft), 0, maxLeft);
+
+    var targetTop = 0;
+    var firstTime = firstEntryTimeForDate(dateStr);
+    if(firstTime){
+      var rows = Array.prototype.slice.call(schedule.querySelectorAll('tr'));
+      var row = rows.find(function(r){
+        var c = r.querySelector('td.time');
+        return c && c.textContent.trim() === firstTime;
+      });
+      if(row){
+        var headerH = 0;
+        var h1 = schedule.querySelector('tr:nth-child(1)');
+        var h2 = schedule.querySelector('tr:nth-child(2)');
+        if(h1) headerH += h1.getBoundingClientRect().height;
+        if(h2) headerH += h2.getBoundingClientRect().height;
+        targetTop = row.offsetTop - headerH - 10;
+      }
+    }
+    var maxTop = Math.max(0, wrap.scrollHeight - wrap.clientHeight);
+    targetTop = clamp(Math.round(targetTop), 0, maxTop);
+
+    wrap.scrollTo({ left: targetLeft, top: targetTop, behavior: 'auto' });
+    // iOS 有時第一次 layout 還沒完成，補一次同座標，避免跳到最右側。
     setTimeout(function(){
-      try{ if(typeof window.render === 'function') window.render(); }catch(e){}
-    }, 0);
-    setTimeout(function(){
-      lockPageToScheduleTop();
-      scrollToDateColumn(date);
-      scrollToFirstBookingTime(date);
+      var maxLeft2 = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+      var maxTop2 = Math.max(0, wrap.scrollHeight - wrap.clientHeight);
+      wrap.scrollTo({ left: clamp(targetLeft,0,maxLeft2), top: clamp(targetTop,0,maxTop2), behavior: 'auto' });
     }, 120);
-    setTimeout(function(){
-      scrollToDateColumn(date);
-      scrollToFirstBookingTime(date);
-    }, 360);
   }
 
-  window.mobileJumpToDate = performDateJump;
+  function jumpFromMonthToBooking(dateStr){
+    if(!dateStr) return;
+    try{ window.mobileSelectedDate = dateStr; }catch(e){}
+    var picker = byId('weekPicker');
+    if(picker) picker.value = dateStr;
 
-  if(typeof window.setMobileSelectedDate === 'function' && !window.setMobileSelectedDate.__v319Wrapped){
-    var oldSetMobileSelectedDate = window.setMobileSelectedDate;
-    window.setMobileSelectedDate = function(date){
-      if(isMobile() && date){
-        pendingJumpDate = date;
-      }
-      return oldSetMobileSelectedDate.apply(this, arguments);
-    };
-    window.setMobileSelectedDate.__v319Wrapped = true;
+    if(typeof window.renderMobileMonthOverview === 'function'){
+      try{ window.renderMobileMonthOverview(); }catch(e){}
+    }
+
+    if(typeof window.setMobileTab === 'function') window.setMobileTab('booking');
+    else window.mobileTab = 'booking';
+
+    // setMobileTab 內部會 render/搬移桌機課表；等完成後再安全定位。
+    [80, 180, 360, 620].forEach(function(ms){
+      setTimeout(function(){
+        if(typeof window.render === 'function'){
+          // 只在尚未生成 schedule 內容時補 render，避免重複閃動。
+          var schedule = byId('schedule');
+          if(!schedule || !schedule.rows || schedule.rows.length < 3){ try{ window.render(); }catch(e){} }
+        }
+        if(typeof window.attachScheduleToMobile === 'function'){
+          try{ window.attachScheduleToMobile(); }catch(e){}
+        }
+        scrollScheduleToDate(dateStr);
+      }, ms);
+    });
   }
 
-  if(typeof window.setMobileTab === 'function' && !window.setMobileTab.__v319DateJumpWrapped){
-    var oldSetMobileTab = window.setMobileTab;
-    window.setMobileTab = function(tab){
-      var result = oldSetMobileTab.apply(this, arguments);
-      if(isMobile() && tab === 'booking' && pendingJumpDate){
-        var date = pendingJumpDate;
-        setTimeout(function(){
-          var picker = byId('weekPicker');
-          if(picker && picker.value !== date){
-            picker.value = date;
-            try{ if(typeof window.render === 'function') window.render(); }catch(e){}
-          }
-          lockPageToScheduleTop();
-          scrollToDateColumn(date);
-          scrollToFirstBookingTime(date);
-        }, isProgrammaticJump ? 80 : 160);
-      }
-      return result;
-    };
-    window.setMobileTab.__v319DateJumpWrapped = true;
+  function extractDateFromMonthButton(btn){
+    if(!btn) return '';
+    if(btn.dataset && btn.dataset.mobileDate) return btn.dataset.mobileDate;
+    var raw = btn.getAttribute('onclick') || '';
+    var m = raw.match(/setMobileSelectedDate\('([^']+)'\)/);
+    return m ? m[1] : '';
   }
 
-  // 只改手機版本月總覽的日期點擊行為；不改卡片外觀與其他排版。
+  // 只攔截手機版「本月總覽」日期格；其他格式與其他按鈕不動。
   document.addEventListener('click', function(ev){
     if(!isMobile()) return;
-    var cell = ev.target.closest && ev.target.closest('.mobile-month-cell');
-    if(!cell) return;
-    var onclick = cell.getAttribute('onclick') || '';
-    var m = onclick.match(/setMobileSelectedDate\('([^']+)'\)/);
-    if(!m || !m[1]) return;
+    var btn = ev.target.closest && ev.target.closest('#mobileMonthOverviewGrid .mobile-month-cell');
+    if(!btn) return;
+    var dateStr = extractDateFromMonthButton(btn);
+    if(!dateStr) return;
     ev.preventDefault();
     ev.stopPropagation();
-    performDateJump(m[1]);
+    if(typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+    jumpFromMonthToBooking(dateStr);
   }, true);
+
+  window.mobileJumpFromMonthToBookingV320 = jumpFromMonthToBooking;
 })();
 </script>
 
