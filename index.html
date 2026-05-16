@@ -11284,5 +11284,904 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v320 mobile month overview safe date jump only -->
+<script id="v320-mobile-month-datejump-safe">
+(function(){
+  function isMobile(){ return window.innerWidth <= 760; }
+  function byId(id){ return document.getElementById(id); }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function toDate(dateStr){ return new Date(String(dateStr || '').slice(0,10) + 'T00:00:00'); }
+  function fmtLocal(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+  function mondayOf(dateStr){
+    var d = toDate(dateStr);
+    if(isNaN(d.getTime())) d = new Date();
+    var day = d.getDay();
+    var diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return fmtLocal(d);
+  }
+  function dayIndexInWeek(dateStr){
+    var d = toDate(dateStr);
+    var m = toDate(mondayOf(dateStr));
+    return Math.max(0, Math.min(6, Math.round((d - m) / 86400000)));
+  }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+  function getScheduleWrap(){
+    var schedule = byId('schedule');
+    if(!schedule) return null;
+    return schedule.closest('.schedule-wrap') || schedule.parentElement;
+  }
+
+  function getVisibleCoachCount(){
+    try{
+      var filter = byId('filterCoach');
+      if(filter && filter.value) return 1;
+      if(Array.isArray(window.coaches) && window.coaches.length) return window.coaches.length;
+    }catch(e){}
+    var heads = document.querySelectorAll('#schedule tr:nth-child(2) th.coach-head:not(.self-head)');
+    return Math.max(1, heads.length ? Math.round(heads.length / 7) : 1);
+  }
+
+  function firstEntryTimeForDate(dateStr){
+    try{
+      if(typeof window.mobileEntriesForDate === 'function'){
+        var list = window.mobileEntriesForDate(dateStr) || [];
+        if(list.length){
+          list = list.slice().sort(function(a,b){ return String(a.time || '').localeCompare(String(b.time || '')); });
+          return list[0].time || '';
+        }
+      }
+    }catch(e){}
+    try{
+      var all = Array.isArray(window.entries) ? window.entries : [];
+      var list2 = all.filter(function(e){ return e && e.date === dateStr; })
+        .sort(function(a,b){ return String(a.time || '').localeCompare(String(b.time || '')); });
+      return list2.length ? (list2[0].time || '') : '';
+    }catch(e){}
+    return '';
+  }
+
+  function scrollScheduleToDate(dateStr){
+    if(!isMobile()) return;
+    var schedule = byId('schedule');
+    var wrap = getScheduleWrap();
+    if(!schedule || !wrap) return;
+
+    // 確保不沿用舊版縮放，避免 Safari sticky/scroll 座標錯位。
+    schedule.style.transform = 'none';
+    schedule.style.zoom = '1';
+    schedule.style.transformOrigin = 'top left';
+
+    var timeCell = schedule.querySelector('th.time, td.time');
+    var stickyW = timeCell ? timeCell.getBoundingClientRect().width : 58;
+    var dayTitle = schedule.querySelectorAll('tr:first-child th.day-title')[dayIndexInWeek(dateStr)];
+    var groupW = 0;
+    var targetLeft = 0;
+
+    if(dayTitle){
+      targetLeft = dayTitle.offsetLeft - stickyW - 4;
+    }else{
+      var coachCount = getVisibleCoachCount();
+      var sampleCol = schedule.querySelector('tr:nth-child(2) th.coach-head') || schedule.querySelector('td.slot');
+      var colW = sampleCol ? sampleCol.getBoundingClientRect().width : 85;
+      groupW = (coachCount + 1) * colW;
+      targetLeft = dayIndexInWeek(dateStr) * groupW;
+    }
+
+    var maxLeft = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+    targetLeft = clamp(Math.round(targetLeft), 0, maxLeft);
+
+    var targetTop = 0;
+    var firstTime = firstEntryTimeForDate(dateStr);
+    if(firstTime){
+      var rows = Array.prototype.slice.call(schedule.querySelectorAll('tr'));
+      var row = rows.find(function(r){
+        var c = r.querySelector('td.time');
+        return c && c.textContent.trim() === firstTime;
+      });
+      if(row){
+        var headerH = 0;
+        var h1 = schedule.querySelector('tr:nth-child(1)');
+        var h2 = schedule.querySelector('tr:nth-child(2)');
+        if(h1) headerH += h1.getBoundingClientRect().height;
+        if(h2) headerH += h2.getBoundingClientRect().height;
+        targetTop = row.offsetTop - headerH - 10;
+      }
+    }
+    var maxTop = Math.max(0, wrap.scrollHeight - wrap.clientHeight);
+    targetTop = clamp(Math.round(targetTop), 0, maxTop);
+
+    wrap.scrollTo({ left: targetLeft, top: targetTop, behavior: 'auto' });
+    // iOS 有時第一次 layout 還沒完成，補一次同座標，避免跳到最右側。
+    setTimeout(function(){
+      var maxLeft2 = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+      var maxTop2 = Math.max(0, wrap.scrollHeight - wrap.clientHeight);
+      wrap.scrollTo({ left: clamp(targetLeft,0,maxLeft2), top: clamp(targetTop,0,maxTop2), behavior: 'auto' });
+    }, 120);
+  }
+
+  function jumpFromMonthToBooking(dateStr){
+    if(!dateStr) return;
+    try{ window.mobileSelectedDate = dateStr; }catch(e){}
+    var picker = byId('weekPicker');
+    if(picker) picker.value = dateStr;
+
+    if(typeof window.renderMobileMonthOverview === 'function'){
+      try{ window.renderMobileMonthOverview(); }catch(e){}
+    }
+
+    if(typeof window.setMobileTab === 'function') window.setMobileTab('booking');
+    else window.mobileTab = 'booking';
+
+    // setMobileTab 內部會 render/搬移桌機課表；等完成後再安全定位。
+    [80, 180, 360, 620].forEach(function(ms){
+      setTimeout(function(){
+        if(typeof window.render === 'function'){
+          // 只在尚未生成 schedule 內容時補 render，避免重複閃動。
+          var schedule = byId('schedule');
+          if(!schedule || !schedule.rows || schedule.rows.length < 3){ try{ window.render(); }catch(e){} }
+        }
+        if(typeof window.attachScheduleToMobile === 'function'){
+          try{ window.attachScheduleToMobile(); }catch(e){}
+        }
+        scrollScheduleToDate(dateStr);
+      }, ms);
+    });
+  }
+
+  function extractDateFromMonthButton(btn){
+    if(!btn) return '';
+    if(btn.dataset && btn.dataset.mobileDate) return btn.dataset.mobileDate;
+    var raw = btn.getAttribute('onclick') || '';
+    var m = raw.match(/setMobileSelectedDate\('([^']+)'\)/);
+    return m ? m[1] : '';
+  }
+
+  // 只攔截手機版「本月總覽」日期格；其他格式與其他按鈕不動。
+  document.addEventListener('click', function(ev){
+    if(!isMobile()) return;
+    var btn = ev.target.closest && ev.target.closest('#mobileMonthOverviewGrid .mobile-month-cell');
+    if(!btn) return;
+    var dateStr = extractDateFromMonthButton(btn);
+    if(!dateStr) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    if(typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+    jumpFromMonthToBooking(dateStr);
+  }, true);
+
+  window.mobileJumpFromMonthToBookingV320 = jumpFromMonthToBooking;
+})();
+</script>
+
+
+
+<!-- v324 手機版學員管理 UX 優化：只影響手機版學生管理卡片，其他頁面不動 -->
+<style id="v324MobileStudentManagerUX">
+@media(max-width:760px){
+  /* 背景模糊與手機卡片尺寸 */
+  #studentDialog.student-dialog{
+    width:calc(100vw - 16px)!important;
+    max-width:calc(100vw - 16px)!important;
+    height:auto!important;
+    max-height:calc(100dvh - 18px)!important;
+    margin:auto!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:24px!important;
+    overflow:hidden!important;
+    background:#fffefb!important;
+    box-shadow:0 18px 58px rgba(55,43,28,.24)!important;
+  }
+  #studentDialog::backdrop{
+    background:rgba(58,48,36,.34)!important;
+    backdrop-filter:blur(8px)!important;
+    -webkit-backdrop-filter:blur(8px)!important;
+  }
+
+  /* 外層 card 釋放空間 */
+  #studentDialog .dialog-body{
+    height:calc(100dvh - 18px)!important;
+    max-height:calc(100dvh - 18px)!important;
+    padding:10px!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:8px!important;
+    background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%)!important;
+  }
+  #studentDialog .student-head{
+    flex:0 0 auto!important;
+    margin:0!important;
+    padding:4px 2px 8px!important;
+    gap:8px!important;
+    align-items:center!important;
+  }
+  #studentDialog .student-head h2{
+    font-size:18px!important;
+    line-height:1.2!important;
+    margin:0!important;
+  }
+  #studentDialog .student-head .dialog-x{
+    position:static!important;
+    transform:none!important;
+    flex:0 0 36px!important;
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    padding:0!important;
+    font-size:20px!important;
+  }
+
+  /* 搜尋與工具列更緊湊 */
+  #studentDialog .student-tools{
+    flex:0 0 auto!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    margin:0!important;
+  }
+  #studentDialog .student-tools input,
+  #studentDialog .student-tools button,
+  #studentDialog .student-status-filter,
+  #studentDialog .student-total-chip{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:40px!important;
+    box-sizing:border-box!important;
+    font-size:15px!important;
+  }
+  #studentDialog .student-tools input{
+    padding:9px 12px!important;
+    border-radius:18px!important;
+  }
+  #studentDialog .student-tools button,
+  #studentDialog .student-total-chip{
+    padding:8px 10px!important;
+    border-radius:16px!important;
+  }
+
+  /* 列表與表單都在卡片內獨立滾動 */
+  #studentDialog .student-layout{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    display:block!important;
+    overflow:hidden!important;
+  }
+  #studentDialog .student-layout.list-mode .student-list{
+    display:block!important;
+    height:100%!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    padding:8px!important;
+    border-radius:18px!important;
+  }
+  #studentDialog .student-layout.list-mode .student-form{display:none!important;}
+  #studentDialog .student-layout.form-mode .student-list{display:none!important;}
+  #studentDialog .student-layout.form-mode .student-form{
+    display:block!important;
+    height:100%!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    padding:0 0 10px!important;
+  }
+
+  /* 表單區塊呼吸感：縮小內距但保留 8px/16px 節奏 */
+  #studentDialog .student-section{
+    margin:0 0 10px!important;
+    padding:10px!important;
+    border-radius:18px!important;
+    box-shadow:0 5px 16px rgba(80,60,30,.035)!important;
+  }
+  #studentDialog .student-section-title{
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+    margin:0 0 10px!important;
+    font-size:13px!important;
+    line-height:1.25!important;
+  }
+  #studentDialog .student-section-title .leaf{
+    flex:0 0 22px!important;
+  }
+  #studentDialog .soft-grid,
+  #studentDialog .soft-grid.three,
+  #studentDialog .soft-grid.one,
+  #studentDialog .student-birthday-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  #studentDialog .soft-field label,
+  #studentDialog .health-row-title{
+    font-size:11.5px!important;
+    margin:0 0 5px!important;
+  }
+  #studentDialog .soft-field input,
+  #studentDialog .soft-field select,
+  #studentDialog .soft-field textarea{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    padding:9px 11px!important;
+    font-size:16px!important;
+    border-radius:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* 健康資料：checkbox 與標題同一列，輸入框在下方滿版 */
+  #studentDialog .health-soft-list{
+    width:100%!important;
+    max-width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:8px!important;
+    overflow:visible!important;
+  }
+  #studentDialog .health-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    align-items:stretch!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    padding:8px!important;
+    border-radius:16px!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+  }
+  #studentDialog .health-row-main{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:28px!important;
+    overflow:visible!important;
+  }
+  #studentDialog .health-row-main input[type="checkbox"]{
+    appearance:auto!important;
+    -webkit-appearance:checkbox!important;
+    flex:0 0 18px!important;
+    width:18px!important;
+    height:18px!important;
+    min-width:18px!important;
+    min-height:18px!important;
+    max-width:18px!important;
+    max-height:18px!important;
+    margin:0!important;
+    padding:0!important;
+    box-shadow:none!important;
+    accent-color:#b99b72!important;
+  }
+  #studentDialog .health-row-main label{
+    display:block!important;
+    position:static!important;
+    transform:none!important;
+    writing-mode:horizontal-tb!important;
+    text-orientation:mixed!important;
+    flex:1 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    color:#6f5b44!important;
+    font-size:13px!important;
+    font-weight:900!important;
+    line-height:1.25!important;
+    text-align:left!important;
+    white-space:normal!important;
+    word-break:keep-all!important;
+    overflow-wrap:anywhere!important;
+  }
+  #studentDialog .health-inputs,
+  #studentDialog .health-inputs.single{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  #studentDialog .health-inputs input,
+  #studentDialog .health-inputs textarea,
+  #studentDialog .health-row input,
+  #studentDialog .health-row textarea{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    padding:9px 11px!important;
+    font-size:16px!important;
+    border-radius:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* 底部動作：次要小按鈕在上，主要儲存滿版 sticky */
+  #studentDialog .student-actions{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:30!important;
+    margin-top:4px!important;
+    padding:12px 0 0!important;
+    background:linear-gradient(180deg,rgba(251,247,238,0),#fbf7ee 28%,#fbf7ee 100%)!important;
+  }
+  #studentDialog .student-actions-inner{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    padding:8px!important;
+    border-radius:18px!important;
+    background:rgba(255,254,251,.96)!important;
+    border:1px solid #eadfce!important;
+    box-shadow:0 -5px 20px rgba(80,60,30,.06)!important;
+  }
+  #studentDialog .student-actions-inner>button.danger{
+    order:1!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:36px!important;
+    padding:7px 10px!important;
+    border-radius:14px!important;
+    font-size:13px!important;
+    background:#fff7f4!important;
+  }
+  #studentDialog .student-actions-inner>div{
+    order:2!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+  }
+  #studentDialog .student-actions-inner>div button{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:38px!important;
+    padding:8px 10px!important;
+    border-radius:14px!important;
+    font-size:14px!important;
+    white-space:nowrap!important;
+  }
+  #studentDialog .student-actions-inner>div button.primary{
+    grid-column:1 / -1!important;
+    min-height:46px!important;
+    font-size:15px!important;
+    font-weight:900!important;
+    border-radius:16px!important;
+  }
+
+  /* 學員列表行動版避免按鈕超出 */
+  #studentDialog .student-row-item{
+    grid-template-columns:1fr!important;
+    gap:6px!important;
+    padding:10px!important;
+    border-radius:16px!important;
+  }
+  #studentDialog .student-row-item button{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:38px!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+  }
+  #studentDialog .student-row-value{
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+  }
+}
+</style>
+<script id="v324MobileStudentManagerUXScript">
+(function(){
+  function byId(id){ return document.getElementById(id); }
+  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+
+  function ensureCoachStudentButton(){
+    var drawer = byId('mobileDrawer');
+    if(!drawer || byId('mdBtnStudentCoach')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'mdBtnStudentCoach';
+    btn.className = 'md-item coach-only';
+    btn.innerHTML = '<span class="md-item-icon ico-stud">⊛</span>學員管理';
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      try{ if(typeof window.closeMobileDrawer === 'function') window.closeMobileDrawer(); }catch(err){}
+      try{ window.openStudentManagerMobileUXV324(); }catch(err){ if(typeof window.openStudentManager === 'function') window.openStudentManager(); }
+    });
+    var anchor = drawer.querySelector('.md-item[data-tab="query"]') || drawer.querySelector('.md-item[data-tab="booking"]') || drawer.querySelector('.md-item');
+    if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(btn, anchor.nextSibling);
+    else drawer.appendChild(btn);
+  }
+
+  function prepStudentDialog(){
+    var dialog = byId('studentDialog');
+    if(!dialog) return;
+    dialog.classList.add('mobile-student-ux-v324');
+    var form = dialog.querySelector('.student-form');
+    var list = dialog.querySelector('.student-list');
+    if(form) form.scrollTop = 0;
+    if(list) list.scrollTop = 0;
+  }
+
+  window.openStudentManagerMobileUXV324 = function(){
+    if(typeof window.openStudentManager === 'function') window.openStudentManager();
+    setTimeout(prepStudentDialog, 40);
+  };
+
+  var oldOpenDrawer = window.openMobileDrawer;
+  window.openMobileDrawer = function(){
+    ensureCoachStudentButton();
+    if(typeof oldOpenDrawer === 'function') return oldOpenDrawer.apply(this, arguments);
+  };
+
+  var oldOpenStudent = window.openStudentManager;
+  if(typeof oldOpenStudent === 'function'){
+    window.openStudentManager = function(){
+      var result = oldOpenStudent.apply(this, arguments);
+      if(isMobile()) setTimeout(prepStudentDialog, 40);
+      return result;
+    };
+  }
+
+  var oldNewStudent = window.newStudentForm;
+  if(typeof oldNewStudent === 'function'){
+    window.newStudentForm = function(){
+      var result = oldNewStudent.apply(this, arguments);
+      if(isMobile()) setTimeout(prepStudentDialog, 30);
+      return result;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureCoachStudentButton();
+    prepStudentDialog();
+  });
+  setTimeout(ensureCoachStudentButton, 250);
+  setTimeout(ensureCoachStudentButton, 900);
+})();
+</script>
+
+
+<!-- v328 手機版本月壽星：主要功能按鈕＋模糊卡片＋已抽自動儲存 -->
+<style id="v328MobileBirthdayRaffleCSS">
+@media(max-width:760px){
+  #mobileBirthdayDialog.v328-birthday-dialog{
+    width:calc(100vw - 24px)!important;
+    max-width:420px!important;
+    max-height:calc(100dvh - 32px)!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:26px!important;
+    overflow:hidden!important;
+    background:#fffefb!important;
+    color:#3d3933!important;
+    box-shadow:0 22px 70px rgba(58,46,31,.28)!important;
+  }
+  #mobileBirthdayDialog::backdrop{
+    background:rgba(58,48,36,.34)!important;
+    backdrop-filter:blur(9px)!important;
+    -webkit-backdrop-filter:blur(9px)!important;
+  }
+  .v328-bd-body{
+    max-height:calc(100dvh - 32px)!important;
+    display:flex!important;
+    flex-direction:column!important;
+    background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%)!important;
+  }
+  .v328-bd-head{
+    flex:0 0 auto!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    padding:16px 16px 12px!important;
+    border-bottom:1px solid #eadfce!important;
+    background:#fffaf1!important;
+  }
+  .v328-bd-title{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:2px!important;
+    min-width:0!important;
+  }
+  .v328-bd-title b{
+    font-size:17px!important;
+    letter-spacing:.04em!important;
+    color:#6f5b44!important;
+  }
+  .v328-bd-title span{
+    font-size:12px!important;
+    color:#9a8774!important;
+  }
+  .v328-bd-close{
+    flex:0 0 34px!important;
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    min-height:34px!important;
+    padding:0!important;
+    border-radius:999px!important;
+    border:1px solid #eadfce!important;
+    background:#fffefb!important;
+    color:#8f704c!important;
+    font-size:20px!important;
+    line-height:1!important;
+    box-shadow:none!important;
+  }
+  .v328-bd-list{
+    flex:1 1 auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:12px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  .v328-bd-card{
+    width:100%!important;
+    border:1px solid #eadfce!important;
+    background:#fffdf8!important;
+    border-radius:20px!important;
+    padding:12px!important;
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:8px 10px!important;
+    align-items:center!important;
+    box-shadow:0 6px 18px rgba(80,60,30,.055)!important;
+  }
+  .v328-bd-card.is-today{
+    background:#fff8ef!important;
+    border-color:#e7c7ad!important;
+  }
+  .v328-bd-main{
+    min-width:0!important;
+  }
+  .v328-bd-name{
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    font-weight:900!important;
+    font-size:15px!important;
+    color:#4d4438!important;
+    line-height:1.25!important;
+  }
+  .v328-bd-date{
+    margin-top:4px!important;
+    font-size:12px!important;
+    color:#8d7b68!important;
+    line-height:1.35!important;
+  }
+  .v328-bd-status{
+    justify-self:end!important;
+    white-space:nowrap!important;
+    font-size:12px!important;
+    font-weight:900!important;
+    border-radius:999px!important;
+    padding:5px 9px!important;
+    background:#f3eadb!important;
+    color:#7a6042!important;
+  }
+  .v328-bd-status.today{
+    background:#ffe7de!important;
+    color:#b85d4f!important;
+  }
+  .v328-bd-check{
+    grid-column:1 / -1!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    gap:7px!important;
+    font-size:13px!important;
+    color:#6f5b44!important;
+    padding-top:4px!important;
+    border-top:1px dashed #eadfce!important;
+  }
+  .v328-bd-check input{
+    width:18px!important;
+    height:18px!important;
+    min-width:18px!important;
+    min-height:18px!important;
+    accent-color:#b99b72!important;
+    margin:0!important;
+  }
+  .v328-bd-empty{
+    margin:10px!important;
+    border:1px dashed #eadfce!important;
+    background:#fffaf1!important;
+    border-radius:20px!important;
+    padding:18px 14px!important;
+    text-align:center!important;
+    color:#8d7b68!important;
+    line-height:1.6!important;
+    font-size:13px!important;
+  }
+}
+</style>
+
+<script id="v328MobileBirthdayRaffleJS">
+(function(){
+  var RAFFLE_KEY='sunrise_mobile_birthday_raffle_v1';
+
+  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+  function byId(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function readJSON(key, fallback){
+    try{ return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback)); }catch(e){ return fallback; }
+  }
+  function writeJSON(key, value){
+    localStorage.setItem(key, JSON.stringify(value||{}));
+    try{ if(typeof scheduleCloudPush==='function') scheduleCloudPush(); }catch(e){}
+  }
+  function allStudents(){
+    try{
+      if(typeof students !== 'undefined' && Array.isArray(students)) return students;
+    }catch(e){}
+    try{
+      var key=(typeof STUDENT_KEY!=='undefined') ? STUDENT_KEY : 'sunrise_students_v1';
+      return readJSON(key, []);
+    }catch(e){ return readJSON('sunrise_students_v1', []); }
+  }
+  function baseMonthDate(){
+    var raw='';
+    try{ raw = (typeof mobileSelectedDate!=='undefined' && mobileSelectedDate) ? mobileSelectedDate : ''; }catch(e){}
+    if(!raw && byId('weekPicker')) raw = byId('weekPicker').value || '';
+    var d = raw ? new Date(raw+'T00:00:00') : new Date();
+    if(isNaN(d.getTime())) d = new Date();
+    return d;
+  }
+  function birthdayDateInYear(birthday, year){
+    if(!birthday) return null;
+    var parts = String(birthday).match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(!parts) return null;
+    var m = Number(parts[2]), d = Number(parts[3]);
+    if(!m || !d) return null;
+    var dt = new Date(year, m-1, d);
+    if(dt.getMonth() !== m-1) return null;
+    return dt;
+  }
+  function monthStudents(){
+    var base = baseMonthDate();
+    var year = base.getFullYear();
+    var month = base.getMonth();
+    var today = new Date(); today.setHours(0,0,0,0);
+    return allStudents().map(function(s, idx){
+      var bd = birthdayDateInYear(s.birthday || s.birth || s.stBirthday, year);
+      if(!bd || bd.getMonth() !== month) return null;
+      var dayDiff = Math.round((bd - today) / 86400000);
+      var status = dayDiff===0 ? '今天生日' : (dayDiff>0 ? ('還有'+dayDiff+'天') : '已過生日');
+      var sort = dayDiff>=0 ? dayDiff : 1000 + Math.abs(dayDiff);
+      return {
+        id: s.id || ('student_'+idx+'_'+(s.name||'')),
+        name: s.name || s.student || s.stName || '未命名學員',
+        date: (month+1) + '/' + bd.getDate(),
+        month: month+1,
+        day: bd.getDate(),
+        status: status,
+        today: dayDiff===0,
+        sort: sort
+      };
+    }).filter(Boolean).sort(function(a,b){ return a.sort-b.sort || a.day-b.day || a.name.localeCompare(b.name,'zh-Hant'); });
+  }
+  function raffleMonthKey(){
+    var b = baseMonthDate();
+    return b.getFullYear() + '-' + String(b.getMonth()+1).padStart(2,'0');
+  }
+  function loadRaffle(){ return readJSON(RAFFLE_KEY, {}); }
+  function saveRaffleStudent(studentId, checked){
+    var data = loadRaffle();
+    var mKey = raffleMonthKey();
+    data[mKey] = data[mKey] || {};
+    data[mKey][studentId] = !!checked;
+    writeJSON(RAFFLE_KEY, data);
+    try{ if(typeof toast==='function') toast(checked?'已標記已抽':'已取消已抽'); }catch(e){}
+  }
+  function ensureDialog(){
+    var dlg = byId('mobileBirthdayDialog');
+    if(dlg) return dlg;
+    dlg = document.createElement('dialog');
+    dlg.id = 'mobileBirthdayDialog';
+    dlg.className = 'v328-birthday-dialog';
+    dlg.innerHTML =
+      '<div class="v328-bd-body">'+
+        '<div class="v328-bd-head">'+
+          '<div class="v328-bd-title"><b id="v328BirthdayTitle">本月壽星</b><span id="v328BirthdaySub">當月抽獎提醒</span></div>'+
+          '<button type="button" class="v328-bd-close" onclick="closeMobileBirthdayDialog()">×</button>'+
+        '</div>'+
+        '<div class="v328-bd-list" id="v328BirthdayList"></div>'+
+      '</div>';
+    document.body.appendChild(dlg);
+    return dlg;
+  }
+  function renderDialog(){
+    var dlg = ensureDialog();
+    var base = baseMonthDate();
+    var list = monthStudents();
+    var raffle = loadRaffle();
+    var mKey = raffleMonthKey();
+    if(byId('v328BirthdayTitle')) byId('v328BirthdayTitle').textContent = (base.getMonth()+1) + '月壽星';
+    if(byId('v328BirthdaySub')) byId('v328BirthdaySub').textContent = list.length ? ('共 ' + list.length + ' 位') : '本月尚無壽星';
+    var box = byId('v328BirthdayList');
+    if(!box) return dlg;
+    if(!list.length){
+      box.innerHTML = '<div class="v328-bd-empty">🎂 本月沒有學員生日</div>';
+      return dlg;
+    }
+    box.innerHTML = list.map(function(s){
+      var checked = !!(raffle[mKey] && raffle[mKey][s.id]);
+      return '<article class="v328-bd-card '+(s.today?'is-today':'')+'">'+
+        '<div class="v328-bd-main">'+
+          '<div class="v328-bd-name"><span>🎂</span><span>'+esc(s.name)+'</span></div>'+
+          '<div class="v328-bd-date">'+esc(s.date)+' 生日</div>'+
+        '</div>'+
+        '<div class="v328-bd-status '+(s.today?'today':'')+'">'+esc(s.status)+'</div>'+
+        '<label class="v328-bd-check"><input type="checkbox" data-v328-birthday-id="'+esc(s.id)+'" '+(checked?'checked':'')+'>已抽</label>'+
+      '</article>';
+    }).join('');
+    return dlg;
+  }
+
+  window.openMobileBirthdayDialog = function(){
+    if(typeof closeMobileDrawer==='function') closeMobileDrawer();
+    var dlg = renderDialog();
+    try{ dlg.showModal(); }catch(e){ dlg.setAttribute('open','open'); }
+  };
+  window.closeMobileBirthdayDialog = function(){
+    var dlg = byId('mobileBirthdayDialog');
+    if(!dlg) return;
+    try{ dlg.close(); }catch(e){ dlg.removeAttribute('open'); }
+  };
+
+  function ensureDrawerButton(){
+    var drawer = byId('mobileDrawer');
+    if(!drawer || byId('mdBtnBirthdayMonth')) return;
+    var btn = document.createElement('button');
+    btn.type='button';
+    btn.className='md-item';
+    btn.id='mdBtnBirthdayMonth';
+    btn.setAttribute('onclick','openMobileBirthdayDialog()');
+    btn.innerHTML='<span class="md-item-icon ico-birthday">🎂</span>本月壽星';
+    var anchor = drawer.querySelector('.md-item[data-tab="query"]') || drawer.querySelector('.md-item[data-tab="booking"]');
+    if(anchor && anchor.parentNode){
+      anchor.parentNode.insertBefore(btn, anchor.nextSibling);
+    }else{
+      var firstDivider = drawer.querySelector('.md-divider');
+      if(firstDivider) drawer.insertBefore(btn, firstDivider);
+      else drawer.appendChild(btn);
+    }
+  }
+
+  document.addEventListener('change', function(ev){
+    var input = ev.target && ev.target.closest && ev.target.closest('#mobileBirthdayDialog input[data-v328-birthday-id]');
+    if(!input) return;
+    saveRaffleStudent(input.getAttribute('data-v328-birthday-id'), input.checked);
+  });
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureDrawerButton();
+    ensureDialog();
+  });
+  setTimeout(ensureDrawerButton, 300);
+  setTimeout(ensureDrawerButton, 1000);
+})();
+</script>
+
+
 </body>
 </html>
