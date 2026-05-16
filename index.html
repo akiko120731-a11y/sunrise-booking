@@ -12013,6 +12013,133 @@ window.addEventListener('resize', function(){
     font-size:13px!important;
   }
 }
+
+/* v331 mobile sticky 2-row schedule + full-width month overview */
+/* 僅手機版：預約表首兩列凍結，本月總覽月曆滿版且不需要橫向滾動 */
+@media(max-width:760px){
+
+  /* 預約表：建立穩定的獨立捲動環境 */
+  body.mobile-tab-booking .schedule-wrap{
+    overflow:auto!important;
+    position:relative!important;
+    -webkit-overflow-scrolling:auto!important;
+    max-height:76dvh!important;
+    overscroll-behavior:contain!important;
+  }
+
+  body.mobile-tab-booking #schedule{
+    border-collapse:separate!important;
+    border-spacing:0!important;
+  }
+
+  /* 首列：日期列凍結 */
+  body.mobile-tab-booking #schedule tr:first-child th,
+  body.mobile-tab-booking #schedule .day-title{
+    position:sticky!important;
+    top:0!important;
+    z-index:90!important;
+    background:#fff3dc!important;
+  }
+
+  /* 第二列：時間／教練列凍結 */
+  body.mobile-tab-booking #schedule tr:nth-child(2) th,
+  body.mobile-tab-booking #schedule .coach-head,
+  body.mobile-tab-booking #schedule .self-head{
+    position:sticky!important;
+    top:42px!important;
+    z-index:86!important;
+    background:#fff7e8!important;
+  }
+
+  /* 左側時間欄：固定在左側，並保留在表格內容上方 */
+  body.mobile-tab-booking #schedule .time{
+    position:sticky!important;
+    left:0!important;
+    z-index:95!important;
+    background:#faf4eb!important;
+    box-shadow:2px 0 6px rgba(80,60,30,.08)!important;
+  }
+
+  /* 左上角兩格需同時支援 top + left */
+  body.mobile-tab-booking #schedule tr:first-child th.time{
+    top:0!important;
+    left:0!important;
+    z-index:120!important;
+    background:#faf4eb!important;
+  }
+
+  body.mobile-tab-booking #schedule tr:nth-child(2) th.time{
+    top:42px!important;
+    left:0!important;
+    z-index:118!important;
+    background:#faf4eb!important;
+  }
+
+  /* 避免內容滑過時蓋住固定標題列 */
+  body.mobile-tab-booking #schedule td,
+  body.mobile-tab-booking #schedule .slot,
+  body.mobile-tab-booking #schedule .merged{
+    z-index:1;
+  }
+
+  /* 手機版本月總覽：滿版、取消橫向滾動與縮放 */
+  body.mobile-tab-month .mobile-month-overview-scroll{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:visible!important;
+    padding:0!important;
+    touch-action:pan-y!important;
+    -webkit-overflow-scrolling:auto!important;
+  }
+
+  body.mobile-tab-month #mobileMonthOverviewGrid,
+  body.mobile-tab-month .mobile-month-overview-grid{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:4px!important;
+    transform:none!important;
+    margin:0!important;
+  }
+
+  body.mobile-tab-month .mobile-month-cell{
+    width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:66px!important;
+    padding:5px 4px!important;
+    border-radius:12px!important;
+  }
+
+  body.mobile-tab-month .mobile-month-dow{
+    min-width:0!important;
+    font-size:10.5px!important;
+    padding:2px 0!important;
+  }
+
+  body.mobile-tab-month .mobile-month-date{
+    font-size:12px!important;
+    line-height:1.1!important;
+  }
+
+  body.mobile-tab-month .mobile-month-mini{
+    font-size:8.5px!important;
+    line-height:1.2!important;
+    -webkit-line-clamp:2!important;
+  }
+
+  body.mobile-tab-month .mobile-month-count{
+    right:3px!important;
+    top:3px!important;
+    min-width:15px!important;
+    height:15px!important;
+    font-size:8px!important;
+  }
+}
+
 </style>
 
 <script id="v328MobileBirthdayRaffleJS">
