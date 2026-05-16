@@ -11459,47 +11459,51 @@ window.addEventListener('resize', function(){
 
 
 
-<!-- v322 手機版教練主要功能：學員管理卡片＋背景模糊，只影響手機版 -->
-<style id="v322MobileStudentManagerStyle">
+<!-- v324 手機版學員管理 UX 優化：只影響手機版學生管理卡片，其他頁面不動 -->
+<style id="v324MobileStudentManagerUX">
 @media(max-width:760px){
-  /* 手機版學員管理：改成螢幕內卡片，不影響桌機版 */
+  /* 背景模糊與手機卡片尺寸 */
   #studentDialog.student-dialog{
-    width:calc(100vw - 24px)!important;
-    max-width:calc(100vw - 24px)!important;
+    width:calc(100vw - 16px)!important;
+    max-width:calc(100vw - 16px)!important;
     height:auto!important;
-    max-height:calc(100dvh - 28px)!important;
+    max-height:calc(100dvh - 18px)!important;
     margin:auto!important;
     padding:0!important;
     border:0!important;
     border-radius:24px!important;
     overflow:hidden!important;
     background:#fffefb!important;
-    box-shadow:0 22px 70px rgba(55,43,28,.24)!important;
+    box-shadow:0 18px 58px rgba(55,43,28,.24)!important;
   }
   #studentDialog::backdrop{
     background:rgba(58,48,36,.34)!important;
     backdrop-filter:blur(8px)!important;
     -webkit-backdrop-filter:blur(8px)!important;
   }
+
+  /* 外層 card 釋放空間 */
   #studentDialog .dialog-body{
-    height:calc(100dvh - 28px)!important;
-    max-height:calc(100dvh - 28px)!important;
-    padding:12px!important;
+    height:calc(100dvh - 18px)!important;
+    max-height:calc(100dvh - 18px)!important;
+    padding:10px!important;
     overflow:hidden!important;
     display:flex!important;
     flex-direction:column!important;
+    gap:8px!important;
     background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%)!important;
   }
   #studentDialog .student-head{
     flex:0 0 auto!important;
-    padding:4px 2px 10px!important;
-    margin:0 0 8px!important;
+    margin:0!important;
+    padding:4px 2px 8px!important;
     gap:8px!important;
     align-items:center!important;
   }
   #studentDialog .student-head h2{
     font-size:18px!important;
     line-height:1.2!important;
+    margin:0!important;
   }
   #studentDialog .student-head .dialog-x{
     position:static!important;
@@ -11512,32 +11516,36 @@ window.addEventListener('resize', function(){
     padding:0!important;
     font-size:20px!important;
   }
+
+  /* 搜尋與工具列更緊湊 */
   #studentDialog .student-tools{
     flex:0 0 auto!important;
     display:grid!important;
     grid-template-columns:1fr!important;
     gap:8px!important;
-    margin:0 0 10px!important;
+    margin:0!important;
   }
   #studentDialog .student-tools input,
   #studentDialog .student-tools button,
-  #studentDialog .student-total-chip,
-  #studentDialog .student-status-filter{
+  #studentDialog .student-status-filter,
+  #studentDialog .student-total-chip{
     width:100%!important;
     max-width:100%!important;
-    min-height:42px!important;
+    min-height:40px!important;
     box-sizing:border-box!important;
     font-size:15px!important;
   }
-  #studentDialog .student-tools button{
+  #studentDialog .student-tools input{
     padding:9px 12px!important;
-    border-radius:16px!important;
-    white-space:nowrap!important;
+    border-radius:18px!important;
   }
+  #studentDialog .student-tools button,
   #studentDialog .student-total-chip{
-    justify-content:center!important;
     padding:8px 10px!important;
+    border-radius:16px!important;
   }
+
+  /* 列表與表單都在卡片內獨立滾動 */
   #studentDialog .student-layout{
     flex:1 1 auto!important;
     min-height:0!important;
@@ -11551,15 +11559,12 @@ window.addEventListener('resize', function(){
     overflow-y:auto!important;
     overflow-x:hidden!important;
     -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
     padding:8px!important;
-    border-radius:20px!important;
+    border-radius:18px!important;
   }
-  #studentDialog .student-layout.list-mode .student-form{
-    display:none!important;
-  }
-  #studentDialog .student-layout.form-mode .student-list{
-    display:none!important;
-  }
+  #studentDialog .student-layout.list-mode .student-form{display:none!important;}
+  #studentDialog .student-layout.form-mode .student-list{display:none!important;}
   #studentDialog .student-layout.form-mode .student-form{
     display:block!important;
     height:100%!important;
@@ -11567,82 +11572,201 @@ window.addEventListener('resize', function(){
     overflow-y:auto!important;
     overflow-x:hidden!important;
     -webkit-overflow-scrolling:touch!important;
-    padding:0 2px 10px!important;
+    overscroll-behavior:contain!important;
+    padding:0 0 10px!important;
   }
+
+  /* 表單區塊呼吸感：縮小內距但保留 8px/16px 節奏 */
   #studentDialog .student-section{
+    margin:0 0 10px!important;
+    padding:10px!important;
     border-radius:18px!important;
-    padding:12px!important;
-    margin-bottom:10px!important;
+    box-shadow:0 5px 16px rgba(80,60,30,.035)!important;
   }
   #studentDialog .student-section-title{
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+    margin:0 0 10px!important;
     font-size:13px!important;
-    margin-bottom:10px!important;
+    line-height:1.25!important;
+  }
+  #studentDialog .student-section-title .leaf{
+    flex:0 0 22px!important;
   }
   #studentDialog .soft-grid,
   #studentDialog .soft-grid.three,
   #studentDialog .soft-grid.one,
-  #studentDialog .student-birthday-row,
-  #studentDialog .health-inputs,
-  #studentDialog .health-inputs.single{
+  #studentDialog .student-birthday-row{
     display:grid!important;
     grid-template-columns:1fr!important;
     gap:8px!important;
   }
-  #studentDialog .soft-grid[style]{
-    margin-top:8px!important;
+  #studentDialog .soft-field label,
+  #studentDialog .health-row-title{
+    font-size:11.5px!important;
+    margin:0 0 5px!important;
   }
   #studentDialog .soft-field input,
   #studentDialog .soft-field select,
-  #studentDialog .soft-field textarea,
-  #studentDialog .health-row input,
-  #studentDialog .health-row textarea{
+  #studentDialog .soft-field textarea{
     width:100%!important;
     max-width:100%!important;
-    min-height:42px!important;
-    font-size:16px!important;
+    min-width:0!important;
+    min-height:40px!important;
     padding:9px 11px!important;
+    font-size:16px!important;
+    border-radius:16px!important;
     box-sizing:border-box!important;
+  }
+
+  /* 健康資料：checkbox 與標題同一列，輸入框在下方滿版 */
+  #studentDialog .health-soft-list{
+    width:100%!important;
+    max-width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:8px!important;
+    overflow:visible!important;
   }
   #studentDialog .health-row{
     display:grid!important;
     grid-template-columns:1fr!important;
     gap:8px!important;
-    padding:10px!important;
+    align-items:stretch!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    padding:8px!important;
     border-radius:16px!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
   }
   #studentDialog .health-row-main{
-    min-height:32px!important;
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:28px!important;
+    overflow:visible!important;
   }
+  #studentDialog .health-row-main input[type="checkbox"]{
+    appearance:auto!important;
+    -webkit-appearance:checkbox!important;
+    flex:0 0 18px!important;
+    width:18px!important;
+    height:18px!important;
+    min-width:18px!important;
+    min-height:18px!important;
+    max-width:18px!important;
+    max-height:18px!important;
+    margin:0!important;
+    padding:0!important;
+    box-shadow:none!important;
+    accent-color:#b99b72!important;
+  }
+  #studentDialog .health-row-main label{
+    display:block!important;
+    position:static!important;
+    transform:none!important;
+    writing-mode:horizontal-tb!important;
+    text-orientation:mixed!important;
+    flex:1 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    color:#6f5b44!important;
+    font-size:13px!important;
+    font-weight:900!important;
+    line-height:1.25!important;
+    text-align:left!important;
+    white-space:normal!important;
+    word-break:keep-all!important;
+    overflow-wrap:anywhere!important;
+  }
+  #studentDialog .health-inputs,
+  #studentDialog .health-inputs.single{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  #studentDialog .health-inputs input,
+  #studentDialog .health-inputs textarea,
+  #studentDialog .health-row input,
+  #studentDialog .health-row textarea{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    padding:9px 11px!important;
+    font-size:16px!important;
+    border-radius:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* 底部動作：次要小按鈕在上，主要儲存滿版 sticky */
   #studentDialog .student-actions{
     position:sticky!important;
     bottom:0!important;
-    padding:12px 0 0!important;
+    z-index:30!important;
     margin-top:4px!important;
+    padding:12px 0 0!important;
     background:linear-gradient(180deg,rgba(251,247,238,0),#fbf7ee 28%,#fbf7ee 100%)!important;
   }
   #studentDialog .student-actions-inner{
     display:grid!important;
     grid-template-columns:1fr!important;
     gap:8px!important;
-    border-radius:18px!important;
     padding:8px!important;
+    border-radius:18px!important;
+    background:rgba(255,254,251,.96)!important;
+    border:1px solid #eadfce!important;
+    box-shadow:0 -5px 20px rgba(80,60,30,.06)!important;
+  }
+  #studentDialog .student-actions-inner>button.danger{
+    order:1!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:36px!important;
+    padding:7px 10px!important;
+    border-radius:14px!important;
+    font-size:13px!important;
+    background:#fff7f4!important;
   }
   #studentDialog .student-actions-inner>div{
+    order:2!important;
     display:grid!important;
     grid-template-columns:1fr 1fr!important;
     gap:8px!important;
     width:100%!important;
   }
-  #studentDialog .student-actions-inner button{
+  #studentDialog .student-actions-inner>div button{
     width:100%!important;
     max-width:100%!important;
     min-width:0!important;
-    min-height:42px!important;
+    min-height:38px!important;
     padding:8px 10px!important;
-    border-radius:15px!important;
+    border-radius:14px!important;
     font-size:14px!important;
     white-space:nowrap!important;
   }
+  #studentDialog .student-actions-inner>div button.primary{
+    grid-column:1 / -1!important;
+    min-height:46px!important;
+    font-size:15px!important;
+    font-weight:900!important;
+    border-radius:16px!important;
+  }
+
+  /* 學員列表行動版避免按鈕超出 */
   #studentDialog .student-row-item{
     grid-template-columns:1fr!important;
     gap:6px!important;
@@ -11651,6 +11775,7 @@ window.addEventListener('resize', function(){
   }
   #studentDialog .student-row-item button{
     width:100%!important;
+    max-width:100%!important;
     min-height:38px!important;
     grid-column:auto!important;
     grid-row:auto!important;
@@ -11662,74 +11787,74 @@ window.addEventListener('resize', function(){
   }
 }
 </style>
-<script id="v322MobileStudentManagerScript">
+<script id="v324MobileStudentManagerUXScript">
 (function(){
-  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
   function byId(id){ return document.getElementById(id); }
-  function addCoachStudentButton(){
+  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+
+  function ensureCoachStudentButton(){
     var drawer = byId('mobileDrawer');
     if(!drawer || byId('mdBtnStudentCoach')) return;
-    var anchor = drawer.querySelector('.md-item[data-tab="query"]') || drawer.querySelector('.md-item[data-tab="booking"]');
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.id = 'mdBtnStudentCoach';
-    btn.className = 'md-item';
+    btn.className = 'md-item coach-only';
     btn.innerHTML = '<span class="md-item-icon ico-stud">⊛</span>學員管理';
     btn.addEventListener('click', function(e){
       e.preventDefault();
       try{ if(typeof window.closeMobileDrawer === 'function') window.closeMobileDrawer(); }catch(err){}
-      try{ if(typeof window.openStudentManagerMobileV322 === 'function') window.openStudentManagerMobileV322(); }
-      catch(err){ if(typeof window.openStudentManager === 'function') window.openStudentManager(); }
+      try{ window.openStudentManagerMobileUXV324(); }catch(err){ if(typeof window.openStudentManager === 'function') window.openStudentManager(); }
     });
+    var anchor = drawer.querySelector('.md-item[data-tab="query"]') || drawer.querySelector('.md-item[data-tab="booking"]') || drawer.querySelector('.md-item');
     if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(btn, anchor.nextSibling);
     else drawer.appendChild(btn);
   }
 
-  function prepMobileStudentDialog(){
+  function prepStudentDialog(){
     var dialog = byId('studentDialog');
     if(!dialog) return;
-    dialog.classList.add('mobile-student-card-ready');
+    dialog.classList.add('mobile-student-ux-v324');
     var form = dialog.querySelector('.student-form');
     var list = dialog.querySelector('.student-list');
     if(form) form.scrollTop = 0;
     if(list) list.scrollTop = 0;
   }
 
-  window.openStudentManagerMobileV322 = function(){
+  window.openStudentManagerMobileUXV324 = function(){
     if(typeof window.openStudentManager === 'function') window.openStudentManager();
-    setTimeout(function(){
-      prepMobileStudentDialog();
-      var dialog = byId('studentDialog');
-      if(dialog && dialog.open){
-        var list = dialog.querySelector('.student-list');
-        if(list) list.scrollTop = 0;
-      }
-    }, 40);
+    setTimeout(prepStudentDialog, 40);
   };
 
-  var oldOpen = window.openMobileDrawer;
+  var oldOpenDrawer = window.openMobileDrawer;
   window.openMobileDrawer = function(){
-    addCoachStudentButton();
-    if(typeof oldOpen === 'function') oldOpen.apply(this, arguments);
+    ensureCoachStudentButton();
+    if(typeof oldOpenDrawer === 'function') return oldOpenDrawer.apply(this, arguments);
   };
 
-  var oldNew = window.newStudentForm;
-  if(typeof oldNew === 'function'){
+  var oldOpenStudent = window.openStudentManager;
+  if(typeof oldOpenStudent === 'function'){
+    window.openStudentManager = function(){
+      var result = oldOpenStudent.apply(this, arguments);
+      if(isMobile()) setTimeout(prepStudentDialog, 40);
+      return result;
+    };
+  }
+
+  var oldNewStudent = window.newStudentForm;
+  if(typeof oldNewStudent === 'function'){
     window.newStudentForm = function(){
-      oldNew.apply(this, arguments);
-      setTimeout(function(){
-        prepMobileStudentDialog();
-        var form = byId('studentDialog')?.querySelector('.student-form');
-        if(form) form.scrollTop = 0;
-      }, 30);
+      var result = oldNewStudent.apply(this, arguments);
+      if(isMobile()) setTimeout(prepStudentDialog, 30);
+      return result;
     };
   }
 
   document.addEventListener('DOMContentLoaded', function(){
-    addCoachStudentButton();
+    ensureCoachStudentButton();
+    prepStudentDialog();
   });
-  setTimeout(addCoachStudentButton, 200);
-  setTimeout(addCoachStudentButton, 800);
+  setTimeout(ensureCoachStudentButton, 250);
+  setTimeout(ensureCoachStudentButton, 900);
 })();
 </script>
 
