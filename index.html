@@ -9896,7 +9896,7 @@ function updateDrawerUser(){
   var isAdm  = (typeof isAdmin === 'function') && isAdmin();
   var coach  = window.currentCoach || '';
   if(avatar) avatar.textContent = isAdm ? 'A' : (coach ? coach.charAt(0) : 'C');
-  if(name)   name.textContent   = isAdm ? 'Admin 管理員' : (coach ? coach + ' 教練' : '教練');
+  if(name)   name.textContent   = isAdm ? 'Admin 管理員' : (coach ? coach : '未登入');
   adminItems.forEach(function(el){ el.style.display = isAdm ? '' : 'none'; });
 }
 
@@ -12309,6 +12309,318 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v333 手機版：抽屜顯示教練姓名＋本月壽星歷史紀錄 -->
+<style id="v333MobileBirthdayHistoryCSS">
+@media(max-width:760px){
+  .v333-bd-tools{
+    flex:0 0 auto!important;
+    display:flex!important;
+    gap:8px!important;
+    padding:10px 12px 0!important;
+    background:linear-gradient(180deg,#fbf7ee 0%,#fffefb 100%)!important;
+  }
+  .v333-bd-tool-btn{
+    flex:1!important;
+    min-height:38px!important;
+    border-radius:999px!important;
+    border:1px solid #eadfce!important;
+    background:#fffaf1!important;
+    color:#7a6042!important;
+    font-size:12.5px!important;
+    font-weight:900!important;
+    box-shadow:0 2px 8px rgba(80,60,30,.04)!important;
+  }
+  .v333-bd-tool-btn.is-active{
+    background:#b99b72!important;
+    border-color:#b99b72!important;
+    color:#fff!important;
+  }
+  .v333-history-panel{
+    flex:1 1 auto!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:12px!important;
+    display:none;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+  .v333-history-panel.is-open{display:flex!important;}
+  .v333-history-controls{
+    display:grid!important;
+    grid-template-columns:40px 1fr 40px!important;
+    gap:8px!important;
+    align-items:center!important;
+    background:#fffaf1!important;
+    border:1px solid #eadfce!important;
+    border-radius:18px!important;
+    padding:8px!important;
+  }
+  .v333-history-controls button{
+    width:40px!important;
+    height:36px!important;
+    min-width:40px!important;
+    min-height:36px!important;
+    padding:0!important;
+    border-radius:999px!important;
+    border:1px solid #eadfce!important;
+    background:#fffefb!important;
+    color:#7a6042!important;
+    font-weight:900!important;
+    box-shadow:none!important;
+  }
+  .v333-history-month{
+    width:100%!important;
+    min-height:36px!important;
+    border:1px solid #eadfce!important;
+    border-radius:999px!important;
+    background:#fffefb!important;
+    color:#5f5142!important;
+    text-align:center!important;
+    font-weight:900!important;
+    padding:6px 10px!important;
+    font-size:14px!important;
+  }
+  .v333-history-list{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:9px!important;
+  }
+  .v333-history-card{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    gap:7px 10px!important;
+    align-items:center!important;
+    background:#fffdf8!important;
+    border:1px solid #eadfce!important;
+    border-radius:18px!important;
+    padding:11px 12px!important;
+    box-shadow:0 5px 16px rgba(80,60,30,.05)!important;
+  }
+  .v333-history-name{
+    min-width:0!important;
+    font-size:14px!important;
+    line-height:1.25!important;
+    font-weight:900!important;
+    color:#4d4438!important;
+  }
+  .v333-history-date{
+    margin-top:3px!important;
+    font-size:12px!important;
+    color:#8d7b68!important;
+  }
+  .v333-history-state{
+    justify-self:end!important;
+    border-radius:999px!important;
+    padding:5px 9px!important;
+    border:1px solid #eadfce!important;
+    background:#f4eee5!important;
+    color:#8a7c6d!important;
+    font-size:12px!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+  }
+  .v333-history-state.done{
+    background:#eef4e9!important;
+    border-color:#d5e3c8!important;
+    color:#6f8a59!important;
+  }
+  .v333-history-check{
+    grid-column:1 / -1!important;
+    justify-self:end!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    gap:6px!important;
+    color:#7a6042!important;
+    font-size:12.5px!important;
+    font-weight:900!important;
+  }
+  .v333-history-check input{
+    width:17px!important;
+    height:17px!important;
+    accent-color:#b99b72!important;
+  }
+  .v333-history-empty{
+    padding:22px 12px!important;
+    text-align:center!important;
+    color:#9a8774!important;
+    background:#fffaf1!important;
+    border:1px dashed #eadfce!important;
+    border-radius:18px!important;
+    font-weight:800!important;
+  }
+}
+</style>
+<script id="v333MobileBirthdayHistoryJS">
+(function(){
+  var RAFFLE_KEY='sunrise_mobile_birthday_raffle_v1';
+  function byId(id){return document.getElementById(id);}
+  function isMobile(){return window.matchMedia && window.matchMedia('(max-width:760px)').matches;}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback));}catch(e){return fallback;}}
+  function writeJSON(key,value){localStorage.setItem(key,JSON.stringify(value||{}));try{if(typeof scheduleCloudPush==='function')scheduleCloudPush();}catch(e){}}
+  function allStudents(){
+    try{if(typeof students!=='undefined' && Array.isArray(students))return students;}catch(e){}
+    try{var key=(typeof STUDENT_KEY!=='undefined')?STUDENT_KEY:'sunrise_students_v1';return readJSON(key,[]);}catch(e){return readJSON('sunrise_students_v1',[]);}
+  }
+  function currentCoachName(){
+    var c='';
+    try{c=window.currentCoach||currentCoach||'';}catch(e){c=window.currentCoach||'';}
+    return String(c||'').trim();
+  }
+  window.updateMobileDrawerCoachNameV333=function(){
+    var name=byId('mdUserName'), avatar=byId('mdAvatar');
+    var isAdm=(typeof isAdmin==='function')&&isAdmin();
+    var coach=currentCoachName();
+    if(name) name.textContent=isAdm?'Admin 管理員':(coach||'未登入');
+    if(avatar) avatar.textContent=isAdm?'A':(coach?coach.charAt(0):'？');
+  };
+  var oldOpen=window.openMobileDrawer;
+  window.openMobileDrawer=function(){
+    if(typeof oldOpen==='function') oldOpen.apply(this,arguments);
+    setTimeout(window.updateMobileDrawerCoachNameV333,0);
+  };
+  var oldApply=window.applyRoleUI;
+  window.applyRoleUI=function(){
+    if(typeof oldApply==='function') oldApply.apply(this,arguments);
+    setTimeout(window.updateMobileDrawerCoachNameV333,0);
+  };
+  var oldSwitch=window.switchIdentity;
+  if(typeof oldSwitch==='function'){
+    window.switchIdentity=function(){
+      var r=oldSwitch.apply(this,arguments);
+      setTimeout(window.updateMobileDrawerCoachNameV333,50);
+      return r;
+    };
+  }
+
+  function birthdayDateInYear(birthday, year){
+    if(!birthday)return null;
+    var parts=String(birthday).match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if(!parts)return null;
+    var m=Number(parts[2]), d=Number(parts[3]);
+    if(!m||!d)return null;
+    var dt=new Date(year,m-1,d);
+    if(dt.getMonth()!==m-1)return null;
+    return dt;
+  }
+  function studentsForMonth(monthKey){
+    var m=String(monthKey||'').match(/^(\d{4})-(\d{2})$/);
+    var now=new Date();
+    var year=m?Number(m[1]):now.getFullYear();
+    var month=m?Number(m[2])-1:now.getMonth();
+    var today=new Date();today.setHours(0,0,0,0);
+    return allStudents().map(function(s,idx){
+      var bd=birthdayDateInYear(s.birthday||s.birth||s.stBirthday,year);
+      if(!bd||bd.getMonth()!==month)return null;
+      var dayDiff=Math.round((bd-today)/86400000);
+      var status=dayDiff===0?'今天生日':(dayDiff>0?('還有'+dayDiff+'天'):'已過生日');
+      var sort=dayDiff>=0?dayDiff:1000+Math.abs(dayDiff);
+      return {id:s.id||('student_'+idx+'_'+(s.name||'')),name:s.name||s.student||s.stName||'未命名學員',date:(month+1)+'/'+bd.getDate(),day:bd.getDate(),status:status,sort:sort};
+    }).filter(Boolean).sort(function(a,b){return a.sort-b.sort||a.day-b.day||a.name.localeCompare(b.name,'zh-Hant');});
+  }
+  function getBaseMonthKey(){
+    var raw='';
+    try{raw=(typeof mobileSelectedDate!=='undefined'&&mobileSelectedDate)?mobileSelectedDate:'';}catch(e){}
+    if(!raw&&byId('weekPicker'))raw=byId('weekPicker').value||'';
+    var d=raw?new Date(raw+'T00:00:00'):new Date();
+    if(isNaN(d.getTime()))d=new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  function shiftMonth(key,delta){
+    var p=String(key||getBaseMonthKey()).split('-');
+    var d=new Date(Number(p[0]),Number(p[1])-1+delta,1);
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  function loadRaffle(){return readJSON(RAFFLE_KEY,{});}
+  function saveRaffleAt(monthKey,studentId,checked){
+    var data=loadRaffle();
+    data[monthKey]=data[monthKey]||{};
+    data[monthKey][studentId]=!!checked;
+    writeJSON(RAFFLE_KEY,data);
+    try{if(typeof toast==='function')toast(checked?'已標記已抽':'已取消已抽');}catch(e){}
+  }
+  function injectHistoryTools(){
+    var dlg=byId('mobileBirthdayDialog');
+    if(!dlg)return;
+    if(byId('v333BirthdayTools'))return;
+    var head=dlg.querySelector('.v328-bd-head');
+    var list=byId('v328BirthdayList');
+    if(!head||!list)return;
+    var tools=document.createElement('div');
+    tools.id='v333BirthdayTools';
+    tools.className='v333-bd-tools';
+    tools.innerHTML='<button type="button" id="v333BtnCurrent" class="v333-bd-tool-btn is-active">本月壽星</button><button type="button" id="v333BtnHistory" class="v333-bd-tool-btn">歷史紀錄</button>';
+    head.insertAdjacentElement('afterend',tools);
+    var panel=document.createElement('div');
+    panel.id='v333BirthdayHistoryPanel';
+    panel.className='v333-history-panel';
+    panel.innerHTML='<div class="v333-history-controls"><button type="button" id="v333HistoryPrev">‹</button><input id="v333HistoryMonth" class="v333-history-month" type="month"><button type="button" id="v333HistoryNext">›</button></div><div id="v333HistoryList" class="v333-history-list"></div>';
+    list.insertAdjacentElement('afterend',panel);
+    byId('v333HistoryMonth').value=getBaseMonthKey();
+    byId('v333BtnCurrent').addEventListener('click',function(){showCurrentView();});
+    byId('v333BtnHistory').addEventListener('click',function(){showHistoryView();});
+    byId('v333HistoryPrev').addEventListener('click',function(){var m=byId('v333HistoryMonth');m.value=shiftMonth(m.value,-1);renderHistory();});
+    byId('v333HistoryNext').addEventListener('click',function(){var m=byId('v333HistoryMonth');m.value=shiftMonth(m.value,1);renderHistory();});
+    byId('v333HistoryMonth').addEventListener('change',renderHistory);
+  }
+  function showCurrentView(){
+    injectHistoryTools();
+    var list=byId('v328BirthdayList'), panel=byId('v333BirthdayHistoryPanel');
+    if(list)list.style.display='flex';
+    if(panel)panel.classList.remove('is-open');
+    var a=byId('v333BtnCurrent'), b=byId('v333BtnHistory');
+    if(a)a.classList.add('is-active'); if(b)b.classList.remove('is-active');
+    var sub=byId('v328BirthdaySub'); if(sub) sub.textContent=sub.dataset.currentText||sub.textContent;
+  }
+  function showHistoryView(){
+    injectHistoryTools();
+    var list=byId('v328BirthdayList'), panel=byId('v333BirthdayHistoryPanel');
+    var sub=byId('v328BirthdaySub'); if(sub && !sub.dataset.currentText) sub.dataset.currentText=sub.textContent||'';
+    if(list)list.style.display='none';
+    if(panel)panel.classList.add('is-open');
+    var a=byId('v333BtnCurrent'), b=byId('v333BtnHistory');
+    if(a)a.classList.remove('is-active'); if(b)b.classList.add('is-active');
+    renderHistory();
+  }
+  function renderHistory(){
+    var monthInput=byId('v333HistoryMonth'), box=byId('v333HistoryList');
+    if(!monthInput||!box)return;
+    var monthKey=monthInput.value||getBaseMonthKey();
+    var p=monthKey.split('-');
+    var title=byId('v328BirthdayTitle'); if(title) title.textContent=Number(p[1])+'月壽星紀錄';
+    var list=studentsForMonth(monthKey);
+    var raffle=loadRaffle();
+    var sub=byId('v328BirthdaySub'); if(sub) sub.textContent=list.length?('共 '+list.length+' 位｜查看已抽狀況'):'該月尚無壽星';
+    if(!list.length){box.innerHTML='<div class="v333-history-empty">🎂 這個月份沒有學員生日</div>';return;}
+    box.innerHTML=list.map(function(s){
+      var done=!!(raffle[monthKey]&&raffle[monthKey][s.id]);
+      return '<article class="v333-history-card">'+
+        '<div><div class="v333-history-name">🎂 '+esc(s.name)+'</div><div class="v333-history-date">'+esc(s.date)+' 生日｜'+esc(s.status)+'</div></div>'+
+        '<div class="v333-history-state '+(done?'done':'')+'">'+(done?'已抽':'未抽')+'</div>'+ 
+        '<label class="v333-history-check"><input type="checkbox" data-v333-history-id="'+esc(s.id)+'" data-v333-month="'+esc(monthKey)+'" '+(done?'checked':'')+'>已抽</label>'+ 
+      '</article>';
+    }).join('');
+  }
+  var oldOpenBirthday=window.openMobileBirthdayDialog;
+  window.openMobileBirthdayDialog=function(){
+    if(typeof oldOpenBirthday==='function')oldOpenBirthday.apply(this,arguments);
+    setTimeout(function(){injectHistoryTools();showCurrentView();},30);
+  };
+  document.addEventListener('change',function(ev){
+    var input=ev.target&&ev.target.closest&&ev.target.closest('input[data-v333-history-id]');
+    if(!input)return;
+    saveRaffleAt(input.getAttribute('data-v333-month'),input.getAttribute('data-v333-history-id'),input.checked);
+    renderHistory();
+  });
+  document.addEventListener('DOMContentLoaded',function(){
+    window.updateMobileDrawerCoachNameV333();
+    setTimeout(window.updateMobileDrawerCoachNameV333,300);
+  });
+  setTimeout(window.updateMobileDrawerCoachNameV333,600);
+})();
+</script>
 
 </body>
 </html>
