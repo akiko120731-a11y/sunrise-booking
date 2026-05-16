@@ -505,7 +505,43 @@ button,input,select,textarea{font-family:inherit}button{touch-action:manipulatio
 .student-dialog .dialog-body{background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%);}
 .student-head{padding:4px 2px 8px;border-bottom:1px dashed #eadfce;}
 .student-head h2::before{content:'🌿 ';font-size:16px}.student-tools{margin:12px 0 12px!important}.student-tools input{border:0!important;background:#fffaf1!important;box-shadow:inset 0 0 0 1px #eadfce,0 4px 12px rgba(90,70,45,.04);height:40px}.student-tools button{background:#fff3dc;border-color:#e6cfa9;color:#7a6042}.student-layout{grid-template-columns:280px 1fr!important;gap:14px!important}.student-list{background:#fffaf1!important;border:1px solid #eadfce!important;border-radius:24px!important;padding:10px!important}.student-item{border:0!important;background:#fffefb!important;border-radius:18px!important;box-shadow:0 3px 12px rgba(80,60,30,.04);padding:11px!important}.student-item:hover{background:#fff7e8!important}.student-form{border:0!important;background:transparent!important;padding:0!important;max-height:68vh!important}.student-section{background:rgba(255,253,248,.92);border:1px solid #eadfce;border-radius:24px;padding:15px;margin-bottom:12px;box-shadow:0 8px 24px rgba(80,60,30,.045)}.student-section-title{display:flex;align-items:center;gap:7px;margin:0 0 12px;font-size:14px;color:#7a6042;letter-spacing:.04em;font-weight:900}.student-section-title .leaf{display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:999px;background:#f3eadb;font-size:12px}.soft-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.soft-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.soft-grid.one{grid-template-columns:1fr}.soft-field label,.health-row-title{display:block;font-size:11.5px;color:#8a7c6d;margin:0 0 5px;font-weight:700;letter-spacing:.02em}.soft-field input,.soft-field select,.soft-field textarea,.health-row input,.health-row textarea{width:100%;border:0!important;background:#fffaf1!important;border-radius:18px!important;padding:10px 12px!important;box-shadow:inset 0 0 0 1px #eadfce,0 2px 8px rgba(80,60,30,.035);color:#3d3933;outline:none;transition:.18s}.soft-field input:focus,.soft-field select:focus,.soft-field textarea:focus,.health-row input:focus,.health-row textarea:focus{background:#fffefb!important;box-shadow:inset 0 0 0 2px #d6ba8d,0 3px 12px rgba(185,155,114,.13)}.soft-note{font-size:10.5px;color:#a08d78;margin-top:4px;line-height:1.45}.required-dot{color:#bd695d;margin-left:2px}.health-soft-list{display:flex;flex-direction:column;gap:9px}.health-row{display:grid;grid-template-columns:190px 1fr;gap:10px;align-items:start;background:#fffaf1;border:1px solid #eadfce;border-radius:20px;padding:10px}.health-row-main{display:flex;align-items:center;gap:8px;min-height:38px}.health-row-main input[type="checkbox"]{width:18px;height:18px;accent-color:#b99b72}.health-row-main label{font-weight:900;color:#6f5b44;font-size:13px}.health-inputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.health-inputs.single{grid-template-columns:1fr}.student-actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(251,247,238,0),#fbf7ee 22%,#fbf7ee 100%);padding:14px 0 2px;margin-top:2px}.student-actions-inner{display:flex;justify-content:space-between;gap:8px;background:#fffefb;border:1px solid #eadfce;border-radius:999px;padding:8px;box-shadow:0 -4px 18px rgba(80,60,30,.06)}.student-actions-inner button{min-width:82px}.student-form input:disabled{background:#f3eee5!important;color:#8a7c6d!important}.student-birthday-row{grid-template-columns:1.2fr .8fr!important}
-@media(max-width:760px){.student-layout{grid-template-columns:1fr!important}.student-list{max-height:168px!important}.student-form{max-height:60vh!important}.student-section{border-radius:20px;padding:13px}.soft-grid,.soft-grid.three,.student-birthday-row{grid-template-columns:1fr!important}.health-row{grid-template-columns:1fr;border-radius:18px}.health-inputs{grid-template-columns:1fr}.student-actions-inner{border-radius:22px;flex-direction:column}.student-actions-inner>div{display:flex;gap:8px}.student-actions-inner button{flex:1;min-height:42px}.student-tools input,.soft-field input,.soft-field select,.soft-field textarea,.health-row input,.health-row textarea{font-size:16px!important}.student-section-title{font-size:13px}.health-row-main label{font-size:13px}}
+@media(max-width:760px){
+.student-layout{grid-template-columns:1fr!important}
+.student-list{max-height:168px!important}
+.student-form{max-height:60vh!important;padding-bottom:72px!important}
+.student-section{border-radius:20px;padding:13px}
+.soft-grid,.soft-grid.three,.student-birthday-row{grid-template-columns:1fr!important}
+.health-row{grid-template-columns:1fr;border-radius:18px}
+.health-inputs{grid-template-columns:1fr}
+.student-actions{
+  padding:8px 0 0!important;
+  margin-top:0!important;
+  position:sticky!important;
+  bottom:0!important;
+}
+.student-actions-inner{
+  border-radius:18px!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  padding:6px!important;
+  gap:6px!important;
+}
+.student-actions-inner>div{
+  display:flex;
+  gap:6px;
+  flex:1;
+}
+.student-actions-inner button{
+  flex:1;
+  min-height:34px!important;
+  font-size:13px!important;
+  padding:6px 8px!important;
+  border-radius:14px!important;
+}
+.student-tools input,.soft-field input,.soft-field select,.soft-field textarea,.health-row input,.health-row textarea{font-size:16px!important}
+.student-section-title{font-size:13px}
+.health-row-main label{font-size:13px}
+}
 
 
 /* v32 學員列表主畫面＋移除月曆今日紅框 */
