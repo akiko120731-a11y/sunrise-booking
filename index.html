@@ -9842,6 +9842,9 @@ body.role-coach.is-logged-in .side { display: none !important; }
   <button type="button" class="md-item" data-tab="query" onclick="closeMobileDrawer();setMobileTab('query')">
     <span class="md-item-icon ico-query">◈</span>統計/查詢作業
   </button>
+  <button type="button" class="md-item coach-only" id="mdBtnCoachStudent" onclick="closeMobileDrawer();openStudentManager()">
+    <span class="md-item-icon ico-stud">⊛</span>學員管理
+  </button>
 
   <div class="md-divider"></div>
   <div class="md-section admin-only" id="mdAdminSection">管理功能</div>
@@ -9893,11 +9896,14 @@ function updateDrawerUser(){
   var avatar = document.getElementById('mdAvatar');
   var name   = document.getElementById('mdUserName');
   var adminItems = document.querySelectorAll('.md-item.admin-only, .md-section.admin-only, #mdAdminSection');
+  var coachItems = document.querySelectorAll('#mobileDrawer .coach-only');
   var isAdm  = (typeof isAdmin === 'function') && isAdmin();
+  var isCch  = (typeof isCoach === 'function') && isCoach();
   var coach  = window.currentCoach || '';
   if(avatar) avatar.textContent = isAdm ? 'A' : (coach ? coach.charAt(0) : 'C');
   if(name)   name.textContent   = isAdm ? 'Admin 管理員' : (coach ? coach + ' 教練' : '教練');
   adminItems.forEach(function(el){ el.style.display = isAdm ? '' : 'none'; });
+  coachItems.forEach(function(el){ el.style.display = isCch ? '' : 'none'; });
 }
 
 /* ── 更新 Drawer active ── */
@@ -11456,6 +11462,26 @@ window.addEventListener('resize', function(){
   window.mobileJumpFromMonthToBookingV320 = jumpFromMonthToBooking;
 })();
 </script>
+
+
+<!-- v321 mobile coach student manager + blurred backdrop -->
+<style id="v321-mobile-coach-student-manager-style">
+@media (max-width:760px){
+  #mobileDrawer .md-item#mdBtnCoachStudent{
+    display:flex;
+  }
+  #studentDialog.student-dialog{
+    border-radius:26px!important;
+    overflow:hidden!important;
+    box-shadow:0 22px 70px rgba(45,36,25,.28)!important;
+  }
+  #studentDialog::backdrop{
+    background:rgba(61,57,51,.28)!important;
+    backdrop-filter:blur(10px)!important;
+    -webkit-backdrop-filter:blur(10px)!important;
+  }
+}
+</style>
 
 </body>
 </html>
