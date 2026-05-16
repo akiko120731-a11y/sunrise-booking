@@ -12108,5 +12108,178 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+
+<!-- v327 手機版本月壽星提醒：固定卡片、不顯示資料來源文字、縮短月曆高度 -->
+<style id="v327MobileBirthdayStaticCardsStyle">
+@media(max-width:760px){
+  /* 縮短上方月曆高度，保留原本寬度與點擊功能 */
+  #mobileMonthPage .mobile-soft-section:has(#mobileMonthOverviewGrid){
+    padding:11px 12px 12px!important;
+    margin-bottom:10px!important;
+  }
+  #mobileMonthPage .mobile-month-overview-scroll{
+    padding-bottom:2px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+  }
+  #mobileMonthPage .mobile-month-overview-grid{
+    gap:5px!important;
+  }
+  #mobileMonthPage .mobile-month-dow{
+    font-size:10px!important;
+    padding:1px 0!important;
+  }
+  #mobileMonthPage .mobile-month-cell{
+    height:56px!important;
+    min-height:56px!important;
+    padding:5px!important;
+    border-radius:14px!important;
+  }
+  #mobileMonthPage .mobile-month-date{
+    font-size:12px!important;
+    line-height:1.05!important;
+  }
+  #mobileMonthPage .mobile-month-mini{
+    margin-top:3px!important;
+    font-size:8.5px!important;
+    line-height:1.2!important;
+    -webkit-line-clamp:1!important;
+  }
+  #mobileMonthPage .mobile-month-count{
+    right:4px!important;
+    top:4px!important;
+    min-width:15px!important;
+    height:15px!important;
+    font-size:8px!important;
+  }
+
+  /* 壽星區塊改為下方固定卡片，不使用橫向滾軸 */
+  #mobileMonthBirthdaySection{
+    margin:10px 0 0!important;
+    padding:12px!important;
+    border-radius:20px!important;
+    overflow:visible!important;
+  }
+  #mobileMonthBirthdaySection .birthday-head{
+    margin-bottom:9px!important;
+  }
+  #mobileMonthBirthdaySection .birthday-title{
+    font-size:15px!important;
+  }
+  #mobileMonthBirthdaySection .birthday-sub{
+    display:none!important;
+  }
+  #mobileMonthBirthdayList{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    overflow:visible!important;
+    padding:0!important;
+    scroll-snap-type:none!important;
+  }
+  #mobileMonthBirthdayList::-webkit-scrollbar{display:none!important;}
+  .mobile-birthday-card{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    flex:none!important;
+    scroll-snap-align:none!important;
+    min-height:0!important;
+    padding:10px 11px!important;
+    border-radius:16px!important;
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    grid-template-areas:
+      "name badge"
+      "meta date"!important;
+    align-items:center!important;
+    column-gap:8px!important;
+    row-gap:4px!important;
+    text-align:left!important;
+  }
+  .mobile-birthday-card .birthday-date{
+    grid-area:date!important;
+    display:block!important;
+    margin:0!important;
+    font-size:11px!important;
+    color:#9a7447!important;
+    text-align:right!important;
+    white-space:nowrap!important;
+  }
+  .mobile-birthday-card .birthday-date span:first-child{display:inline!important;}
+  .mobile-birthday-card .birthday-date .mobile-birthday-badge{display:none!important;}
+  .mobile-birthday-card .birthday-name{
+    grid-area:name!important;
+    font-size:14px!important;
+    line-height:1.25!important;
+    min-width:0!important;
+  }
+  .mobile-birthday-card .birthday-meta{
+    grid-area:meta!important;
+    margin:0!important;
+    font-size:10.5px!important;
+    min-width:0!important;
+  }
+  .mobile-birthday-card::after{
+    content:attr(data-birthday-status);
+    grid-area:badge;
+    justify-self:end;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    padding:2px 7px;
+    font-size:10px;
+    font-weight:900;
+    color:#9a5a46;
+    background:#ffe7de;
+    border:1px solid #f0c6ba;
+    white-space:nowrap;
+  }
+  .mobile-birthday-empty{
+    padding:11px!important;
+    font-size:12px!important;
+  }
+}
+</style>
+<script id="v327MobileBirthdayStaticCardsScript">
+(function(){
+  function cleanupBirthdayBlock(){
+    var sec=document.getElementById('mobileMonthBirthdaySection');
+    if(!sec) return;
+    var sub=sec.querySelector('.birthday-sub');
+    if(sub) sub.textContent='';
+    var empty=sec.querySelector('.mobile-birthday-empty');
+    if(empty) empty.innerHTML='這個月尚無學員生日。';
+    sec.querySelectorAll('.mobile-birthday-card').forEach(function(card){
+      var badge=card.querySelector('.mobile-birthday-badge');
+      if(badge) card.setAttribute('data-birthday-status', badge.textContent.trim());
+    });
+  }
+  var old=window.renderMobileMonthBirthdays;
+  if(typeof old==='function'){
+    window.renderMobileMonthBirthdays=function(){
+      var result=old.apply(this, arguments);
+      cleanupBirthdayBlock();
+      return result;
+    };
+  }
+  var oldOverview=window.renderMobileMonthOverview;
+  if(typeof oldOverview==='function'){
+    window.renderMobileMonthOverview=function(){
+      var result=oldOverview.apply(this, arguments);
+      setTimeout(cleanupBirthdayBlock, 0);
+      return result;
+    };
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(cleanupBirthdayBlock, 350);
+    setTimeout(cleanupBirthdayBlock, 1000);
+  });
+  setTimeout(cleanupBirthdayBlock, 1200);
+})();
+</script>
+
 </body>
 </html>
