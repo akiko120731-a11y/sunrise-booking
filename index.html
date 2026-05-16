@@ -11858,5 +11858,255 @@ window.addEventListener('resize', function(){
 })();
 </script>
 
+
+<!-- v325 手機版本月總覽：本月壽星提醒區塊（自動抓學員管理生日） -->
+<style id="v325MobileMonthBirthdayStyle">
+@media(max-width:760px){
+  #mobileMonthBirthdaySection{
+    margin:12px 0 0!important;
+    padding:14px 14px 16px!important;
+    border:1px solid #eadfce!important;
+    border-radius:22px!important;
+    background:linear-gradient(180deg,#fffefb 0%,#fff8ef 100%)!important;
+    box-shadow:0 8px 22px rgba(80,60,30,.045)!important;
+  }
+  #mobileMonthBirthdaySection .birthday-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    margin-bottom:10px!important;
+  }
+  #mobileMonthBirthdaySection .birthday-title{
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    font-size:15px!important;
+    font-weight:900!important;
+    color:#6f5b44!important;
+    letter-spacing:.04em!important;
+  }
+  #mobileMonthBirthdaySection .birthday-sub{
+    font-size:11px!important;
+    color:#9a8a78!important;
+    white-space:nowrap!important;
+  }
+  #mobileMonthBirthdayList{
+    display:flex!important;
+    gap:10px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:2px 2px 4px!important;
+    scroll-snap-type:x proximity!important;
+  }
+  #mobileMonthBirthdayList::-webkit-scrollbar{display:none!important;}
+  .mobile-birthday-card{
+    flex:0 0 156px!important;
+    scroll-snap-align:start!important;
+    border:1px solid #eadfce!important;
+    border-radius:18px!important;
+    background:#fffdf8!important;
+    padding:10px 11px!important;
+    box-shadow:0 4px 14px rgba(80,60,30,.045)!important;
+    text-align:left!important;
+    color:#4d453c!important;
+    min-height:86px!important;
+  }
+  .mobile-birthday-card.today{
+    background:#fff1eb!important;
+    border-color:#f0c6ba!important;
+  }
+  .mobile-birthday-card.upcoming{
+    background:#fff8e8!important;
+  }
+  .mobile-birthday-card.passed{
+    opacity:.72!important;
+  }
+  .mobile-birthday-card .birthday-date{
+    display:flex!important;
+    justify-content:space-between!important;
+    align-items:center!important;
+    gap:6px!important;
+    font-size:12px!important;
+    color:#9a7447!important;
+    font-weight:900!important;
+    margin-bottom:6px!important;
+  }
+  .mobile-birthday-card .birthday-name{
+    font-size:15px!important;
+    font-weight:900!important;
+    color:#3d3933!important;
+    line-height:1.25!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .mobile-birthday-card .birthday-meta{
+    margin-top:5px!important;
+    font-size:11px!important;
+    color:#8a7c6d!important;
+    line-height:1.35!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .mobile-birthday-badge{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border-radius:999px!important;
+    padding:2px 7px!important;
+    font-size:10px!important;
+    font-weight:900!important;
+    color:#9a5a46!important;
+    background:#ffe7de!important;
+    border:1px solid #f0c6ba!important;
+    white-space:nowrap!important;
+  }
+  .mobile-birthday-empty{
+    width:100%!important;
+    border:1px dashed #eadfce!important;
+    border-radius:16px!important;
+    padding:12px!important;
+    text-align:center!important;
+    color:#9a8a78!important;
+    background:#fffdf8!important;
+    font-size:12px!important;
+    line-height:1.5!important;
+  }
+}
+</style>
+<script id="v325MobileMonthBirthdayScript">
+(function(){
+  function byId(id){return document.getElementById(id);}
+  function escText(v){
+    if(typeof esc==='function') return esc(v||'');
+    return String(v||'').replace(/[&<>\"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]||m;});
+  }
+  function isMobile(){return window.matchMedia && window.matchMedia('(max-width:760px)').matches;}
+  function parseBirthdayMMDD(v){
+    if(!v) return null;
+    var s=String(v).trim().replace(/\./g,'-').replace(/\//g,'-');
+    var m=s.match(/^(?:\d{4}-)?(\d{1,2})-(\d{1,2})$/);
+    if(!m) m=s.match(/(\d{1,2})\s*月\s*(\d{1,2})\s*日?/);
+    if(!m) return null;
+    var mm=Number(m[1]), dd=Number(m[2]);
+    if(!mm||!dd||mm<1||mm>12||dd<1||dd>31) return null;
+    return {month:mm,day:dd};
+  }
+  function monthBaseDate(){
+    try{
+      if(window.mobileMonthBase){return new Date(String(window.mobileMonthBase)+'-01T00:00:00');}
+      if(window.mobileSelectedDate){var sd=new Date(String(window.mobileSelectedDate)+'T00:00:00');return new Date(sd.getFullYear(),sd.getMonth(),1);}
+      var wp=byId('weekPicker')&&byId('weekPicker').value;
+      if(wp){var d=new Date(wp+'T00:00:00');return new Date(d.getFullYear(),d.getMonth(),1);}
+    }catch(e){}
+    var now=new Date();return new Date(now.getFullYear(),now.getMonth(),1);
+  }
+  function visibleStudents(){
+    var list=Array.isArray(window.students)?window.students:[];
+    return list.filter(function(s){
+      try{ if(typeof isAdmin==='function' && isAdmin()) return true; }catch(e){}
+      try{ if(typeof isCoach==='function' && isCoach()) return !s.coach || s.coach===window.currentCoach; }catch(e){}
+      return true;
+    });
+  }
+  function birthdayStatus(target){
+    var today=new Date();
+    var t0=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
+    var d0=new Date(target.getFullYear(),target.getMonth(),target.getDate()).getTime();
+    var diff=Math.round((d0-t0)/86400000);
+    if(diff===0) return {cls:'today',label:'今天生日'};
+    if(diff>0 && diff<=7) return {cls:'upcoming',label:'還有 '+diff+' 天'};
+    if(diff>7) return {cls:'upcoming',label:'即將生日'};
+    return {cls:'passed',label:'已過生日'};
+  }
+  function getMonthBirthdays(){
+    var base=monthBaseDate(), y=base.getFullYear(), m=base.getMonth()+1;
+    return visibleStudents().map(function(s){
+      var b=parseBirthdayMMDD(s.birthday||s.birth||s.birthDate||s.dob);
+      if(!b || b.month!==m) return null;
+      var target=new Date(y,b.month-1,b.day);
+      if(target.getMonth()!==b.month-1) return null;
+      var st=birthdayStatus(target);
+      return {student:s,date:target,month:b.month,day:b.day,status:st};
+    }).filter(Boolean).sort(function(a,b){
+      var aKey=(a.status.cls==='passed'?1000:0)+a.day;
+      var bKey=(b.status.cls==='passed'?1000:0)+b.day;
+      return aKey-bKey;
+    });
+  }
+  function ensureBirthdaySection(){
+    var page=byId('mobileMonthPage');
+    var grid=byId('mobileMonthOverviewGrid');
+    if(!page || !grid) return null;
+    var sec=byId('mobileMonthBirthdaySection');
+    if(sec) return sec;
+    sec=document.createElement('div');
+    sec.id='mobileMonthBirthdaySection';
+    sec.className='mobile-soft-section mobile-birthday-section';
+    sec.innerHTML='<div class="birthday-head"><div class="birthday-title">🎂 本月壽星</div><div class="birthday-sub">自動抓學員生日</div></div><div id="mobileMonthBirthdayList"></div>';
+    var holder=grid.closest('.mobile-soft-section') || grid.parentNode;
+    if(holder && holder.parentNode) holder.parentNode.insertBefore(sec, holder.nextSibling);
+    else page.appendChild(sec);
+    return sec;
+  }
+  window.renderMobileMonthBirthdays=function(){
+    if(!isMobile()) return;
+    var sec=ensureBirthdaySection();
+    var listBox=byId('mobileMonthBirthdayList');
+    if(!sec || !listBox) return;
+    var base=monthBaseDate();
+    var birthdays=getMonthBirthdays();
+    var sub=sec.querySelector('.birthday-sub');
+    if(sub) sub.textContent=(base.getMonth()+1)+'月｜'+birthdays.length+' 位';
+    if(!birthdays.length){
+      listBox.innerHTML='<div class="mobile-birthday-empty">這個月尚無學員生日。<br>生日資料會自動從「學員管理」抓取。</div>';
+      return;
+    }
+    listBox.innerHTML=birthdays.map(function(item){
+      var s=item.student||{};
+      var id=String(s.id||'').replace(/'/g,'\\\'');
+      var age='';
+      try{ if(typeof studentAge==='function' && s.birthday) age='｜'+studentAge(s.birthday)+'歲'; }catch(e){}
+      var coach=s.coach?('｜'+escText(s.coach)) : '';
+      return '<button type="button" class="mobile-birthday-card '+item.status.cls+'" onclick="try{ if(typeof openStudentManager===\'function\') openStudentManager(); if(\''+id+'\' && typeof loadStudent===\'function\') setTimeout(function(){loadStudent(\''+id+'\')},80); }catch(e){}">'
+        +'<div class="birthday-date"><span>'+(item.month)+'/'+(item.day)+'</span><span class="mobile-birthday-badge">'+escText(item.status.label)+'</span></div>'
+        +'<div class="birthday-name">🎂 '+escText(s.name||'未命名')+'</div>'
+        +'<div class="birthday-meta">'+escText(s.phone||'')+age+coach+'</div>'
+        +'</button>';
+    }).join('');
+  };
+
+  var oldRenderMonth=window.renderMobileMonthOverview;
+  if(typeof oldRenderMonth==='function'){
+    window.renderMobileMonthOverview=function(){
+      var r=oldRenderMonth.apply(this,arguments);
+      setTimeout(window.renderMobileMonthBirthdays,0);
+      return r;
+    };
+  }
+  var oldRenderApp=window.renderMobileApp;
+  if(typeof oldRenderApp==='function'){
+    window.renderMobileApp=function(){
+      var r=oldRenderApp.apply(this,arguments);
+      setTimeout(window.renderMobileMonthBirthdays,0);
+      return r;
+    };
+  }
+  var oldSaveStudent=window.saveStudent;
+  if(typeof oldSaveStudent==='function'){
+    window.saveStudent=function(){
+      var r=oldSaveStudent.apply(this,arguments);
+      setTimeout(window.renderMobileMonthBirthdays,120);
+      return r;
+    };
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(window.renderMobileMonthBirthdays,300);});
+  setTimeout(window.renderMobileMonthBirthdays,900);
+})();
+</script>
+
 </body>
 </html>
