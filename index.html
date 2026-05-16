@@ -9842,9 +9842,6 @@ body.role-coach.is-logged-in .side { display: none !important; }
   <button type="button" class="md-item" data-tab="query" onclick="closeMobileDrawer();setMobileTab('query')">
     <span class="md-item-icon ico-query">◈</span>統計/查詢作業
   </button>
-  <button type="button" class="md-item coach-only" id="mdBtnCoachStudent" onclick="closeMobileDrawer();openStudentManager()">
-    <span class="md-item-icon ico-stud">⊛</span>學員管理
-  </button>
 
   <div class="md-divider"></div>
   <div class="md-section admin-only" id="mdAdminSection">管理功能</div>
@@ -9896,14 +9893,11 @@ function updateDrawerUser(){
   var avatar = document.getElementById('mdAvatar');
   var name   = document.getElementById('mdUserName');
   var adminItems = document.querySelectorAll('.md-item.admin-only, .md-section.admin-only, #mdAdminSection');
-  var coachItems = document.querySelectorAll('#mobileDrawer .coach-only');
   var isAdm  = (typeof isAdmin === 'function') && isAdmin();
-  var isCch  = (typeof isCoach === 'function') && isCoach();
   var coach  = window.currentCoach || '';
   if(avatar) avatar.textContent = isAdm ? 'A' : (coach ? coach.charAt(0) : 'C');
   if(name)   name.textContent   = isAdm ? 'Admin 管理員' : (coach ? coach + ' 教練' : '教練');
   adminItems.forEach(function(el){ el.style.display = isAdm ? '' : 'none'; });
-  coachItems.forEach(function(el){ el.style.display = isCch ? '' : 'none'; });
 }
 
 /* ── 更新 Drawer active ── */
@@ -11464,24 +11458,280 @@ window.addEventListener('resize', function(){
 </script>
 
 
-<!-- v321 mobile coach student manager + blurred backdrop -->
-<style id="v321-mobile-coach-student-manager-style">
-@media (max-width:760px){
-  #mobileDrawer .md-item#mdBtnCoachStudent{
-    display:flex;
-  }
+
+<!-- v322 手機版教練主要功能：學員管理卡片＋背景模糊，只影響手機版 -->
+<style id="v322MobileStudentManagerStyle">
+@media(max-width:760px){
+  /* 手機版學員管理：改成螢幕內卡片，不影響桌機版 */
   #studentDialog.student-dialog{
-    border-radius:26px!important;
+    width:calc(100vw - 24px)!important;
+    max-width:calc(100vw - 24px)!important;
+    height:auto!important;
+    max-height:calc(100dvh - 28px)!important;
+    margin:auto!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:24px!important;
     overflow:hidden!important;
-    box-shadow:0 22px 70px rgba(45,36,25,.28)!important;
+    background:#fffefb!important;
+    box-shadow:0 22px 70px rgba(55,43,28,.24)!important;
   }
   #studentDialog::backdrop{
-    background:rgba(61,57,51,.28)!important;
-    backdrop-filter:blur(10px)!important;
-    -webkit-backdrop-filter:blur(10px)!important;
+    background:rgba(58,48,36,.34)!important;
+    backdrop-filter:blur(8px)!important;
+    -webkit-backdrop-filter:blur(8px)!important;
+  }
+  #studentDialog .dialog-body{
+    height:calc(100dvh - 28px)!important;
+    max-height:calc(100dvh - 28px)!important;
+    padding:12px!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+    background:linear-gradient(180deg,#fffefb 0%,#fbf7ee 100%)!important;
+  }
+  #studentDialog .student-head{
+    flex:0 0 auto!important;
+    padding:4px 2px 10px!important;
+    margin:0 0 8px!important;
+    gap:8px!important;
+    align-items:center!important;
+  }
+  #studentDialog .student-head h2{
+    font-size:18px!important;
+    line-height:1.2!important;
+  }
+  #studentDialog .student-head .dialog-x{
+    position:static!important;
+    transform:none!important;
+    flex:0 0 36px!important;
+    width:36px!important;
+    height:36px!important;
+    min-width:36px!important;
+    min-height:36px!important;
+    padding:0!important;
+    font-size:20px!important;
+  }
+  #studentDialog .student-tools{
+    flex:0 0 auto!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    margin:0 0 10px!important;
+  }
+  #studentDialog .student-tools input,
+  #studentDialog .student-tools button,
+  #studentDialog .student-total-chip,
+  #studentDialog .student-status-filter{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:42px!important;
+    box-sizing:border-box!important;
+    font-size:15px!important;
+  }
+  #studentDialog .student-tools button{
+    padding:9px 12px!important;
+    border-radius:16px!important;
+    white-space:nowrap!important;
+  }
+  #studentDialog .student-total-chip{
+    justify-content:center!important;
+    padding:8px 10px!important;
+  }
+  #studentDialog .student-layout{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    display:block!important;
+    overflow:hidden!important;
+  }
+  #studentDialog .student-layout.list-mode .student-list{
+    display:block!important;
+    height:100%!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:8px!important;
+    border-radius:20px!important;
+  }
+  #studentDialog .student-layout.list-mode .student-form{
+    display:none!important;
+  }
+  #studentDialog .student-layout.form-mode .student-list{
+    display:none!important;
+  }
+  #studentDialog .student-layout.form-mode .student-form{
+    display:block!important;
+    height:100%!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding:0 2px 10px!important;
+  }
+  #studentDialog .student-section{
+    border-radius:18px!important;
+    padding:12px!important;
+    margin-bottom:10px!important;
+  }
+  #studentDialog .student-section-title{
+    font-size:13px!important;
+    margin-bottom:10px!important;
+  }
+  #studentDialog .soft-grid,
+  #studentDialog .soft-grid.three,
+  #studentDialog .soft-grid.one,
+  #studentDialog .student-birthday-row,
+  #studentDialog .health-inputs,
+  #studentDialog .health-inputs.single{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+  #studentDialog .soft-grid[style]{
+    margin-top:8px!important;
+  }
+  #studentDialog .soft-field input,
+  #studentDialog .soft-field select,
+  #studentDialog .soft-field textarea,
+  #studentDialog .health-row input,
+  #studentDialog .health-row textarea{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:42px!important;
+    font-size:16px!important;
+    padding:9px 11px!important;
+    box-sizing:border-box!important;
+  }
+  #studentDialog .health-row{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    padding:10px!important;
+    border-radius:16px!important;
+  }
+  #studentDialog .health-row-main{
+    min-height:32px!important;
+  }
+  #studentDialog .student-actions{
+    position:sticky!important;
+    bottom:0!important;
+    padding:12px 0 0!important;
+    margin-top:4px!important;
+    background:linear-gradient(180deg,rgba(251,247,238,0),#fbf7ee 28%,#fbf7ee 100%)!important;
+  }
+  #studentDialog .student-actions-inner{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    border-radius:18px!important;
+    padding:8px!important;
+  }
+  #studentDialog .student-actions-inner>div{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+  }
+  #studentDialog .student-actions-inner button{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:42px!important;
+    padding:8px 10px!important;
+    border-radius:15px!important;
+    font-size:14px!important;
+    white-space:nowrap!important;
+  }
+  #studentDialog .student-row-item{
+    grid-template-columns:1fr!important;
+    gap:6px!important;
+    padding:10px!important;
+    border-radius:16px!important;
+  }
+  #studentDialog .student-row-item button{
+    width:100%!important;
+    min-height:38px!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+  }
+  #studentDialog .student-row-value{
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
   }
 }
 </style>
+<script id="v322MobileStudentManagerScript">
+(function(){
+  function isMobile(){ return window.matchMedia && window.matchMedia('(max-width:760px)').matches; }
+  function byId(id){ return document.getElementById(id); }
+  function addCoachStudentButton(){
+    var drawer = byId('mobileDrawer');
+    if(!drawer || byId('mdBtnStudentCoach')) return;
+    var anchor = drawer.querySelector('.md-item[data-tab="query"]') || drawer.querySelector('.md-item[data-tab="booking"]');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'mdBtnStudentCoach';
+    btn.className = 'md-item';
+    btn.innerHTML = '<span class="md-item-icon ico-stud">⊛</span>學員管理';
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      try{ if(typeof window.closeMobileDrawer === 'function') window.closeMobileDrawer(); }catch(err){}
+      try{ if(typeof window.openStudentManagerMobileV322 === 'function') window.openStudentManagerMobileV322(); }
+      catch(err){ if(typeof window.openStudentManager === 'function') window.openStudentManager(); }
+    });
+    if(anchor && anchor.parentNode) anchor.parentNode.insertBefore(btn, anchor.nextSibling);
+    else drawer.appendChild(btn);
+  }
+
+  function prepMobileStudentDialog(){
+    var dialog = byId('studentDialog');
+    if(!dialog) return;
+    dialog.classList.add('mobile-student-card-ready');
+    var form = dialog.querySelector('.student-form');
+    var list = dialog.querySelector('.student-list');
+    if(form) form.scrollTop = 0;
+    if(list) list.scrollTop = 0;
+  }
+
+  window.openStudentManagerMobileV322 = function(){
+    if(typeof window.openStudentManager === 'function') window.openStudentManager();
+    setTimeout(function(){
+      prepMobileStudentDialog();
+      var dialog = byId('studentDialog');
+      if(dialog && dialog.open){
+        var list = dialog.querySelector('.student-list');
+        if(list) list.scrollTop = 0;
+      }
+    }, 40);
+  };
+
+  var oldOpen = window.openMobileDrawer;
+  window.openMobileDrawer = function(){
+    addCoachStudentButton();
+    if(typeof oldOpen === 'function') oldOpen.apply(this, arguments);
+  };
+
+  var oldNew = window.newStudentForm;
+  if(typeof oldNew === 'function'){
+    window.newStudentForm = function(){
+      oldNew.apply(this, arguments);
+      setTimeout(function(){
+        prepMobileStudentDialog();
+        var form = byId('studentDialog')?.querySelector('.student-form');
+        if(form) form.scrollTop = 0;
+      }, 30);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    addCoachStudentButton();
+  });
+  setTimeout(addCoachStudentButton, 200);
+  setTimeout(addCoachStudentButton, 800);
+})();
+</script>
 
 </body>
 </html>
